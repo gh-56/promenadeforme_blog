@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Build outputs
+dist/
+build/
+
+# VS Code
+.vscode/
+
+# backend
+backend/node_modules/
+backend/dist/
+backend/.env
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
