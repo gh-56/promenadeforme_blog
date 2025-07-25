@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+interface ApiResponse {
+  code: number;
+  message: string;
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState('');
+  useEffect(() => {
+    const callApi = async () => {
+      try {
+        const response = await axios.get<ApiResponse>('/api');
+        if (response.data && typeof response === 'object') {
+          setMessage(response.data.message);
+          console.log('응답 코드:', response.data.code);
+        } else {
+          console.error('API 응답이 올바르지 않습니다.');
+        }
+      } catch (error) {
+        console.error('API 요청 오류:', error);
+      }
+    };
+    callApi();
+  }, []);
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>{message}</h1>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
