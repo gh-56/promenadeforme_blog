@@ -5,6 +5,8 @@ import cors from 'cors';
 import connect from './schemas/index.js';
 import 'dotenv/config';
 import CustomError from './utils/customError.js';
+import indexRouter from './routes/index.js';
+import postsRouter from './routes/posts.js';
 
 const app = express();
 
@@ -14,14 +16,13 @@ connect();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
+app.use('/', indexRouter);
+app.use('/api/posts', postsRouter);
 
 app.use((req, res, next) => {
   const error = new CustomError(
