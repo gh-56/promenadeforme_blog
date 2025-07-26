@@ -2,9 +2,10 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "nodenext",
     "outDir": "./dist",
     "rootDir": "./src",
+    "moduleResolution": "nodenext",
     "esModuleInterop": true /* CommonJS 모듈을 ES 모듈처럼 가져올 수 있게 함 */,
     "forceConsistentCasingInFileNames": true /* 파일 이름 대소문자 일관성 강제 */,
     "strict": true,
