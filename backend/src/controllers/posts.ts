@@ -32,3 +32,36 @@ export const createPost = async (
     next(error);
   }
 };
+
+export const getPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const posts = await Post.find({});
+    if (!posts || posts.length === 0) {
+      res.status(200).json([]);
+    }
+    res.status(200).json(posts);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPostById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: '포스트를 찾을 수 없습니다.' });
+    }
+    res.status(200).json(post);
+  } catch (error) {
+    next(error);
+  }
+};
