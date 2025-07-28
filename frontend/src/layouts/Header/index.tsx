@@ -1,5 +1,40 @@
+import './style.css';
+import { Link } from 'react-router-dom';
+import { MAIN_PATH, POST_PATH, POST_WRITE_PATH } from '../../constant';
+import Input from '../../components/Input';
+import { useState } from 'react';
+
 const Header = () => {
-  return <div>Header</div>;
+  const [searchValue, setSearchValue] = useState('');
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  return (
+    <header className='header-container'>
+      <div className='header-logo'>
+        <Link to={MAIN_PATH()}>
+          <h1>Promenadeforme</h1>
+        </Link>
+      </div>
+      <nav className='header-menu'>
+        <div className='header-nav-list'>
+          <Link to='/'>소개</Link>
+          <Link to={POST_PATH()}>글 목록</Link>
+          <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
+        </div>
+        <div className='header-search'>
+          <Input
+            id='search'
+            type='text'
+            placeholder='검색어를 입력하세요.'
+            value={searchValue}
+            onChange={handleSearchChange}
+          />
+        </div>
+      </nav>
+    </header>
+  );
 };
 
 export default Header;
