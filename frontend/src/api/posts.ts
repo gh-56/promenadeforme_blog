@@ -1,6 +1,5 @@
 import axios from 'axios';
-import type { PostFormData } from '../types/post';
-import type { Post } from '../types/post';
+import type { PostFormData, Post } from '../types/interface';
 
 export const fetchCreatePost = async (data: PostFormData) => {
   const response = await axios.post<Post>('/api/posts', data);
