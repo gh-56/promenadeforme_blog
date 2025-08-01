@@ -6,3 +6,11 @@
   outline: 0;
   font-size: 0.9rem;
 }
+
+.title-input {
+  margin-bottom: 1rem;
+  border-radius: 1px;
+  border: 1px solid #ddd;
+  width: 100%;
+  padding: 15px;
+}

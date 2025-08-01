@@ -19,10 +19,12 @@ import {
   handleKeyCommand,
 } from '../../../hooks/useEditorConfig';
 import { fetchCreatePost } from '../../../api/posts'; // API 함수 경로 확인
+import Input from '../../../components/Input';
 
 const PostWritePage = () => {
   const nav = useNavigate();
   const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
   const [author, setAuthor] = useState('');
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -66,19 +68,32 @@ const PostWritePage = () => {
 
   return (
     <>
-      <h1>글 작성 페이지</h1>
+      <h1>글 쓰기</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor='title'>제목</label>
-          <input
+          {/* <label htmlFor='category'>카테고리</label> */}
+          <select
+            name='category'
+            id='category'
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value=''>카테고리를 선택하세요.</option>
+            <option value='category1'>카테고리 1</option>
+          </select>
+        </div>
+        <div>
+          {/* <label htmlFor='title'>제목</label> */}
+          <Input
             id='title'
+            className='title-input'
             type='text'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder='제목을 입력하세요.'
           />
         </div>
         <div>
-          <label htmlFor='content'>내용</label>
+          {/* <label htmlFor='content'>내용</label> */}
           <div className='RichEditor-root' onClick={focusEditor}>
             <InlineStyleControls
               editorState={editorState}
