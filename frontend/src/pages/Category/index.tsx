@@ -25,7 +25,7 @@ const CategoryPage = () => {
       }
     };
     getCategories();
-  }, []);
+  }, [categories]);
 
   const handleAddCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
