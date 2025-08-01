@@ -1,35 +1,65 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { PostFormData } from '../../../types/interface';
 import {
   Editor,
   EditorState,
-  RichUtils, // RichUtils는 toggleInlineStyle, toggleBlockType에서 직접 사용되므로 유지합니다.
+  RichUtils,
   type DraftEditorCommand,
 } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import './editorStyle.css';
 
-// 분리된 컴포넌트들을 불러옵니다.
 import InlineStyleControls from '../../../components/WriteStyle/InlineStyleControls';
 import BlockStyleControls from '../../../components/WriteStyle/BlockStyleControls';
-// 분리된 함수들을 불러옵니다.
+
 import {
   getBlockStyle,
   handleKeyCommand,
 } from '../../../hooks/useEditorConfig';
-import { fetchCreatePost } from '../../../api/posts'; // API 함수 경로 확인
+import { fetchCreatePost } from '../../../api/posts';
+import type { PostFormData } from '../../../types/interface';
+
+import { fetchCreateCategory, fetchCategories } from '../../../api/categories';
+import type { Category } from '../../../types/interface';
 import Input from '../../../components/Input';
 
 const PostWritePage = () => {
   const nav = useNavigate();
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
   const [author, setAuthor] = useState('');
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
+  const [categoryName, setCategoryName] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
+
   const editorRef = useRef<Editor>(null);
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getCategories();
+  }, []);
+
+  const handleAddCategory = async () => {
+    if (!categoryName) return alert('카테고리 이름을 입력하세요.');
+
+    try {
+      const newCategory = await fetchCreateCategory(categoryName);
+      setCategories([...categories, newCategory]);
+      setCategoryName('');
+      alert('새로운 카테고리가 생성되었습니다.');
+    } catch (error) {
+      console.error(error);
+      alert('카테고리 생성에 실패했습니다.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,6 +70,7 @@ const PostWritePage = () => {
         title,
         content,
         author,
+        category: '',
       };
 
       await fetchCreatePost(newPost);
@@ -71,15 +102,27 @@ const PostWritePage = () => {
       <h1>글 쓰기</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          {/* <label htmlFor='category'>카테고리</label> */}
-          <select
-            name='category'
-            id='category'
-            onChange={(e) => setCategory(e.target.value)}
-          >
+          <label htmlFor='category'>카테고리 선택</label>
+          <select id='category'>
             <option value=''>카테고리를 선택하세요.</option>
-            <option value='category1'>카테고리 1</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category.name}>
+                {category.name}
+              </option>
+            ))}
           </select>
+        </div>
+        <div>
+          <label htmlFor='add-category'>새 카테고리 추가</label>
+          <input
+            id='add-category'
+            type='text'
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+          />
+          <button type='button' onClick={handleAddCategory}>
+            추가
+          </button>
         </div>
         <div>
           {/* <label htmlFor='title'>제목</label> */}

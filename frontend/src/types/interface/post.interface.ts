@@ -1,8 +1,8 @@
 export interface PostFormData {
   title: string;
   content: string;
+  category: string;
   images?: string[];
-  thumbnail?: string;
   tags?: string[];
   author: string;
 }

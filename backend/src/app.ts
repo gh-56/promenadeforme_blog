@@ -7,6 +7,7 @@ import 'dotenv/config';
 import CustomError from './utils/customError.js';
 import indexRouter from './routes/index.js';
 import postsRouter from './routes/posts.js';
+import categoriesRouter from './routes/categories.js';
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', indexRouter);
 app.use('/api/posts', postsRouter);
+app.use('/api/categories', categoriesRouter);
 
 app.use((req, res, next) => {
   const error = new CustomError(
