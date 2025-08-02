@@ -3,6 +3,7 @@ import './style.css';
 interface InputProps {
   className?: string;
   id?: string;
+  name?: string;
   type: string;
   placeholder: string;
   value: string;
@@ -12,6 +13,7 @@ interface InputProps {
 const Input = ({
   className,
   id,
+  name,
   type,
   placeholder,
   value,
@@ -22,6 +24,7 @@ const Input = ({
     <input
       className={inputClassName}
       id={id}
+      name={name}
       type={type}
       placeholder={placeholder}
       value={value}

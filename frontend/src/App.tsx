@@ -12,8 +12,10 @@ import {
   POST_DETAIL_PATH,
   CATEGORY_PATH,
   HEALTH_CHECK_PATH,
+  JOIN_PATH,
 } from './constant';
 import CategoryPage from './pages/Category';
+import JoinPage from './pages/Auth/Join';
 
 function App() {
   return (
@@ -24,6 +26,7 @@ function App() {
         <Route path={POST_DETAIL_PATH(':id')} element={<PostDetailPage />} />
         <Route path={POST_PATH()} element={<PostReadPage />} />
         <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
+        <Route path={JOIN_PATH()} element={<JoinPage />} />
         <Route path='*' element={<h1>페이지가 존재하지 않습니다.</h1>} />
       </Route>
       <Route path={HEALTH_CHECK_PATH()} element={<HealthCheckPage />} />

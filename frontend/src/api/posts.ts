@@ -1,17 +1,17 @@
 import axios from 'axios';
-import type { PostFormData, Post } from '../types/interface';
+import type { PostFormData, PostResponse } from '../types/interface';
 
 export const fetchCreatePost = async (data: PostFormData) => {
-  const response = await axios.post<Post>('/api/posts', data);
+  const response = await axios.post<PostResponse>('/api/posts', data);
   return response.data;
 };
 
 export const fetchReadPosts = async () => {
-  const response = await axios.get<Post[]>('/api/posts');
+  const response = await axios.get<PostResponse[]>('/api/posts');
   return response.data;
 };
 
 export const fetchReadPostById = async (id: string) => {
-  const response = await axios.get<Post>(`/api/posts/${id}`);
+  const response = await axios.get<PostResponse>(`/api/posts/${id}`);
   return response.data;
 };

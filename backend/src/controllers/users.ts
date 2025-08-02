@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import User from '../schemas/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 export const createUser = async (
   req: Request,
@@ -9,7 +12,8 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
-    const { username, email, password, nickname, profileImage, bio } = req.body;
+    const { username, email, password, nickname, bio } = req.body;
+    const profileImageFile = req.file;
 
     if (!username || !email || !password || !nickname) {
       return res
@@ -45,6 +49,19 @@ export const createUser = async (
       }
     }
 
+    let profileImageUrl = 'http://localhost:4000/images/default-profile.png';
+    if (profileImageFile) {
+      const tempPath = profileImageFile.path;
+      const newFileName = `${Date.now()}-${profileImageFile.originalname}`;
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const finalPath = path.join(__dirname, '../public/images/', newFileName);
+
+      await fs.rename(tempPath, finalPath);
+
+      profileImageUrl = `http://localhost:4000/images/${newFileName}`;
+    }
+
     const hashPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -52,7 +69,7 @@ export const createUser = async (
       email,
       nickname,
       password: hashPassword,
-      profileImage,
+      profileImage: profileImageUrl,
       bio,
     });
 

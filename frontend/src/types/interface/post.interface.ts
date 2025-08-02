@@ -7,7 +7,7 @@ export interface PostFormData {
   author: string;
 }
 
-export interface Post extends PostFormData {
+export interface PostResponse extends PostFormData {
   _id: string;
   commentsCount: number;
   createdAt: Date;
