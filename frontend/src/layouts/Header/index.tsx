@@ -1,6 +1,11 @@
 import './style.css';
 import { Link } from 'react-router-dom';
-import { MAIN_PATH, POST_PATH, POST_WRITE_PATH } from '../../constant';
+import {
+  CATEGORY_PATH,
+  MAIN_PATH,
+  POST_PATH,
+  POST_WRITE_PATH,
+} from '../../constant';
 import Input from '../../components/Input';
 import { useState } from 'react';
 
@@ -22,6 +27,7 @@ const Header = () => {
           <Link to='/'>소개</Link>
           <Link to={POST_PATH()}>글 목록</Link>
           <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
+          <Link to={CATEGORY_PATH()}>편집</Link>
         </div>
         <div className='header-search'>
           <Input
