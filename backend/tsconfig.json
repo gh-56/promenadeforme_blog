@@ -13,6 +13,7 @@
     "sourceMap": true /* 소스 맵 파일 생성 */,
     "allowJs": true /* JavaScript 파일 컴파일 허용 */,
     "typeRoots": [
+      "./src/types/",
       "./node_modules/@types",
       "./@types"
     ] /* 타입 정의 파일 검색 경로 */

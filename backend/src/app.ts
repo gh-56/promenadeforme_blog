@@ -1,4 +1,5 @@
 import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
@@ -8,6 +9,7 @@ import CustomError from './utils/customError.js';
 import indexRouter from './routes/index.js';
 import postsRouter from './routes/posts.js';
 import categoriesRouter from './routes/categories.js';
+import usersRouter from './routes/users.js';
 
 const app = express();
 
@@ -25,8 +27,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', indexRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/categories', categoriesRouter);
+app.use('/api/users', usersRouter);
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const error = new CustomError(
     `${req.method} ${req.url} 라우터가 없습니다.`,
     404
@@ -34,7 +37,7 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
 
   const status = err.status || 500;

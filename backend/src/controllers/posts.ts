@@ -8,14 +8,14 @@ export const createPost = async (
 ) => {
   try {
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
-    const { title, content, images, thumbnail, tags, author } = req.body;
+    const { title, content, category ,images, tags, author } = req.body;
 
     // 새로운 포스트 생성
     const newPost = new Post({
       title,
       content,
+      category,
       images,
-      thumbnail,
       tags,
       author,
     });

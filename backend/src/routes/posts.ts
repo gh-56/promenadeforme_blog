@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { createPost, getPosts, getPostById } from '../controllers/posts.js';
+import { authMiddleware } from '../middlewares/auth.js';
 
 const router = Router();
 
 // POST /api/posts
-router.post('/', createPost);
+router.post('/', authMiddleware, createPost);
 
 // GET /api/posts
 router.get('/', getPosts);
