@@ -120,7 +120,9 @@ export const login = async (
       }
     );
 
-    res.status(200).json({ message: '로그인 성공', user: userResponse, token });
+    res
+      .status(200)
+      .json({ message: '로그인이 완료되었습니다.', user: userResponse, token });
   } catch (error) {
     next(error);
   }

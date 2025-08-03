@@ -9,9 +9,12 @@ import {
   JOIN_PATH,
 } from '../../constant';
 import Input from '../../components/Input';
+import Button from '../../components/Button';
 import { useState } from 'react';
+import { useUserStore } from '../../store';
 
 const Header = () => {
+  const { isLoggedIn, user, logout } = useUserStore();
   const [searchValue, setSearchValue] = useState('');
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -26,12 +29,25 @@ const Header = () => {
       </div>
       <nav className='header-menu'>
         <div className='header-nav-list'>
-          <Link to='/'>소개</Link>
-          <Link to={POST_PATH()}>글 목록</Link>
-          <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
-          <Link to={CATEGORY_PATH()}>편집</Link>
-          <Link to={LOGIN_PATH()}>로그인</Link>
-          <Link to={JOIN_PATH()}>회원가입</Link>
+          {isLoggedIn ? (
+            <>
+              <Link to='/'>소개</Link>
+              <Link to={POST_PATH()}>글 목록</Link>
+              <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
+              <Link to={CATEGORY_PATH()}>편집</Link>
+              <span>{user?.nickname}님, 안녕하세요!</span>
+              <Button className='logout-button' onClick={logout}>
+                로그아웃
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to='/'>소개</Link>
+              <Link to={POST_PATH()}>글 목록</Link>
+              <Link to={LOGIN_PATH()}>로그인</Link>
+              <Link to={JOIN_PATH()}>회원가입</Link>
+            </>
+          )}
         </div>
         <div className='header-search'>
           <Input

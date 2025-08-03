@@ -18,18 +18,23 @@ import {
   LOGIN_PATH,
   JOIN_PATH,
 } from './constant';
+import ProtectedRoutes from './routes/ProtectedRoutes';
 
 function App() {
   return (
     <Routes>
       <Route element={<Container />}>
         <Route path={MAIN_PATH()} element={<Main />} />
-        <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
         <Route path={POST_DETAIL_PATH(':id')} element={<PostDetailPage />} />
         <Route path={POST_PATH()} element={<PostReadPage />} />
-        <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
         <Route path={LOGIN_PATH()} element={<LoginPage />} />
         <Route path={JOIN_PATH()} element={<JoinPage />} />
+
+        <Route element={<ProtectedRoutes />}>
+          <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
+          <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
+        </Route>
+
         <Route path='*' element={<h1>페이지가 존재하지 않습니다.</h1>} />
       </Route>
       <Route path={HEALTH_CHECK_PATH()} element={<HealthCheckPage />} />

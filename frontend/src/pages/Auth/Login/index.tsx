@@ -5,6 +5,8 @@ import type { LoginFormData } from '../../../types/interface';
 import { fetchLogin } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
 import { MAIN_PATH } from '../../../constant';
+import { useUserStore } from '../../../store';
+import type { LoginResponse } from '../../../types/interface';
 
 const LoginPage = () => {
   const nav = useNavigate();
@@ -12,6 +14,7 @@ const LoginPage = () => {
     email: '',
     password: '',
   });
+  const login = useUserStore((state) => state.login);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -21,8 +24,10 @@ const LoginPage = () => {
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await fetchLogin(formData);
-      alert('로그인이 완료되었습니다.');
+      const apiResponse: LoginResponse = await fetchLogin(formData);
+      const { message, user, token } = apiResponse;
+      login(user, token);
+      alert(message);
       nav(MAIN_PATH());
     } catch (error) {
       console.error(error);

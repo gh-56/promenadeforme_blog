@@ -8,14 +8,17 @@ export interface JoinFormData {
 }
 
 export interface JoinResponse {
-  _id: string;
-  username: string;
-  email: string;
-  nickname: string;
-  profileImage?: string;
-  bio?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  message: string;
+  user: {
+    _id: string;
+    username: string;
+    email: string;
+    nickname: string;
+    profileImage?: string;
+    bio?: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
 
 export interface LoginFormData {
@@ -24,6 +27,10 @@ export interface LoginFormData {
 }
 
 export interface LoginResponse {
-  email: string;
-  nickname: string;
+  message: string;
+  user: {
+    email: string;
+    nickname: string;
+  };
+  token: string;
 }
