@@ -5,6 +5,7 @@ import {
   MAIN_PATH,
   POST_PATH,
   POST_WRITE_PATH,
+  LOGIN_PATH,
   JOIN_PATH,
 } from '../../constant';
 import Input from '../../components/Input';
@@ -29,6 +30,7 @@ const Header = () => {
           <Link to={POST_PATH()}>글 목록</Link>
           <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
           <Link to={CATEGORY_PATH()}>편집</Link>
+          <Link to={LOGIN_PATH()}>로그인</Link>
           <Link to={JOIN_PATH()}>회원가입</Link>
         </div>
         <div className='header-search'>
