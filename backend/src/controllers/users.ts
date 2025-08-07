@@ -3,8 +3,8 @@ import User from '../schemas/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
 import path from 'path';
+import process from 'process';
 
 export const createUser = async (
   req: Request,
@@ -40,7 +40,7 @@ export const createUser = async (
     const existingUser = await User.findOne({ $or: [{ email }, { nickname }] });
     if (existingUser) {
       if (existingUser.email === email) {
-        return res.status(409).json({ message: '이미 사용 중인 이메일입니다' });
+        return res.status(409).json({ message: '이미 사용 중인 이메일입니다.' });
       }
       if (existingUser.nickname === nickname) {
         return res
@@ -51,11 +51,10 @@ export const createUser = async (
 
     let profileImageUrl = 'http://localhost:4000/images/default-profile.png';
     if (profileImageFile) {
+      const __dirname = path.resolve(process.cwd());
       const tempPath = profileImageFile.path;
       const newFileName = `${Date.now()}-${profileImageFile.originalname}`;
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
-      const finalPath = path.join(__dirname, '../public/images/', newFileName);
+      const finalPath = path.join(__dirname, 'public/images/', newFileName);
 
       await fs.rename(tempPath, finalPath);
 
@@ -101,7 +100,7 @@ export const login = async (
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user || (await bcrypt.compare(password, user.password))) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res
         .status(401)
         .json({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });

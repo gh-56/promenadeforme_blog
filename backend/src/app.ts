@@ -1,7 +1,6 @@
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
 import connect from './schemas/index.js';
 import 'dotenv/config';
@@ -11,13 +10,12 @@ import postsRouter from './routes/posts.js';
 import categoriesRouter from './routes/categories.js';
 import usersRouter from './routes/users.js';
 
+const __dirname = path.resolve(process.cwd());
+
 const app = express();
 
 app.set('port', process.env.PORT || 4000);
 connect();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -51,11 +49,6 @@ app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
     message,
     stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
   });
-});
-
-app.listen(app.get('port'), () => {
-  console.log(`서버가 ${app.get('port')}번 포트에서 실행 중입니다.`);
-  console.log(`http://localhost:${app.get('port')}`);
 });
 
 export default app;
