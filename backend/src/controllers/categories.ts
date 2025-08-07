@@ -22,7 +22,7 @@ export const createCategory = async (
   } catch (error: any) {
     if (error.code === 11000) {
       return res
-        .status(400)
+        .status(409)
         .json({ message: '이미 존재하는 카테고리 이름입니다.' });
     }
     next(error);

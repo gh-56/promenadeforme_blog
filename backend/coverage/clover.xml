@@ -1,9 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1754575673465" clover="3.2.0">
-  <project timestamp="1754575673466" name="All files">
-    <metrics statements="52" coveredstatements="52" conditionals="22" coveredconditionals="20" methods="2" coveredmethods="2" elements="76" coveredelements="74" complexity="0" loc="52" ncloc="52" packages="2" files="2" classes="2"/>
+<coverage generated="1754587116785" clover="3.2.0">
+  <project timestamp="1754587116785" name="All files">
+    <metrics statements="94" coveredstatements="94" conditionals="34" coveredconditionals="32" methods="6" coveredmethods="6" elements="134" coveredelements="132" complexity="0" loc="94" ncloc="94" packages="2" files="4" classes="4"/>
     <package name="controllers">
-      <metrics statements="48" coveredstatements="48" conditionals="22" coveredconditionals="20" methods="2" coveredmethods="2"/>
+      <metrics statements="86" coveredstatements="86" conditionals="34" coveredconditionals="32" methods="6" coveredmethods="6"/>
+      <file name="categories.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\controllers\categories.ts">
+        <metrics statements="38" coveredstatements="38" conditionals="12" coveredconditionals="12" methods="4" coveredmethods="4"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="12" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="23" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="51" count="5" type="stmt"/>
+        <line num="52" count="5" type="stmt"/>
+        <line num="54" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="60" count="4" type="stmt"/>
+        <line num="66" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="74" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="88" count="3" type="stmt"/>
+        <line num="89" count="3" type="stmt"/>
+        <line num="90" count="3" type="stmt"/>
+        <line num="91" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+      </file>
       <file name="users.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\controllers\users.ts">
         <metrics statements="48" coveredstatements="48" conditionals="22" coveredconditionals="20" methods="2" coveredmethods="2"/>
         <line num="2" count="1" type="stmt"/>
@@ -57,7 +98,14 @@
       </file>
     </package>
     <package name="schemas">
-      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="category.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\schemas\category.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+      </file>
       <file name="user.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\schemas\user.ts">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
