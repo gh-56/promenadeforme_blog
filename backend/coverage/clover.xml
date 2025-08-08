@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1754668451001" clover="3.2.0">
-  <project timestamp="1754668451001" name="All files">
-    <metrics statements="159" coveredstatements="159" conditionals="68" coveredconditionals="64" methods="11" coveredmethods="11" elements="238" coveredelements="234" complexity="0" loc="159" ncloc="159" packages="2" files="6" classes="6"/>
+<coverage generated="1754670749955" clover="3.2.0">
+  <project timestamp="1754670749955" name="All files">
+    <metrics statements="171" coveredstatements="171" conditionals="72" coveredconditionals="68" methods="12" coveredmethods="12" elements="255" coveredelements="251" complexity="0" loc="171" ncloc="171" packages="3" files="7" classes="7"/>
     <package name="controllers">
       <metrics statements="147" coveredstatements="147" conditionals="68" coveredconditionals="64" methods="11" coveredmethods="11"/>
       <file name="categories.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\controllers\categories.ts">
@@ -159,6 +159,24 @@
         <line num="114" count="1" type="stmt"/>
         <line num="122" count="1" type="stmt"/>
         <line num="126" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="middlewares">
+      <metrics statements="12" coveredstatements="12" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+      <file name="auth.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\middlewares\auth.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="11" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="18" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
       </file>
     </package>
     <package name="schemas">
