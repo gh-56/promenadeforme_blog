@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1754587116785" clover="3.2.0">
-  <project timestamp="1754587116785" name="All files">
-    <metrics statements="94" coveredstatements="94" conditionals="34" coveredconditionals="32" methods="6" coveredmethods="6" elements="134" coveredelements="132" complexity="0" loc="94" ncloc="94" packages="2" files="4" classes="4"/>
+<coverage generated="1754668451001" clover="3.2.0">
+  <project timestamp="1754668451001" name="All files">
+    <metrics statements="159" coveredstatements="159" conditionals="68" coveredconditionals="64" methods="11" coveredmethods="11" elements="238" coveredelements="234" complexity="0" loc="159" ncloc="159" packages="2" files="6" classes="6"/>
     <package name="controllers">
-      <metrics statements="86" coveredstatements="86" conditionals="34" coveredconditionals="32" methods="6" coveredmethods="6"/>
+      <metrics statements="147" coveredstatements="147" conditionals="68" coveredconditionals="64" methods="11" coveredmethods="11"/>
       <file name="categories.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\controllers\categories.ts">
         <metrics statements="38" coveredstatements="38" conditionals="12" coveredconditionals="12" methods="4" coveredmethods="4"/>
         <line num="2" count="1" type="stmt"/>
@@ -44,6 +44,70 @@
         <line num="92" count="1" type="stmt"/>
         <line num="94" count="1" type="stmt"/>
         <line num="96" count="1" type="stmt"/>
+      </file>
+      <file name="posts.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\controllers\posts.ts">
+        <metrics statements="61" coveredstatements="61" conditionals="34" coveredconditionals="32" methods="5" coveredmethods="5"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="9" count="5" type="stmt"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="12" count="5" type="stmt"/>
+        <line num="14" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="18" count="4" type="cond" truecount="5" falsecount="0"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="54" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="68" count="3" type="stmt"/>
+        <line num="69" count="3" type="stmt"/>
+        <line num="70" count="3" type="stmt"/>
+        <line num="71" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="85" count="6" type="stmt"/>
+        <line num="86" count="6" type="stmt"/>
+        <line num="87" count="6" type="stmt"/>
+        <line num="88" count="6" type="stmt"/>
+        <line num="90" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="94" count="5" type="cond" truecount="5" falsecount="0"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="100" count="4" type="stmt"/>
+        <line num="112" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="113" count="2" type="stmt"/>
+        <line num="114" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="117" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="122" count="1" type="stmt"/>
+        <line num="127" count="1" type="stmt"/>
+        <line num="131" count="1" type="stmt"/>
+        <line num="136" count="5" type="stmt"/>
+        <line num="137" count="5" type="stmt"/>
+        <line num="138" count="5" type="stmt"/>
+        <line num="140" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="141" count="1" type="stmt"/>
+        <line num="144" count="4" type="stmt"/>
+        <line num="149" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="150" count="2" type="stmt"/>
+        <line num="151" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="152" count="1" type="stmt"/>
+        <line num="154" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="159" count="1" type="stmt"/>
+        <line num="161" count="1" type="stmt"/>
       </file>
       <file name="users.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\controllers\users.ts">
         <metrics statements="48" coveredstatements="48" conditionals="22" coveredconditionals="20" methods="2" coveredmethods="2"/>
@@ -98,13 +162,20 @@
       </file>
     </package>
     <package name="schemas">
-      <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="category.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\schemas\category.ts">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="15" count="1" type="stmt"/>
         <line num="17" count="1" type="stmt"/>
+      </file>
+      <file name="post.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\schemas\post.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
       </file>
       <file name="user.ts" path="C:\Users\gh56\Desktop\mypromenade\backend\src\schemas\user.ts">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
