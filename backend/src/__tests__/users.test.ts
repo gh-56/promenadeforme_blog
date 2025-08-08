@@ -154,10 +154,11 @@ describe('createUser', () => {
 
   describe('이미 가입된 회원이라면 409 상태코드를 반환한다', () => {
     test('이미 가입된 이메일인 경우', async () => {
+      const existingUser = 'gh@gh.com';
       const req = {
         body: {
           username: 'gh',
-          email: 'gh@gh.com',
+          email: existingUser,
           nickname: 'gh',
           password: 'Password123!',
           bio: '테스트입니다',
@@ -170,7 +171,7 @@ describe('createUser', () => {
 
       jest.spyOn(User, 'findOne').mockResolvedValue({
         username: 'gh123',
-        email: 'gh@gh.com',
+        email: existingUser,
         nickname: 'gh123',
         password: 'Password123123!',
         bio: '테스트입니다123',

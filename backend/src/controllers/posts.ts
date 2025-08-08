@@ -9,11 +9,7 @@ export const createPost = async (
   try {
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
     const { title, content, category, images, tags } = req.body;
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      return res.status(401).json({ message: '로그인이 필요합니다.' });
-    }
+    const userId = req.user!.userId;
 
     if (!title || !content || !category) {
       return res
@@ -85,11 +81,7 @@ export const updatePost = async (
   try {
     const { id } = req.params;
     const { title, content, category, images, tags } = req.body;
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      return res.status(401).json({ message: '로그인이 필요합니다.' });
-    }
+    const userId = req.user!.userId;
 
     if (!title || !content || !category) {
       return res
@@ -113,8 +105,7 @@ export const updatePost = async (
       const postExists = await Post.findById(id);
       if (!postExists) {
         return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-      }
-      if (postExists.author.toString() !== userId) {
+      } else {
         return res.status(403).json({ message: '수정 권한이 없습니다.' });
       }
     }
@@ -135,11 +126,7 @@ export const deletePost = async (
 ) => {
   try {
     const { id } = req.params;
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      return res.status(401).json({ message: '로그인이 필요합니다.' });
-    }
+    const userId = req.user!.userId;
 
     const deletedPost = await Post.findByIdAndDelete({
       _id: id,
@@ -150,8 +137,7 @@ export const deletePost = async (
       const postExists = await Post.findById(id);
       if (!postExists) {
         return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-      }
-      if (postExists.author.toString() !== userId) {
+      } else {
         return res.status(403).json({ message: '삭제 권한이 없습니다.' });
       }
     }

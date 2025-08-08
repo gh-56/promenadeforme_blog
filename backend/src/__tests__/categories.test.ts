@@ -14,6 +14,9 @@ describe('createCategory', () => {
       body: {
         name: false,
       },
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -39,6 +42,9 @@ describe('createCategory', () => {
     const req = {
       body: {
         name: 'testCategory',
+      },
+      user: {
+        userId: '1',
       },
     } as Request;
     const res = {} as Response;
@@ -67,6 +73,9 @@ describe('createCategory', () => {
       body: {
         name: 'testCategory',
       },
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -94,6 +103,9 @@ describe('createCategory', () => {
       body: {
         name: 'testCategory',
       },
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -114,7 +126,11 @@ describe('createCategory', () => {
 
 describe('getCategories', () => {
   test('모든 카테고리 불러오면 200 상태코드를 반환한다', async () => {
-    const req = {} as Request;
+    const req = {
+      user: {
+        userId: 'gh',
+      },
+    } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
     res.json = jest.fn().mockReturnValue(res);
@@ -133,7 +149,11 @@ describe('getCategories', () => {
   });
 
   test('카테고리를 불러오는 도중 에러가 발생할 경우', async () => {
-    const req = {} as Request;
+    const req = {
+      user: {
+        userId: 'gh',
+      },
+    } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
     res.json = jest.fn().mockReturnValue(res);
@@ -161,6 +181,9 @@ describe('updateCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -183,6 +206,9 @@ describe('updateCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -190,12 +216,41 @@ describe('updateCategory', () => {
     const next = jest.fn() as NextFunction;
 
     jest.spyOn(Category, 'findByIdAndUpdate').mockResolvedValue(null);
+    jest.spyOn(Category, 'findById').mockResolvedValue(null);
 
     await updateCategory(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({ message: '카테고리를 찾을 수 없습니다.' })
+    );
+  });
+
+  test('카테고리를 수정할 권한이 없으면 403 상태코드를 반환한다', async () => {
+    const req = {
+      body: {
+        name: 'testCategory',
+      },
+      params: {
+        id: '1',
+      } as any,
+      user: {
+        userId: '1',
+      },
+    } as Request;
+    const res = {} as Response;
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(Category, 'findByIdAndUpdate').mockResolvedValue(null);
+    jest.spyOn(Category, 'findById').mockResolvedValue({ author: '2' });
+
+    await updateCategory(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ message: '수정 권한이 없습니다.' })
     );
   });
 
@@ -207,6 +262,9 @@ describe('updateCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -235,6 +293,9 @@ describe('updateCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -287,6 +348,9 @@ describe('deleteCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -294,6 +358,7 @@ describe('deleteCategory', () => {
     const next = jest.fn() as NextFunction;
 
     jest.spyOn(Category, 'findByIdAndDelete').mockResolvedValue(null);
+    jest.spyOn(Category, 'findById').mockResolvedValue(null);
     await deleteCategory(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
@@ -304,6 +369,34 @@ describe('deleteCategory', () => {
     );
   });
 
+  test('카테고리를 삭제할 권한이 없으면 403 상태코드를 반환한다', async () => {
+    const req = {
+      body: {
+        name: 'testCategory',
+      },
+      params: {
+        id: '1',
+      } as any,
+      user: {
+        userId: '1',
+      },
+    } as Request;
+    const res = {} as Response;
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(Category, 'findByIdAndDelete').mockResolvedValue(null);
+    jest.spyOn(Category, 'findById').mockResolvedValue({ author: '2' });
+    await deleteCategory(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: '삭제 권한이 없습니다.',
+      })
+    );
+  });
   test('카테고리 삭제에 성공하면 200 상태코드를 반환한다', async () => {
     const req = {
       body: {
@@ -312,6 +405,9 @@ describe('deleteCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -337,6 +433,9 @@ describe('deleteCategory', () => {
       params: {
         id: '1',
       } as any,
+      user: {
+        userId: '1',
+      },
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);

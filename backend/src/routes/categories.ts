@@ -5,19 +5,20 @@ import {
   updateCategory,
   deleteCategory,
 } from '../controllers/categories.js';
+import { authMiddleware } from '../middlewares/auth.js';
 
 const router = Router();
 
 // POST /api/categories
-router.post('/', createCategory);
+router.post('/', authMiddleware, createCategory);
 
 // GET /api/categories
-router.get('/', getCategories);
+router.get('/', authMiddleware, getCategories);
 
 // PATCH /api/categories:id
-router.patch('/:id', updateCategory);
+router.patch('/:id', authMiddleware, updateCategory);
 
 // DELETE /api/categories:id
-router.delete('/:id', deleteCategory);
+router.delete('/:id', authMiddleware, deleteCategory);
 
 export default router;

@@ -8,11 +8,12 @@ export const createCategory = async (
 ) => {
   try {
     const { name } = req.body;
+    const userId = req.user!.userId;
 
     if (!name) {
       return res.status(400).json({ message: '카테고리 이름을 입력하세요.' });
     }
-    const newCategory = new Category({ name });
+    const newCategory = new Category({ name, author: userId });
     await newCategory.save();
 
     res.status(201).json({
@@ -35,7 +36,8 @@ export const getCategories = async (
   next: NextFunction
 ) => {
   try {
-    const categories = await Category.find({});
+    const userId = req.user!.userId;
+    const categories = await Category.find({ author: userId });
     res.status(200).json(categories);
   } catch (error) {
     next(error);
@@ -50,6 +52,7 @@ export const updateCategory = async (
   try {
     const { id } = req.params;
     const { name } = req.body;
+    const userId = req.user!.userId;
 
     if (!name) {
       return res
@@ -58,13 +61,20 @@ export const updateCategory = async (
     }
 
     const updatedCategory = await Category.findByIdAndUpdate(
-      id,
+      { _id: id, author: userId },
       { name },
       { new: true, runValidators: true }
     );
 
     if (!updatedCategory) {
-      return res.status(404).json({ message: '카테고리를 찾을 수 없습니다.' });
+      const categoryExists = await Category.findById(id);
+      if (!categoryExists) {
+        return res
+          .status(404)
+          .json({ message: '카테고리를 찾을 수 없습니다.' });
+      } else {
+        return res.status(403).json({ message: '수정 권한이 없습니다.' });
+      }
     }
     res.status(200).json({
       message: '카테고리가 성공적으로 수정되었습니다.',
@@ -87,9 +97,20 @@ export const deleteCategory = async (
 ) => {
   try {
     const { id } = req.params;
-    const deletedCategory = await Category.findByIdAndDelete(id);
+    const userId = req.user!.userId;
+    const deletedCategory = await Category.findByIdAndDelete({
+      _id: id,
+      author: userId,
+    });
     if (!deletedCategory) {
-      return res.status(404).json({ message: '카테고리를 찾을 수 없습니다.' });
+      const categoryExists = await Category.findById(id);
+      if (!categoryExists) {
+        return res
+          .status(404)
+          .json({ message: '카테고리를 찾을 수 없습니다.' });
+      } else {
+        return res.status(403).json({ message: '삭제 권한이 없습니다.' });
+      }
     }
     res.status(200).json({ message: '카테고리가 성공적으로 삭제되었습니다.' });
   } catch (error) {

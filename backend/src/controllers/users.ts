@@ -40,7 +40,9 @@ export const createUser = async (
     const existingUser = await User.findOne({ $or: [{ email }, { nickname }] });
     if (existingUser) {
       if (existingUser.email === email) {
-        return res.status(409).json({ message: '이미 사용 중인 이메일입니다.' });
+        return res
+          .status(409)
+          .json({ message: '이미 사용 중인 이메일입니다.' });
       }
       if (existingUser.nickname === nickname) {
         return res

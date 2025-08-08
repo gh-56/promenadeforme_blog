@@ -13,31 +13,6 @@ afterEach(() => {
 });
 describe('createPost', () => {
   describe('제목, 내용, 카테고리 정보 중 하나라도 넘어오지 않았다면 400 상태코드를 반환한다', () => {
-    test('유저 정보가 없는(로그인 하지 않고 접근하는) 경우', async () => {
-      const req = {
-        body: {
-          title: '',
-          content: 'test content',
-          category: 'test category',
-          images: ['test'],
-          tags: ['test'],
-        },
-        user: {
-          userId: null,
-        },
-      } as Request;
-      const res = {} as Response;
-      res.status = jest.fn().mockReturnValue(res);
-      res.json = jest.fn().mockReturnValue(res);
-      const next = jest.fn() as NextFunction;
-
-      const mockSave = jest.spyOn(Post.prototype, 'save').mockResolvedValue({});
-
-      await createPost(req, res, next);
-
-      expect(res.status).toHaveBeenCalledWith(401);
-      expect(mockSave).not.toHaveBeenCalledTimes(1);
-    });
     test('제목 없이 글을 생성하려는 경우', async () => {
       const req = {
         body: {
@@ -337,36 +312,6 @@ describe('getPostById', () => {
 });
 
 describe('updatePost', () => {
-  test('유저 정보가 없는(로그인 하지 않고 접근하는) 경우 401 상태코드를 반환한다', async () => {
-    const req = {
-      body: {
-        title: 'updated content',
-        content: 'test content',
-        category: 'test category',
-        images: ['test'],
-        tags: ['test'],
-      },
-      params: {
-        id: '1',
-      } as any,
-      user: {
-        userId: null,
-      },
-    } as Request;
-    const res = {} as Response;
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
-    const next = jest.fn() as NextFunction;
-
-    const mockFind = jest
-      .spyOn(Post, 'findByIdAndUpdate')
-      .mockResolvedValue({});
-
-    await updatePost(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(mockFind).not.toHaveBeenCalledTimes(1);
-  });
   test('수정으로 보낸 내용 중 필수 입력 항목이 비어있을 경우 400 상태코드를 반환한다', async () => {
     const req = {
       body: {
@@ -559,30 +504,6 @@ describe('updatePost', () => {
 });
 
 describe('deletePost', () => {
-  test('로그인 없이 접근하려는 경우 401 상태코드를 반환한다', async () => {
-    const req = {
-      params: {
-        id: '1',
-      } as any,
-      user: {
-        userId: null,
-      },
-    } as Request;
-    const res = {} as Response;
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
-    const next = jest.fn() as NextFunction;
-
-    const mockFind = jest
-      .spyOn(Post, 'findByIdAndDelete')
-      .mockResolvedValue({});
-
-    await deletePost(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(mockFind).not.toHaveBeenCalledTimes(1);
-  });
-
   test('삭제할 게시글을 찾을 수 없으면 404 상태코드를 반환한다', async () => {
     const req = {
       params: {
@@ -687,6 +608,5 @@ describe('deletePost', () => {
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(mockFind).toHaveBeenCalledTimes(1);
-
-  })
+  });
 });
