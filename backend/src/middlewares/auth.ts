@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export const authMiddleware = (
   req: Request,
@@ -13,6 +13,7 @@ export const authMiddleware = (
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     req.user = decoded;
+    console.log(req.user);
     next();
   } catch (error: any) {
     if (error.name === 'TokenExpiredError') {

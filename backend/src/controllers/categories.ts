@@ -13,7 +13,7 @@ export const createCategory = async (
     if (!name) {
       return res.status(400).json({ message: '카테고리 이름을 입력하세요.' });
     }
-    const newCategory = new Category({ name, author: userId });
+    const newCategory = new Category({ name: name, author: userId });
     await newCategory.save();
 
     res.status(201).json({
@@ -38,7 +38,7 @@ export const getCategories = async (
   try {
     const userId = req.user!.userId;
     const categories = await Category.find({ author: userId });
-    res.status(200).json(categories);
+    res.status(200).json({ categories });
   } catch (error) {
     next(error);
   }
