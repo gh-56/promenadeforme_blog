@@ -38,20 +38,14 @@ export const createUser = async (
     }
 
     const existingUser = await User.findOne({ $or: [{ email }, { nickname }] });
-    if (existingUser) {
-      if (existingUser.email === email) {
-        return res
-          .status(409)
-          .json({ message: '이미 사용 중인 이메일입니다.' });
-      }
-      if (existingUser.nickname === nickname) {
-        return res
-          .status(409)
-          .json({ message: '이미 사용 중인 닉네임입니다.' });
-      }
+    if (existingUser && existingUser.email === email) {
+      return res.status(409).json({ message: '이미 사용 중인 이메일입니다.' });
+    }
+    if (existingUser && existingUser.nickname === nickname) {
+      return res.status(409).json({ message: '이미 사용 중인 닉네임입니다.' });
     }
 
-    let profileImageUrl = 'http://localhost:4000/images/default-profile.png';
+    let profileImageUrl = '';
     if (profileImageFile) {
       const __dirname = path.resolve(process.cwd());
       const tempPath = profileImageFile.path;
@@ -61,6 +55,8 @@ export const createUser = async (
       await fs.rename(tempPath, finalPath);
 
       profileImageUrl = `http://localhost:4000/images/${newFileName}`;
+    } else {
+      profileImageUrl = 'http://localhost:4000/images/default-profile.png';
     }
 
     const hashPassword = await bcrypt.hash(password, 10);

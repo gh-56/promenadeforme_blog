@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import User from '../schemas/user.js';
 import jwt from 'jsonwebtoken';
 import fs from 'fs/promises';
+import path from 'path';
 
 jest.mock('../schemas/user.js');
 
@@ -216,6 +217,71 @@ describe('createUser', () => {
         expect.objectContaining({ message: '이미 사용 중인 닉네임입니다.' })
       );
     });
+  });
+
+  test('프로필 이미지를 업로드하면 파일의 이름을 바꾼다', async () => {
+    const req = {
+      body: {
+        username: 'gh',
+        email: 'gh@gh.com',
+        nickname: 'gh',
+        password: 'Password123!',
+        bio: '테스트입니다',
+      },
+      file: {
+        path: '/mock/path/temp.png',
+        originalname: 'profile.png',
+      } as Express.Multer.File,
+    } as Request;
+    const res = {} as Response;
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(User, 'findOne').mockResolvedValue({});
+    jest.spyOn(process, 'cwd').mockReturnValue('/mock/path');
+    jest
+      .spyOn(path, 'join')
+      .mockReturnValue('/mock/path/public/images/mock.png');
+    jest.spyOn(fs, 'rename').mockResolvedValue();
+    jest.spyOn(User.prototype, 'save').mockResolvedValue({});
+
+    await createUser(req, res, next);
+
+    expect(fs.rename).toHaveBeenCalledWith(
+      '/mock/path/temp.png',
+      expect.stringContaining('public/images')
+    );
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+
+  test('프로필 이미지를 업로드하지 않으면 기본 파일 주소를 사용한다', async () => {
+    const req = {
+      body: {
+        username: 'gh',
+        email: 'gh@gh.com',
+        nickname: 'gh',
+        password: 'Password123!',
+        bio: '테스트입니다',
+      },
+    } as Request;
+    const res = {} as Response;
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(User, 'findOne').mockResolvedValue({});
+    jest.spyOn(process, 'cwd').mockReturnValue('/mock/path');
+    jest
+      .spyOn(path, 'join')
+      .mockReturnValue('/mock/path/public/images/mock.png');
+    jest.spyOn(fs, 'rename').mockResolvedValue();
+    jest.spyOn(User.prototype, 'save').mockResolvedValue({});
+
+    await createUser(req, res, next);
+
+    expect(fs.rename).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(201);
   });
 
   test('회원가입에 성공하면 200 상태코드를 반환한다', async () => {
