@@ -7,11 +7,14 @@ import {
   deletePost,
 } from '../controllers/posts.js';
 import { authMiddleware } from '../middlewares/auth.js';
+import multer from 'multer';
+
+const upload = multer({ dest: 'uploads/' });
 
 const router = Router();
 
 // POST /api/posts
-router.post('/', authMiddleware, createPost);
+router.post('/', authMiddleware, upload.array('images'), createPost);
 
 // GET /api/posts
 router.get('/', getPosts);

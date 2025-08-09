@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Post from '../schemas/post.js';
+import path from 'path';
+import fs from 'fs/promises';
 
 export const createPost = async (
   req: Request,
@@ -8,8 +10,9 @@ export const createPost = async (
 ) => {
   try {
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
-    const { title, content, category, images, tags } = req.body;
+    const { title, content, category, tags } = req.body;
     const userId = req.user!.userId;
+    const imageFiles = req.files as Express.Multer.File[];
 
     if (!title || !content || !category) {
       return res
@@ -17,12 +20,24 @@ export const createPost = async (
         .json({ message: '필수 입력 항목이 누락되었습니다.' });
     }
 
+    const imageUrls: string[] = [];
+    if (imageFiles && imageFiles.length > 0) {
+      for (const file of imageFiles) {
+        const __dirname = path.resolve(process.cwd());
+        const newFileName = `${new Date()}-${file.originalname}`;
+        const finalPath = path.join(__dirname, 'public/images', newFileName);
+
+        await fs.rename(file.path, finalPath);
+        imageUrls.push(`http://localhost:4000/images/${newFileName}`);
+      }
+    }
+
     // 새로운 포스트 생성
     const newPost = new Post({
       title,
       content,
       category,
-      images,
+      images: imageUrls,
       tags,
       author: userId,
     });
