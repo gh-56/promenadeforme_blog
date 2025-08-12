@@ -7,9 +7,7 @@ import {
   deletePost,
 } from '../controllers/posts.js';
 import { authMiddleware } from '../middlewares/auth.js';
-import multer from 'multer';
-
-const upload = multer({ dest: 'uploads/' });
+import { upload } from '../middlewares/multer.js';
 
 const router = Router();
 
@@ -23,7 +21,7 @@ router.get('/', getPosts);
 router.get('/:id', getPostById);
 
 // PATCH /api/posts:id
-router.patch('/:id', authMiddleware, updatePost);
+router.patch('/:id', authMiddleware, upload.array('images'), updatePost);
 
 // DELETE /api/posts:id
 router.delete('/:id', authMiddleware, deletePost);

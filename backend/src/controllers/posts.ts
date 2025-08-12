@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Post from '../schemas/post.js';
-import path from 'path';
-import fs from 'fs/promises';
+import { Types } from 'mongoose';
+import { deleteImageFile, saveImageFile } from '../services/file.service.js';
 
 export const createPost = async (
   req: Request,
@@ -12,7 +12,7 @@ export const createPost = async (
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
     const { title, content, category, tags } = req.body;
     const userId = req.user!.userId;
-    const imageFiles = req.files as Express.Multer.File[];
+    const images = req.files as Express.Multer.File[];
 
     if (!title || !content || !category) {
       return res
@@ -20,15 +20,11 @@ export const createPost = async (
         .json({ message: '필수 입력 항목이 누락되었습니다.' });
     }
 
-    const imageUrls: string[] = [];
-    if (imageFiles && imageFiles.length > 0) {
-      for (const file of imageFiles) {
-        const __dirname = path.resolve(process.cwd());
-        const newFileName = `${new Date()}-${file.originalname}`;
-        const finalPath = path.join(__dirname, 'public/images', newFileName);
-
-        await fs.rename(file.path, finalPath);
-        imageUrls.push(`http://localhost:4000/images/${newFileName}`);
+    const imageIds: Types.ObjectId[] = [];
+    if (images && images.length > 0) {
+      for (const image of images) {
+        const newImage = await saveImageFile(image, userId);
+        imageIds.push(newImage._id);
       }
     }
 
@@ -37,7 +33,7 @@ export const createPost = async (
       title,
       content,
       category,
-      images: imageUrls,
+      images: imageIds,
       tags,
       author: userId,
     });
@@ -95,13 +91,32 @@ export const updatePost = async (
 ) => {
   try {
     const { id } = req.params;
-    const { title, content, category, images, tags } = req.body;
+    const { title, content, category, tags } = req.body;
     const userId = req.user!.userId;
+    const images = req.files as Express.Multer.File[];
 
     if (!title || !content || !category) {
       return res
         .status(400)
         .json({ message: '필수 입력 항목이 누락되었습니다.' });
+    }
+
+    const existPost = await Post.findById(id);
+    if (!existPost) {
+      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+    }
+
+    const existPost2 = await Post.findOne({ _id: id, author: userId });
+    if (!existPost2) {
+      return res.status(403).json({ message: '수정 권한이 없습니다.' });
+    }
+
+    const imageIds: Types.ObjectId[] = [];
+    if (images && images.length > 0) {
+      for (const image of images) {
+        const updatedImage = await saveImageFile(image, userId, true);
+        imageIds.push(updatedImage._id);
+      }
     }
 
     const updatedPost = await Post.findByIdAndUpdate(
@@ -110,20 +125,11 @@ export const updatePost = async (
         title,
         content,
         category,
-        images,
+        images: imageIds,
         tags,
       },
       { new: true, runValidators: true }
     );
-
-    if (!updatedPost) {
-      const postExists = await Post.findById(id);
-      if (!postExists) {
-        return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-      } else {
-        return res.status(403).json({ message: '수정 권한이 없습니다.' });
-      }
-    }
 
     res.status(200).json({
       message: '게시글이 성공적으로 수정되었습니다.',
@@ -155,6 +161,11 @@ export const deletePost = async (
       } else {
         return res.status(403).json({ message: '삭제 권한이 없습니다.' });
       }
+    }
+
+    const imageToDelete = deletedPost.images;
+    if (imageToDelete && imageToDelete.length > 0) {
+      await deleteImageFile(imageToDelete);
     }
 
     res.status(200).json({ message: '게시글이 성공적으로 삭제되었습니다.' });
