@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { createUser, login } from '../controllers/users';
+import { createUser, login } from '../../controllers/users';
 import bcrypt from 'bcrypt';
-import User from '../schemas/user.js';
+import User from '../../schemas/user.js';
 import jwt from 'jsonwebtoken';
 import fs from 'fs/promises';
 import path from 'path';

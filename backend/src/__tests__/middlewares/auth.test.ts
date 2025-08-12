@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { authMiddleware } from '../middlewares/auth';
+import { authMiddleware } from '../../middlewares/auth';
 
 describe('authMiddleware', () => {
   test('토큰이 없다면 401 상태코드를 반환한다', () => {

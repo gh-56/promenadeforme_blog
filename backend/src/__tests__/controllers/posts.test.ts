@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import Post from '../schemas/post.js';
+import Post from '../../schemas/post.js';
 import {
   createPost,
   getPosts,
   getPostById,
   updatePost,
   deletePost,
-} from '../controllers/posts.js';
+} from '../../controllers/posts.js';
 
 afterEach(() => {
   jest.restoreAllMocks();

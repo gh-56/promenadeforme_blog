@@ -4,8 +4,8 @@ import {
   getCategories,
   updateCategory,
   deleteCategory,
-} from '../controllers/categories';
-import Category from '../schemas/category';
+} from '../../controllers/categories';
+import Category from '../../schemas/category';
 
 afterEach(() => jest.restoreAllMocks());
 describe('createCategory', () => {
