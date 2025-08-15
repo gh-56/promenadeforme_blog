@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import Image from '../schemas/image';
 import { Types } from 'mongoose';
 
-interface File {
+export interface File {
   buffer: Buffer;
   originalname: string;
 }
@@ -28,7 +28,7 @@ export const saveImageFile = async (
     if (!isUpdated) {
       existingImage.referenceCount += 1;
     }
-    existingImage.save();
+    await existingImage.save();
   } else {
     try {
       await fs.writeFile(savePath, file.buffer);
@@ -51,16 +51,32 @@ export const saveImageFile = async (
 
 export const deleteImageFile = async (imageIds: Types.ObjectId[]) => {
   for (const imageId of imageIds) {
-    const image = await Image.findById(imageId);
-    if (image) {
-      image.referenceCount -= 1;
-      await image.save();
-      if (image.referenceCount <= 0) {
-        const fileName = path.basename(image.url as string);
-        const filePath = path.resolve(process.cwd(), 'uploads', fileName);
-        await fs.unlink(filePath);
-        await Image.findOneAndDelete({ _id: imageId });
+    try {
+      const image = await Image.findById(imageId);
+      if (!image) {
+        console.warn(`${imageId}번 이미지가 없습니다.`);
+        continue;
+      } else {
+        image.referenceCount -= 1;
+        await image.save();
+
+        if (image.referenceCount <= 0) {
+          const fileName = path.basename(image.url as string);
+          const filePath = path.resolve(process.cwd(), 'uploads', fileName);
+          try {
+            await fs.unlink(filePath);
+            await Image.findOneAndDelete({ _id: imageId });
+            console.log(`${imageId}번 이미지가 삭제되었습니다.`);
+          } catch (fileError) {
+            console.error(
+              `${imageId}번 이미지 삭제에 실패했습니다.`,
+              fileError
+            );
+          }
+        }
       }
+    } catch (dbError) {
+      console.error(`${imageId}번 이미지 삭제에 실패했습니다.`, dbError);
     }
   }
 };

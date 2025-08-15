@@ -101,13 +101,13 @@ export const updatePost = async (
         .json({ message: '필수 입력 항목이 누락되었습니다.' });
     }
 
-    const existPost = await Post.findById(id);
-    if (!existPost) {
+    const existPostById = await Post.findById(id);
+    if (!existPostById) {
       return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
     }
 
-    const existPost2 = await Post.findOne({ _id: id, author: userId });
-    if (!existPost2) {
+    const existPostByAuthor = await Post.findOne({ _id: id, author: userId });
+    if (!existPostByAuthor) {
       return res.status(403).json({ message: '수정 권한이 없습니다.' });
     }
 

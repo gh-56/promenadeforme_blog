@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Post from '../../schemas/post.js';
+import Image from '../../schemas/image.js';
 import {
   createPost,
   getPosts,
@@ -7,9 +8,13 @@ import {
   updatePost,
   deletePost,
 } from '../../controllers/posts.js';
+import * as FileService from '../../services/file.service.js';
+jest.mock('../../services/file.service.js');
+jest.mock('../../schemas/post.js');
+jest.mock('../../schemas/image.js');
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  jest.clearAllMocks();
 });
 describe('createPost', () => {
   describe('제목, 내용, 카테고리 정보 중 하나라도 넘어오지 않았다면 400 상태코드를 반환한다', () => {
@@ -64,6 +69,45 @@ describe('createPost', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(mockSave).not.toHaveBeenCalledTimes(1);
     });
+  });
+
+  test('이미지가 서버로 업로드 되면 이미지 저장 로직을 실행한다', async () => {
+    const req = {
+      body: {
+        title: 'test title',
+        content: 'test content',
+        category: 'test category',
+        tags: ['test'],
+      },
+      user: {
+        userId: '1',
+      },
+      files: [
+        {
+          fieldname: 'images',
+          originalname: 'test.png',
+        },
+      ],
+    } as Request;
+    const res = {} as Response;
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    const next = jest.fn() as NextFunction;
+
+    const mockSaveImageFile = jest
+      .spyOn(FileService, 'saveImageFile')
+      .mockResolvedValue(
+        new Image({
+          referenceCount: 0,
+          hash: '1234',
+          url: '1234',
+          author: 'test',
+        })
+      );
+
+    await createPost(req, res, next);
+
+    expect(mockSaveImageFile).toHaveBeenCalledTimes(1);
   });
 
   test('글 작성에 성공하면 201 상태코드를 반환한다', async () => {
@@ -396,10 +440,6 @@ describe('updatePost', () => {
     res.json = jest.fn().mockReturnValue(res);
     const next = jest.fn() as NextFunction;
 
-    const mockFind = jest
-      .spyOn(Post, 'findByIdAndUpdate')
-      .mockResolvedValue(null);
-
     jest.spyOn(Post, 'findById').mockResolvedValue({
       title: 'updated content',
       content: 'test content',
@@ -408,6 +448,8 @@ describe('updatePost', () => {
       tags: ['test'],
       author: '2',
     });
+
+    jest.spyOn(Post, 'findOne').mockResolvedValue(null);
 
     await updatePost(req, res, next);
 
@@ -420,7 +462,6 @@ describe('updatePost', () => {
         title: 'updated title',
         content: 'test content',
         category: 'test category',
-        images: ['test'],
         tags: ['test'],
       },
       params: {
@@ -429,6 +470,12 @@ describe('updatePost', () => {
       user: {
         userId: '1',
       },
+      files: [
+        {
+          fieldname: 'images',
+          originalname: 'test.png',
+        },
+      ],
     } as Request;
     const res = {} as Response;
     res.status = jest.fn().mockReturnValue(res);
@@ -443,7 +490,15 @@ describe('updatePost', () => {
       tags: ['test'],
       author: '1',
     });
-    const mockFind = jest.spyOn(Post, 'findByIdAndUpdate').mockResolvedValue({
+    const mockFind = jest.spyOn(Post, 'findOne').mockResolvedValue({
+      title: 'updated title',
+      content: 'test content',
+      category: 'test category',
+      images: ['test'],
+      tags: ['test'],
+      author: '1',
+    });
+    jest.spyOn(Post, 'findByIdAndUpdate').mockResolvedValue({
       title: 'updated title',
       content: 'test content',
       category: 'test category',
@@ -556,6 +611,30 @@ describe('deletePost', () => {
 
     expect(res.status).toHaveBeenCalledWith(403);
     expect(mockFind).toHaveBeenCalledTimes(1);
+  });
+
+  test('게시글에 이미지가 존재한다면 이미지를 제거한다', async () => {
+    const req = {
+      params: {
+        id: '1',
+      } as any,
+      user: {
+        userId: '1',
+      },
+    } as Request;
+    const res = {} as Response;
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    const next = jest.fn() as NextFunction;
+
+    jest.spyOn(Post, 'findByIdAndDelete').mockResolvedValue({
+      images: 'testImage.png',
+    });
+    jest.spyOn(FileService, 'deleteImageFile').mockResolvedValue();
+
+    await deletePost(req, res, next);
+
+    expect(FileService.deleteImageFile).toHaveBeenCalledTimes(1);
   });
 
   test('게시글이 성공적으로 삭제되면 200 상태코드를 반환한다', async () => {

@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 
 const imageSchema = new Schema({
   hash: {

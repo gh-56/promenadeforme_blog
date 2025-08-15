@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs/promises';
 import path from 'path';
 
-jest.mock('../schemas/user.js');
+jest.mock('../../schemas/user.js');
 
 beforeEach(() => {
   jest.clearAllMocks();
