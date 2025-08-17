@@ -189,6 +189,7 @@ describe('getPosts', () => {
     await getPosts(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toHaveBeenCalledTimes(1);
     expect(res.json).toHaveBeenCalledWith([]);
   });
 
