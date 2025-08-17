@@ -10,6 +10,8 @@ import type { LoginResponse } from '../../../types/interface';
 import './style.css';
 import { Link } from 'react-router-dom';
 
+// TODO: alert을 인라인 혹은 토스트 방식으로 변경하기
+// TODO: 로딩 스피너 추가하기
 const LoginPage = () => {
   const nav = useNavigate();
   const [formData, setFormData] = useState<LoginFormData>({
