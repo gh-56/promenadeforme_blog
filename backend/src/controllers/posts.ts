@@ -65,7 +65,7 @@ export const getPosts = async (
       .skip(skip)
       .limit(limit)
       .populate('category', 'name')
-      .populate('author', '-password -email')
+      .populate('author', '-password -username -bio')
       .populate('images', 'url')
       .exec();
 
@@ -101,7 +101,7 @@ export const getPostById = async (
       .skip(skip)
       .limit(limit)
       .populate('category', 'name')
-      .populate('author', '-password -email')
+      .populate('author', '-password -username -bio')
       .populate('images', 'url')
       .exec();
 
