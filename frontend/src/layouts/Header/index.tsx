@@ -33,8 +33,12 @@ const Header = () => {
   return (
     <header className='header-container'>
       <div className='header-logo'>
-        <Link to={MAIN_PATH()} onClick={toggleMenu}>
-          <h1>Promenadeforme</h1>
+        <Link to={MAIN_PATH()}>
+          {isMenuOpen ? (
+            <h1 onClick={toggleMenu}>Promenadeforme</h1>
+          ) : (
+            <h1>Promenadeforme</h1>
+          )}
         </Link>
       </div>
       <nav className='header-menu'>

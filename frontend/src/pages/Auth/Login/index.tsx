@@ -51,7 +51,7 @@ const LoginPage = () => {
             name='email'
             value={formData.email}
             onChange={handleChange}
-            placeholder='이메일을 입력해주세요.'
+            placeholder='이메일'
           />
         </div>
         <div className='login-input-box'>
@@ -62,7 +62,7 @@ const LoginPage = () => {
             name='password'
             value={formData.password}
             onChange={handleChange}
-            placeholder='비밀번호를 입력해주세요.'
+            placeholder='비밀번호'
           />
         </div>
         <Button className='login-button' type='submit'>

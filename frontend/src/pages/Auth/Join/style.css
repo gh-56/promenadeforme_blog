@@ -9,10 +9,11 @@
 }
 
 .join-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-decoration: none;
   color: rgba(0, 0, 0, 1);
-  font-weight: 600;
+  letter-spacing: 4px;
+  font-weight: 900;
 }
 
 .join-form {

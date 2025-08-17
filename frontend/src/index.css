@@ -1,5 +1,13 @@
 body {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 1rem;
+  font-family: 'ChosunGu', sans-serif;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: 'ChosunGu', sans-serif;
 }
