@@ -40,11 +40,11 @@ function App() {
 
   return (
     <Routes>
+      <Route path={LOGIN_PATH()} element={<LoginPage />} />
       <Route element={<Container />}>
         <Route path={MAIN_PATH()} element={<Main />} />
         <Route path={POST_DETAIL_PATH(':id')} element={<PostDetailPage />} />
         <Route path={POST_PATH()} element={<PostReadPage />} />
-        <Route path={LOGIN_PATH()} element={<LoginPage />} />
         <Route path={JOIN_PATH()} element={<JoinPage />} />
 
         <Route element={<ProtectedRoutes />}>

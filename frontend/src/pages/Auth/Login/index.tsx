@@ -4,9 +4,11 @@ import Button from '../../../components/Button';
 import type { LoginFormData } from '../../../types/interface';
 import { fetchLogin } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
-import { MAIN_PATH } from '../../../constant';
+import { JOIN_PATH, MAIN_PATH } from '../../../constant';
 import { useUserStore } from '../../../store';
 import type { LoginResponse } from '../../../types/interface';
+import './style.css';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const nav = useNavigate();
@@ -34,11 +36,15 @@ const LoginPage = () => {
     }
   };
   return (
-    <div>
-      <form onSubmit={handleLoginSubmit}>
-        <div>
-          <label htmlFor='email'>이메일</label>
+    <div className='login-container'>
+      <Link to={MAIN_PATH()} className='login-title'>
+        Promenadeforme
+      </Link>
+      <form className='login-form' onSubmit={handleLoginSubmit}>
+        <div className='login-input-box'>
+          {/* <label htmlFor='email'>이메일</label> */}
           <Input
+            className='login-input'
             type='email'
             name='email'
             value={formData.email}
@@ -46,9 +52,10 @@ const LoginPage = () => {
             placeholder='이메일을 입력해주세요.'
           />
         </div>
-        <div>
-          <label htmlFor='email'>비밀번호</label>
+        <div className='login-input-box'>
+          {/* <label htmlFor='email'>비밀번호</label> */}
           <Input
+            className='login-input'
             type='password'
             name='password'
             value={formData.password}
@@ -56,7 +63,12 @@ const LoginPage = () => {
             placeholder='비밀번호를 입력해주세요.'
           />
         </div>
-        <Button type='submit'>로그인</Button>
+        <Button className='login-button' type='submit'>
+          로그인
+        </Button>
+        <Link to={JOIN_PATH()} className='to-join-page'>
+          회원가입 페이지로 이동
+        </Link>
       </form>
     </div>
   );
