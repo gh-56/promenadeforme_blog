@@ -8,18 +8,18 @@ import {
   LOGIN_PATH,
   JOIN_PATH,
 } from '../../constant';
-import Input from '../../components/Input';
+// import Input from '../../components/Input';
 import { useState } from 'react';
 import { useUserStore } from '../../store';
 
 const Header = () => {
   const { isLoggedIn, logout } = useUserStore();
-  const [searchValue, setSearchValue] = useState('');
+  // const [searchValue, setSearchValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
+  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchValue(e.target.value);
+  // };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <header className='header-container'>
       <div className='header-logo'>
-        <Link to={MAIN_PATH()}>
+        <Link to={MAIN_PATH()} onClick={toggleMenu}>
           <h1>Promenadeforme</h1>
         </Link>
       </div>
@@ -36,29 +36,44 @@ const Header = () => {
         <div className={`header-nav-list ${isMenuOpen ? 'open' : ''}`}>
           {isLoggedIn ? (
             <>
+              <div></div>
               <Link to={POST_PATH()} onClick={toggleMenu}>
                 글 목록
               </Link>
               <Link to={POST_WRITE_PATH()} onClick={toggleMenu}>
                 글 쓰기
               </Link>
-              <Link to={CATEGORY_PATH()}>마이페이지</Link>
-              <span onClick={logout} style={{ cursor: 'pointer' }}>
+              <Link to={CATEGORY_PATH()} onClick={toggleMenu}>
+                마이페이지
+              </Link>
+              <span
+                onClick={() => {
+                  logout();
+                  toggleMenu();
+                }}
+                style={{ cursor: 'pointer' }}
+              >
                 로그아웃
               </span>
             </>
           ) : (
             <>
-              <Link to={POST_PATH()}>글 목록</Link>
-              <Link to={LOGIN_PATH()}>로그인</Link>
-              <Link to={JOIN_PATH()}>회원가입</Link>
+              <Link to={POST_PATH()} onClick={toggleMenu}>
+                글 목록
+              </Link>
+              <Link to={LOGIN_PATH()} onClick={toggleMenu}>
+                로그인
+              </Link>
+              <Link to={JOIN_PATH()} onClick={toggleMenu}>
+                회원가입
+              </Link>
             </>
           )}
         </div>
         <button className='hamburger-button' onClick={toggleMenu}>
           ☰
         </button>
-        <div className='header-search'>
+        {/* <div className='header-search'>
           <Input
             className='header-input'
             id='search'
@@ -67,7 +82,7 @@ const Header = () => {
             value={searchValue}
             onChange={handleSearchChange}
           />
-        </div>
+        </div> */}
       </nav>
     </header>
   );
