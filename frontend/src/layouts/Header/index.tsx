@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { useUserStore } from '../../store';
 
 const Header = () => {
-  const { isLoggedIn, user, logout } = useUserStore();
+  const { isLoggedIn, logout } = useUserStore();
   const [searchValue, setSearchValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -36,9 +36,13 @@ const Header = () => {
         <div className={`header-nav-list ${isMenuOpen ? 'open' : ''}`}>
           {isLoggedIn ? (
             <>
-              <Link to={POST_PATH()}>글 목록</Link>
-              <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
-              <Link to={CATEGORY_PATH()}>{user?.nickname}</Link>
+              <Link to={POST_PATH()} onClick={toggleMenu}>
+                글 목록
+              </Link>
+              <Link to={POST_WRITE_PATH()} onClick={toggleMenu}>
+                글 쓰기
+              </Link>
+              <Link to={CATEGORY_PATH()}>마이페이지</Link>
               <span onClick={logout} style={{ cursor: 'pointer' }}>
                 로그아웃
               </span>
@@ -56,6 +60,7 @@ const Header = () => {
         </button>
         <div className='header-search'>
           <Input
+            className='header-input'
             id='search'
             type='text'
             placeholder='검색어를 입력하세요.'
