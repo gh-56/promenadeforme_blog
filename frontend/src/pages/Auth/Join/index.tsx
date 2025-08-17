@@ -4,8 +4,13 @@ import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 import { fetchCreateUser } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_PATH } from '../../../constant';
+import { LOGIN_PATH, MAIN_PATH } from '../../../constant';
+import './style.css';
+import { Link } from 'react-router-dom';
 
+// TODO: alert 대신 인라인이나 토스트 스타일로 변경하기
+// TODO: 프로필 이미지 우측 하단에 카메라 아이콘 css 연출하기
+// TODO: 필수 입력, 선택 입력 알기 쉽게 구분하기
 const JoinPage = () => {
   const nav = useNavigate();
   const [formData, setFormData] = useState<
@@ -74,11 +79,12 @@ const JoinPage = () => {
   };
 
   return (
-    <div>
-      <h1>회원가입</h1>
-      <form onSubmit={handleJoinSubmit}>
+    <div className='join-container'>
+      <Link to={MAIN_PATH()} className='join-title'>
+        Promenadeforme
+      </Link>
+      <form className='join-form' onSubmit={handleJoinSubmit}>
         <div>
-          <label htmlFor='profileImage'>프로필사진</label>
           <div onClick={handleClickImage} style={{ cursor: 'pointer' }}>
             <img
               src={previewImage}
@@ -95,70 +101,70 @@ const JoinPage = () => {
             style={{ display: 'none' }}
           />
         </div>
-        <div>
-          <label htmlFor='username'>이름</label>
+        <div className='join-input-box'>
           <Input
+            className='join-input'
             type='text'
             id='username'
             name='username'
             value={formData.username}
-            placeholder=''
+            placeholder='이름'
             onChange={handleChange}
           />
         </div>
-        <div>
-          <label htmlFor='email'>이메일</label>
+        <div className='join-input-box'>
           <Input
+            className='join-input'
             type='email'
             id='email'
             name='email'
             value={formData.email}
-            placeholder=''
+            placeholder='이메일'
             onChange={handleChange}
           />
         </div>
-        <div>
-          <label htmlFor='password'>비밀번호</label>
+        <div className='join-input-box'>
           <Input
+            className='join-input'
             type='password'
             id='password'
             name='password'
             value={formData.password}
-            placeholder=''
+            placeholder='비밀번호'
             onChange={handleChange}
           />
         </div>
-        <div>
-          <label htmlFor='password_check'>비밀번호 재확인</label>
+        <div className='join-input-box'>
           <Input
+            className='join-input'
             type='password'
             id='password_check'
             name='password_check'
             value={formData.password_check}
-            placeholder=''
+            placeholder='비밀번호 확인'
             onChange={handleChange}
           />
         </div>
-        <div>
-          <label htmlFor='nickname'>닉네임</label>
+        <div className='join-input-box'>
           <Input
+            className='join-input'
             type='text'
             id='nickname'
             name='nickname'
             value={formData.nickname}
-            placeholder=''
+            placeholder='닉네임'
             onChange={handleChange}
           />
         </div>
 
-        <div>
-          <label htmlFor='bio'>상태메시지</label>
+        <div className='join-input-box'>
           <Input
+            className='join-input'
             type='text'
             id='bio'
             name='bio'
             value={formData.bio || ''}
-            placeholder=''
+            placeholder='상태메세지'
             onChange={handleChange}
           />
         </div>
