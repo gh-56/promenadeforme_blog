@@ -152,6 +152,8 @@ export const getUserProfile = async (
     res.status(200).json({
       nickname: user.nickname,
       email: user.email,
+      profileImage: user.profileImage,
+      bio: user.bio,
     });
   } catch (error) {
     next(error);
