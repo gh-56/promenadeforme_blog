@@ -21,6 +21,11 @@ export interface JoinResponse {
   };
 }
 
+export interface UserProfile {
+  email: string;
+  nickname: string;
+}
+
 export interface LoginFormData {
   email: string;
   password: string;
@@ -28,9 +33,5 @@ export interface LoginFormData {
 
 export interface LoginResponse {
   message: string;
-  user: {
-    email: string;
-    nickname: string;
-  };
-  token: string;
+  user: UserProfile;
 }
