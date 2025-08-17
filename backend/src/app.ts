@@ -2,6 +2,7 @@ import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import connect from './schemas/index.js';
 import 'dotenv/config';
 import CustomError from './utils/customError.js';
@@ -20,6 +21,7 @@ connect();
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', indexRouter);

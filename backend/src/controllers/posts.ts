@@ -59,7 +59,7 @@ export const getPosts = async (
   try {
     const posts = await Post.find({});
     if (!posts || posts.length === 0) {
-      res.status(200).json([]);
+      return res.status(200).json([]);
     }
     res.status(200).json(posts);
   } catch (error) {

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export const authMiddleware = (
   req: Request,
@@ -7,7 +7,7 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ message: '토큰이 제공되지 않았습니다.' });
     }

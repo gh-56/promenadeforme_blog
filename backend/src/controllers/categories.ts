@@ -38,7 +38,7 @@ export const getCategories = async (
   try {
     const userId = req.user!.userId;
     const categories = await Category.find({ author: userId });
-    res.status(200).json({ categories });
+    res.status(200).json(categories);
   } catch (error) {
     next(error);
   }

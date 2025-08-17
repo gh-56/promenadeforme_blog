@@ -117,9 +117,42 @@ export const login = async (
       }
     );
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
     res
       .status(200)
-      .json({ message: '로그인이 완료되었습니다.', user: userResponse, token });
+      .json({ message: '로그인이 완료되었습니다.', user: userResponse });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: '로그아웃 되었습니다.' });
+};
+
+export const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user!.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    res.status(200).json({
+      nickname: user.nickname,
+      email: user.email,
+    });
   } catch (error) {
     next(error);
   }
