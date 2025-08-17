@@ -13,9 +13,10 @@ import { useState } from 'react';
 import { useUserStore } from '../../store';
 
 const Header = () => {
-  const { isLoggedIn, logout } = useUserStore();
+  const { isLoggedIn, user, logout } = useUserStore();
   // const [searchValue, setSearchValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   setSearchValue(e.target.value);
@@ -23,6 +24,10 @@ const Header = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleProfile = () => {
+    setIsProfileOpen(!isProfileOpen);
   };
 
   return (
@@ -36,25 +41,47 @@ const Header = () => {
         <div className={`header-nav-list ${isMenuOpen ? 'open' : ''}`}>
           {isLoggedIn ? (
             <>
-              <div></div>
               <Link to={POST_PATH()} onClick={toggleMenu}>
                 글 목록
               </Link>
               <Link to={POST_WRITE_PATH()} onClick={toggleMenu}>
                 글 쓰기
               </Link>
-              <Link to={CATEGORY_PATH()} onClick={toggleMenu}>
-                마이페이지
-              </Link>
-              <span
-                onClick={() => {
-                  logout();
-                  toggleMenu();
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                로그아웃
-              </span>
+
+              <div className='profile-box' onClick={toggleProfile}>
+                <div className='profile-info'>
+                  <div className='profile-image-box'>
+                    <img src={user?.profileImage} alt='프로필 이미지' />
+                  </div>
+                  <div className='profile-nickname'>{user?.nickname}</div>
+                </div>
+
+                <div
+                  className={`profile-detail ${isProfileOpen ? 'open' : ''}`}
+                >
+                  <div className='detail-header'>
+                    <div className='detail-image-box'>
+                      <img src={user?.profileImage} alt='프로필 이미지' />
+                    </div>
+                    <div className='detail-nickname'>{user?.nickname}</div>
+                  </div>
+
+                  <div className='detail-links'>
+                    <Link to={CATEGORY_PATH()} onClick={toggleMenu}>
+                      마이페이지
+                    </Link>
+                    <span
+                      onClick={() => {
+                        logout();
+                        toggleMenu();
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      로그아웃
+                    </span>
+                  </div>
+                </div>
+              </div>
             </>
           ) : (
             <>

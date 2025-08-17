@@ -22,8 +22,10 @@ export interface JoinResponse {
 }
 
 export interface UserProfile {
-  email: string;
   nickname: string;
+  email: string;
+  profileImage: string;
+  bio: string;
 }
 
 export interface LoginFormData {
