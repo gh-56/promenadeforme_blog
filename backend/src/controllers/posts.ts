@@ -57,11 +57,30 @@ export const getPosts = async (
   next: NextFunction
 ) => {
   try {
-    const posts = await Post.find({});
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find({})
+      .skip(skip)
+      .limit(limit)
+      .populate('category', 'name')
+      .populate('author', '-password -email')
+      .populate('images', 'url')
+      .exec();
+
     if (!posts || posts.length === 0) {
       return res.status(200).json([]);
     }
-    res.status(200).json(posts);
+
+    const totalPosts = await Post.countDocuments();
+
+    res.status(200).json({
+      posts,
+      totalPosts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPosts / limit),
+    });
   } catch (error) {
     next(error);
   }
@@ -74,10 +93,22 @@ export const getPostById = async (
 ) => {
   try {
     const { id } = req.params;
-    const post = await Post.findById(id);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const post = await Post.findById(id)
+      .skip(skip)
+      .limit(limit)
+      .populate('category', 'name')
+      .populate('author', '-password -email')
+      .populate('images', 'url')
+      .exec();
+
     if (!post) {
       return res.status(404).json({ message: '포스트를 찾을 수 없습니다.' });
     }
+
     res.status(200).json(post);
   } catch (error) {
     next(error);
