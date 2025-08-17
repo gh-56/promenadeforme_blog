@@ -19,7 +19,7 @@ import {
 import { fetchCreatePost } from '../../../api/posts';
 import type { PostFormData } from '../../../types/interface';
 
-import { fetchCreateCategory, fetchCategories } from '../../../api/categories';
+import { fetchGetCategories } from '../../../api/categories';
 import type { Category } from '../../../types/interface';
 import Input from '../../../components/Input';
 
@@ -30,7 +30,6 @@ const PostWritePage = () => {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
-  const [categoryName, setCategoryName] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
 
   const editorRef = useRef<Editor>(null);
@@ -38,7 +37,7 @@ const PostWritePage = () => {
   useEffect(() => {
     const getCategories = async () => {
       try {
-        const data = await fetchCategories();
+        const data = await fetchGetCategories();
         setCategories(data);
       } catch (error) {
         console.error(error);
@@ -47,19 +46,19 @@ const PostWritePage = () => {
     getCategories();
   }, []);
 
-  const handleAddCategory = async () => {
-    if (!categoryName) return alert('카테고리 이름을 입력하세요.');
+  // const handleAddCategory = async () => {
+  //   if (!categoryName) return alert('카테고리 이름을 입력하세요.');
 
-    try {
-      const newCategory = await fetchCreateCategory(categoryName);
-      setCategories([...categories, newCategory]);
-      setCategoryName('');
-      alert('새로운 카테고리가 생성되었습니다.');
-    } catch (error) {
-      console.error(error);
-      alert('카테고리 생성에 실패했습니다.');
-    }
-  };
+  //   try {
+  //     const newCategory = await fetchCreateCategory(categoryName);
+  //     setCategories([...categories, newCategory]);
+  //     setCategoryName('');
+  //     alert('새로운 카테고리가 생성되었습니다.');
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert('카테고리 생성에 실패했습니다.');
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,7 +111,7 @@ const PostWritePage = () => {
             ))}
           </select>
         </div>
-        <div>
+        {/* <div>
           <label htmlFor='add-category'>새 카테고리 추가</label>
           <input
             id='add-category'
@@ -123,7 +122,7 @@ const PostWritePage = () => {
           <button type='button' onClick={handleAddCategory}>
             추가
           </button>
-        </div>
+        </div> */}
         <div>
           {/* <label htmlFor='title'>제목</label> */}
           <Input

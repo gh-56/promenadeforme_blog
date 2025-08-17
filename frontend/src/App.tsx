@@ -19,8 +19,25 @@ import {
   JOIN_PATH,
 } from './constant';
 import ProtectedRoutes from './routes/ProtectedRoutes';
+import { useUserStore } from './store';
+import { useEffect, useState } from 'react';
 
 function App() {
+  const initStore = useUserStore((state) => state.init);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      await initStore();
+      setIsLoading(false);
+    };
+    initializeApp();
+  }, [initStore]);
+
+  if (isLoading) {
+    return <div>로딩 중...</div>;
+  }
+
   return (
     <Routes>
       <Route element={<Container />}>

@@ -25,8 +25,8 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const apiResponse: LoginResponse = await fetchLogin(formData);
-      const { message, user, token } = apiResponse;
-      login(user, token);
+      const { message, user } = apiResponse;
+      login(user);
       alert(message);
       nav(MAIN_PATH());
     } catch (error) {

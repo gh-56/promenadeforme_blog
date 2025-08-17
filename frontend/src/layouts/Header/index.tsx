@@ -9,7 +9,6 @@ import {
   JOIN_PATH,
 } from '../../constant';
 import Input from '../../components/Input';
-import Button from '../../components/Button';
 import { useState } from 'react';
 import { useUserStore } from '../../store';
 
@@ -31,18 +30,15 @@ const Header = () => {
         <div className='header-nav-list'>
           {isLoggedIn ? (
             <>
-              <Link to='/'>소개</Link>
               <Link to={POST_PATH()}>글 목록</Link>
               <Link to={POST_WRITE_PATH()}>글 쓰기</Link>
-              <Link to={CATEGORY_PATH()}>편집</Link>
-              <span>{user?.nickname}님, 안녕하세요!</span>
-              <Button className='logout-button' onClick={logout}>
+              <Link to={CATEGORY_PATH()}>{user?.nickname}</Link>
+              <span onClick={logout} style={{ cursor: 'pointer' }}>
                 로그아웃
-              </Button>
+              </span>
             </>
           ) : (
             <>
-              <Link to='/'>소개</Link>
               <Link to={POST_PATH()}>글 목록</Link>
               <Link to={LOGIN_PATH()}>로그인</Link>
               <Link to={JOIN_PATH()}>회원가입</Link>

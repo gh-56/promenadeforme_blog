@@ -34,3 +34,13 @@ export const fetchLogin = async (loginFormData: LoginFormData) => {
     });
   return response;
 };
+
+export const fetchLogout = async () => {
+  const response = await axios
+    .post('/api/users/logout')
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+  return response;
+};

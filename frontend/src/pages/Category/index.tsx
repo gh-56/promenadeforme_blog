@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  fetchCategories,
+  fetchGetCategories,
   fetchCreateCategory,
   fetchUpdateCategory,
   fetchDeleteCategory,
@@ -18,7 +18,7 @@ const CategoryPage = () => {
   useEffect(() => {
     const getCategories = async () => {
       try {
-        const data = await fetchCategories();
+        const data = await fetchGetCategories();
         setCategories(data);
       } catch (error) {
         console.error(error);

@@ -6,9 +6,14 @@ export const fetchCreateCategory = async (name: string) => {
   return response.data;
 };
 
-export const fetchCategories = async () => {
-  const response = await axios.get<Category[]>('/api/categories');
-  return response.data;
+export const fetchGetCategories = async () => {
+  const response = await axios
+    .get<Category[]>('/api/categories')
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+  return response;
 };
 
 export const fetchUpdateCategory = async (id: string, name: string) => {
