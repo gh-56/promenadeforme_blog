@@ -15,8 +15,14 @@ import { useUserStore } from '../../store';
 const Header = () => {
   const { isLoggedIn, user, logout } = useUserStore();
   const [searchValue, setSearchValue] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -27,7 +33,7 @@ const Header = () => {
         </Link>
       </div>
       <nav className='header-menu'>
-        <div className='header-nav-list'>
+        <div className={`header-nav-list ${isMenuOpen ? 'open' : ''}`}>
           {isLoggedIn ? (
             <>
               <Link to={POST_PATH()}>글 목록</Link>
@@ -45,6 +51,9 @@ const Header = () => {
             </>
           )}
         </div>
+        <button className='hamburger-button' onClick={toggleMenu}>
+          ☰
+        </button>
         <div className='header-search'>
           <Input
             id='search'
