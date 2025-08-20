@@ -1,3 +1,17 @@
-export type { PostFormData, PostResponse } from './post.interface';
-export type { Category } from './category.interface';
-export type { JoinFormData, JoinResponse, UserProfile, LoginFormData, LoginResponse } from './user.interface';
+export type {
+  RegisterRequest,
+  RegisterResponse,
+  LoginRequest,
+  LoginResponse,
+  RefreshResponse,
+  GetProfileResponse,
+} from './user.interface';
+export type {
+  PostRequest,
+  PostResponse,
+  GetAllPostResponse,
+  PostAuthorResponse,
+  PostCategoryResponse,
+  PostImageResponse,
+} from './post.interface';
+export type { CategoryRequest, CategoryResponse } from './category.interface';
