@@ -1,0 +1,612 @@
+openapi: 3.0.0
+info:
+  title: Promenadeforme 블로그 API
+  description: 개발자를 위한 블로그 플랫폼 promenadeforme의 API 문서
+  version: 1.0.0
+paths:
+  /api/users/join:
+    post:
+      summary: 회원가입
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: 회원가입 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: 필수 입력 항목 누락 또는 유효성 검사 실패
+        '409':
+          description: 이미 사용 중인 이메일이거나 닉네임
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/users/login:
+    post:
+      summary: 로그인
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: 유효하지 않은 인증 정보
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/users/logout:
+    post:
+      summary: 로그아웃
+      tags:
+        - Users
+      security:
+        - CookieAuth: []
+      responses:
+        '204':
+          description: 로그아웃 성공
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/users/refresh:
+    get:
+      summary: 토큰 재발급
+      tags:
+        - Users
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: 새로운 엑세스 토큰 발급 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: 토큰이 존재하지 않음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/users/me:
+    get:
+      summary: 내 프로필 정보 조회
+      tags:
+        - Users
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: 프로필 정보조회
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfileResponse'
+        '404':
+          description: 사용자를 찾을 수 없음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/posts:
+    post:
+      summary: 새로운 게시글 생성
+      tags:
+        - Posts
+      security:
+        - CookieAuth: []
+      requestBody:
+        description: 게시글 생성
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+      responses:
+        '201':
+          description: 게시글 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '400':
+          description: 필수 입력 항목 누락
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: 모든 게시글 불러오기
+      tags:
+        - Posts
+      parameters:
+        - name: page
+          in: query
+          description: 게시글 페이지 네이션
+          required: false
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 게시글 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllPostResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/posts/{postId}:
+    get:
+      summary: 게시글 상세보기
+      tags:
+        - Posts
+      parameters:
+        - name: postId
+          in: path
+          description: 게시글 id로 불러오기
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 게시글 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: 게시글을 찾을 수 없음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: 게시글 수정
+      tags:
+        - Posts
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: postId
+          in: path
+          description: 게시글 id로 불러오기
+          required: true
+          explode: true
+          schema:
+            type: string
+      requestBody:
+        description: 게시글 수정
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+      responses:
+        '200':
+          description: 게시글 수정 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '400':
+          description: 필수 입력 항목 누락
+        '403':
+          description: 권한 없음
+        '404':
+          description: 게시글을 찾을 수 없음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: 게시글 삭제
+      tags:
+        - Posts
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: postId
+          in: path
+          description: 게시글 id로 불러오기
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 게시글 삭제 성공
+        '403':
+          description: 권한 없음
+        '404':
+          description: 게시글을 찾을 수 없음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/categories:
+    post:
+      summary: 새로운 카테고리 생성
+      tags:
+        - Categories
+      security:
+        - CookieAuth: []
+      requestBody:
+        description: 카테고리 생성
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '201':
+          description: 카테고리 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+        '400':
+          description: 필수 입력 항목 누락
+        '409':
+          description: 이미 존재하는 카테고리
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: 모든 카테고리 불로오기
+      tags:
+        - Categories
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: 카테고리 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+        '404':
+          description: 카테고리를 찾을 수 없음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/categories/{categoryId}:
+    patch:
+      summary: 모든 카테고리 불로오기
+      tags:
+        - Categories
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: categoryId
+          in: path
+          description: 카테고리 id로 불러오기
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 카테고리 수정 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+        '400':
+          description: 필수 입력 항목 누락
+        '403':
+          description: 권한 없음
+        '404':
+          description: 카테고리를 찾을 수 없음
+        '409':
+          description: 이미 존재하는 카테고리
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: 카테고리 삭제
+      tags:
+        - Categories
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: categoryId
+          in: path
+          description: 카테고리 id로 불러오기
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 카테고리 삭제 성공
+        '403':
+          description: 권한 없음
+        '404':
+          description: 카테고리를 찾을 수 없음
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      description: 회원가입 요청
+      required:
+        - username
+        - email
+        - nickname
+        - password
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        nickname:
+          type: string
+        password:
+          type: string
+        profileImage:
+          type: string
+          format: binary
+        bio:
+          type: string
+
+    RegisterResponse:
+      type: object
+      description: 회원가입 응답 (비밀번호 제외)
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        nickname:
+          type: string
+        profileImage:
+          type: string
+          format: binary
+        bio:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    LoginRequest:
+      type: object
+      description: 로그인 요청
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      description: 로그인 응답 (토큰 포함)
+      properties:
+        user:
+          type: object
+          properties:
+            _id:
+              type: string
+            nickname:
+              type: string
+            profileImage:
+              type: string
+        accessToken:
+          type: string
+    RefreshResponse:
+      type: object
+      description: access 토큰 재발급
+      properties:
+        accessToken:
+          type: string
+    GetProfileResponse:
+      type: object
+      description: 상태 관리용 프로필 정보 응답
+      properties:
+        nickname:
+          type: string
+        email:
+          type: string
+        profileImage:
+          type: string
+        bio:
+          type: string
+    PostAuthorResponse:
+      type: object
+      description: 포스트 응답 전용 유저 정보
+      properties:
+        _id:
+          type: string
+        nickname:
+          type: string
+        profileImage:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    PostCategoryResponse:
+      type: object
+      description: 포스트 응답 전용 카테고리 정보
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+    PostImageResponse:
+      type: object
+      description: 포스트 응답 전용 이미지 정보
+      properties:
+        _id:
+          type: string
+        url:
+          type: string
+    PostRequest:
+      type: object
+      description: 포스트 생성 및 수정 요청
+      properties:
+        title:
+          type: string
+          example: 테스트 제목입니다.
+        content:
+          type: string
+          example: 테스트 내용입니다.
+        category:
+          type: string
+          example: 카테고리
+        tags:
+          type: array
+          items:
+            type: string
+            example: ['테스트1', 'test2']
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+    PostResponse:
+      type: object
+      description: 포스트 응답
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        category:
+          $ref: '#/components/schemas/PostCategoryResponse'
+        author:
+          $ref: '#/components/schemas/PostAuthorResponse'
+        tags:
+          type: array
+          items:
+            type: string
+        images:
+          $ref: '#/components/schemas/PostImageResponse'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: number
+    GetAllPostResponse:
+      type: object
+      description: 모든 포스트 응답 (페이지네이션)
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostResponse'
+        totalPosts:
+          type: number
+        currentPage:
+          type: number
+        totalPage:
+          type: number
+    CategoryRequest:
+      type: object
+      description: 카테고리 요청
+      properties:
+        name:
+          type: string
+    CategoryResponse:
+      type: object
+      description: 카테고리 응답
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        author:
+          type: string
+        createdAt:
+          type: string
+          format: data-time
+        __v:
+          type: number
+    Error:
+      type: object
+      description: 상태코드와 메시지 응답
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        stack:
+          type: string
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+      description: JWT 토큰을 쿠키에 담아서 보냅니다.

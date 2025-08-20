@@ -10,8 +10,11 @@ import indexRouter from './routes/index.js';
 import postsRouter from './routes/posts.js';
 import categoriesRouter from './routes/categories.js';
 import usersRouter from './routes/users.js';
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
 
-const __dirname = path.resolve(process.cwd());
+const rootPath = path.resolve(process.cwd());
+const swaggerDocument = yaml.load('src/utils/swagger.yaml');
 
 const app = express();
 
@@ -19,7 +22,7 @@ app.set('port', process.env.PORT || 4000);
 connect();
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(rootPath, 'public')));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -28,6 +31,8 @@ app.use('/api', indexRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/users', usersRouter);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   const error = new CustomError(
@@ -47,8 +52,8 @@ app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
       : '서버 내부 오류가 발생했습니다.';
 
   res.status(status).json({
-    status,
-    message,
+    code: status,
+    message: message,
     stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
   });
 });

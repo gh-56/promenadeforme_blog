@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUser, login, logout, getUserProfile } from '../controllers/users.js';
+import { createUser, login, logout, getUserProfile, refresh } from '../controllers/users.js';
 import multer from 'multer';
 import { authMiddleware } from '../middlewares/auth.js';
 
@@ -13,8 +13,11 @@ router.post('/join', upload.single('profileImage'), createUser);
 // POST /api/users/login
 router.post('/login', login);
 
+// GET /api/users/refresh
+router.get('/refresh', refresh);
+
 // POST /api/users/logout
-router.post('/logout', logout)
+router.post('/logout', logout);
 
 // GET /api/users/me
 router.get('/me', authMiddleware, getUserProfile);
