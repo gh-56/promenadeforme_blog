@@ -79,10 +79,10 @@ const PostWritePage = () => {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor='category'>카테고리 선택</label>
-          <select id='category'>
+          <select id='category' onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
             <option value=''>카테고리를 선택하세요.</option>
             {categories.map((category) => (
-              <option key={category._id} value={category.name}>
+              <option key={category._id} value={category._id}>
                 {category.name}
               </option>
             ))}

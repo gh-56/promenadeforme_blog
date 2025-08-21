@@ -1,34 +1,31 @@
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchReadPostById } from '../../../api/posts';
-import type { Post } from '../../../types/interface';
-import { useNavigate, useParams } from 'react-router-dom';
+import type { PostResponse } from '../../../types/interface';
 
 const PostDetailPage = () => {
-  const [post, setPost] = useState<Post>();
-  const [loading, setLoading] = useState(true);
-  const { id } = useParams();
-  const nav = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [post, setPost] = useState<PostResponse | null>();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getPost = async () => {
-      if (!id) {
-        nav('/');
-        return;
-      }
-      try {
-        const post = await fetchReadPostById(id as string);
-        setPost(post);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (id) {
+        try {
+          const postData = await fetchReadPostById(id);
+          setPost(postData);
+        } catch (error) {
+          console.error('게시글을 가져오는 데 실패했습니다.', error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
     getPost();
-  }, [id, nav]);
+  }, [id]);
 
-  if (loading) {
-    return <div>로딩 중...</div>;
+  if (isLoading) {
+    return <div>게시글을 불러오는 중...</div>;
   }
 
   if (!post) {
@@ -37,11 +34,8 @@ const PostDetailPage = () => {
 
   return (
     <>
-      <div>
-        <h1>{post.title}</h1>
-        <p>{post.content}</p>
-        <p>{post.author}</p>
-      </div>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
     </>
   );
 };
