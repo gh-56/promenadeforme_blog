@@ -3,6 +3,7 @@ body {
   margin: 0 auto;
   padding: 0 1rem;
   font-family: 'ChosunGu', sans-serif;
+  overflow-x: hidden;
 }
 
 input,

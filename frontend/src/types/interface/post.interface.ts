@@ -35,7 +35,7 @@ export interface PostResponse {
   content: string;
   category: PostCategoryResponse;
   author: PostAuthorResponse;
-  images?: PostImageResponse[];
+  images: PostImageResponse[];
   tags?: string[];
   createdAt: string;
   updatedAt: string;

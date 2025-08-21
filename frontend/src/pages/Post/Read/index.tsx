@@ -36,13 +36,15 @@ const PostReadPage = () => {
   return (
     <div className='post-container'>
       <h1 className='post-title'>전체 글 보기</h1>
-      {postsData.posts.length !== 0 ? (
-        postsData.posts.map((post) => {
-          return <PostCard key={post._id} post={post} />;
-        })
-      ) : (
-        <div>게시글이 없습니다.</div>
-      )}
+      <div className='post-main'>
+        {postsData.posts.length !== 0 ? (
+          postsData.posts.map((post) => {
+            return <PostCard key={post._id} post={post} />;
+          })
+        ) : (
+          <div>게시글이 없습니다.</div>
+        )}
+      </div>
     </div>
   );
 };
