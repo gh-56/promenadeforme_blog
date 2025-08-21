@@ -1,4 +1,4 @@
-import { Document, Schema, Types, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const imageSchema = new Schema({
   hash: {
@@ -9,6 +9,7 @@ const imageSchema = new Schema({
   url: {
     type: String,
     require: true,
+    default: 'http://localhost:4000/images/default-post-image.jpg'
   },
   referenceCount: {
     type: Number,

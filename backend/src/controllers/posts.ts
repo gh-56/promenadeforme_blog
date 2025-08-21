@@ -3,6 +3,7 @@ import Post from '../schemas/post.js';
 import { Types } from 'mongoose';
 import { deleteImageFile, saveImageFile } from '../services/file.service.js';
 import CustomError from '../utils/customError.js';
+import Image from '../schemas/image.js';
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,6 +21,16 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
       for (const image of images) {
         const newImage = await saveImageFile(image, userId);
         imageIds.push(newImage._id);
+      }
+    } else {
+      let defaultImage;
+      defaultImage = await Image.findOne({ url: 'http://localhost:4000/images/default-post-image.jpg' });
+      if (defaultImage) {
+        imageIds.push(defaultImage._id);
+      } else {
+        defaultImage = new Image({ author: userId });
+        await defaultImage.save();
+        imageIds.push(defaultImage._id);
       }
     }
 
