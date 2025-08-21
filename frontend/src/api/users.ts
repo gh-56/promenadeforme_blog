@@ -1,14 +1,9 @@
+import api from './axios.js';
 import axios from 'axios';
-import type {
-  GetProfileResponse,
-  LoginRequest,
-  LoginResponse,
-  RefreshResponse,
-  RegisterResponse,
-} from '../types/interface/';
+import type { LoginRequest, UserResponse, RefreshResponse, RegisterResponse } from '../types/interface/';
 
 export const fetchCreateUser = async (formData: FormData) => {
-  const response = await axios
+  const response = await api
     .post<RegisterResponse>('/api/users/join', formData)
     .then((response) => response.data)
     .catch((error) => {
@@ -18,8 +13,8 @@ export const fetchCreateUser = async (formData: FormData) => {
 };
 
 export const fetchLogin = async (loginRequest: LoginRequest) => {
-  const response = await axios
-    .post<LoginResponse>('/api/users/login', loginRequest)
+  const response = await api
+    .post<UserResponse>('/api/users/login', loginRequest)
     .then((response) => response.data)
     .catch((error) => {
       throw error;
@@ -28,7 +23,7 @@ export const fetchLogin = async (loginRequest: LoginRequest) => {
 };
 
 export const fetchLogout = async () => {
-  const response = await axios
+  const response = await api
     .post('/api/users/logout')
     .then((response) => response.data)
     .catch((error) => {
@@ -38,7 +33,7 @@ export const fetchLogout = async () => {
 };
 
 export const fetchAccessToken = async () => {
-  const response = await axios
+  const response = await api
     .get<RefreshResponse>('/api/users/refresh')
     .then((response) => response.data)
     .catch((error) => {
@@ -49,7 +44,7 @@ export const fetchAccessToken = async () => {
 
 export const fetchGetProfile = async () => {
   const response = await axios
-    .get<GetProfileResponse>('/api/users/me')
+    .get<UserResponse>('/api/users/me')
     .then((response) => response.data)
     .catch((error) => {
       throw error;

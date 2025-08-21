@@ -4,8 +4,8 @@ export interface RegisterRequest {
   email: string;
   nickname: string;
   password: string;
-  profileImage: string;
-  bio: string;
+  profileImage?: string;
+  bio?: string;
 }
 
 // 회원가입 응답
@@ -26,12 +26,8 @@ export interface LoginRequest {
 }
 
 // 로그인 응답 (토큰 포함)
-export interface LoginResponse {
-  user: {
-    _id: string;
-    nickname: string;
-    profileImage: string;
-  };
+export interface UserResponse {
+  user: UserProfile;
   accessToken: string;
 }
 
@@ -41,7 +37,8 @@ export interface RefreshResponse {
 }
 
 // 상태 관리용 프로필 정보 응답
-export interface GetProfileResponse {
+export interface UserProfile {
+  _id: string;
   nickname: string;
   email: string;
   profileImage: string;

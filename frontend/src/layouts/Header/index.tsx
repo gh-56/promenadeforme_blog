@@ -89,9 +89,9 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link to={POST_PATH()} onClick={toggleMenu}>
+              {/* <Link to={POST_PATH()} onClick={toggleMenu}>
                 글 목록
-              </Link>
+              </Link> */}
               <Link to={LOGIN_PATH()} onClick={toggleMenu}>
                 로그인
               </Link>

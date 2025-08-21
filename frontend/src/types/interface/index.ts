@@ -2,9 +2,9 @@ export type {
   RegisterRequest,
   RegisterResponse,
   LoginRequest,
-  LoginResponse,
+  UserResponse,
   RefreshResponse,
-  GetProfileResponse,
+  UserProfile,
 } from './user.interface';
 export type {
   PostRequest,

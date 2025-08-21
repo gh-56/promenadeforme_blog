@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import {
-  fetchGetCategories,
-  fetchCreateCategory,
-  fetchUpdateCategory,
-  fetchDeleteCategory,
-} from '../../api/categories';
-import type { Category } from '../../types/interface';
+import { fetchReadCategories, fetchCreateCategory, fetchUpdateCategory, fetchDeleteCategory } from '../../api/categories';
+import type { CategoryRequest, CategoryResponse } from '../../types/interface';
 
 const CategoryPage = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
-    null
-  );
-  const [editingCategoryName, setEditingCategoryName] = useState('');
+  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [newCategoryName, setNewCategoryName] = useState<CategoryRequest>({ name: '' });
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editingCategoryName, setEditingCategoryName] = useState<CategoryRequest>({ name: '' });
 
   useEffect(() => {
     const getCategories = async () => {
       try {
-        const data = await fetchGetCategories();
-        setCategories(data);
+        const categoriesData = await fetchReadCategories();
+        setCategories(categoriesData);
       } catch (error) {
         console.error(error);
       }
     };
+
     getCategories();
   }, []);
 
@@ -33,7 +27,7 @@ const CategoryPage = () => {
     try {
       const newCategory = await fetchCreateCategory(newCategoryName);
       setCategories([...categories, newCategory]);
-      setNewCategoryName('');
+      setNewCategoryName({ name: '' });
       alert('새로운 카테고리가 생성되었습니다.');
     } catch (error) {
       console.error(error);
@@ -41,7 +35,7 @@ const CategoryPage = () => {
     }
   };
 
-  const handleUpdateClick = (id: string, name: string) => {
+  const handleUpdateClick = (id: string, name: CategoryRequest) => {
     setEditingCategoryId(id);
     setEditingCategoryName(name);
   };
@@ -50,18 +44,13 @@ const CategoryPage = () => {
     e.preventDefault();
     if (!editingCategoryName) return alert('수정할 이름을 입력해 주세요.');
     try {
-      await fetchUpdateCategory(
-        editingCategoryId as string,
-        editingCategoryName
-      );
+      const updatedCategory: CategoryResponse = await fetchUpdateCategory(editingCategoryId as string, editingCategoryName);
       const updatedCategories = categories.map((category) =>
-        category._id === editingCategoryId
-          ? { ...category, name: editingCategoryName }
-          : category
+        category._id === updatedCategory._id ? updatedCategory : category
       );
       setCategories(updatedCategories);
       setEditingCategoryId(null);
-      setEditingCategoryName('');
+      setEditingCategoryName({ name: '' });
     } catch (error) {
       console.error(error);
       alert('카테고리 수정에 실패했습니다.');
@@ -86,8 +75,8 @@ const CategoryPage = () => {
       <form onSubmit={handleAddCategory}>
         <input
           type='text'
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
+          value={newCategoryName.name}
+          onChange={(e) => setNewCategoryName({ name: e.target.value })}
           placeholder='새 카테고리 이름'
         />
         <button type='submit'>추가</button>
@@ -100,28 +89,19 @@ const CategoryPage = () => {
               <form onSubmit={handleUpdateSubmit}>
                 <input
                   type='text'
-                  value={editingCategoryName}
-                  onChange={(e) => setEditingCategoryName(e.target.value)}
+                  value={editingCategoryName.name}
+                  onChange={(e) => setEditingCategoryName({ name: e.target.value })}
                 />
                 <button type='submit'>저장</button>
-                <button
-                  type='button'
-                  onClick={() => setEditingCategoryId(null)}
-                >
+                <button type='button' onClick={() => setEditingCategoryId(null)}>
                   취소
                 </button>
               </form>
             ) : (
               <>
                 <span>{category.name}</span>
-                <button
-                  onClick={() => handleUpdateClick(category._id, category.name)}
-                >
-                  수정
-                </button>
-                <button onClick={() => handleDeleteClick(category._id)}>
-                  삭제
-                </button>
+                <button onClick={() => handleUpdateClick(category._id, category)}>수정</button>
+                <button onClick={() => handleDeleteClick(category._id)}>삭제</button>
               </>
             )}
           </li>

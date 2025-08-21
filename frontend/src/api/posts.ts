@@ -1,8 +1,8 @@
-import axios from 'axios';
+import api from './axios.js';
 import type { GetAllPostResponse, PostRequest, PostResponse } from '../types/interface';
 
 export const fetchCreatePost = async (formData: FormData) => {
-  const response = await axios
+  const response = await api
     .post<PostResponse>('/api/posts', formData)
     .then((response) => response.data)
     .catch((error) => {
@@ -12,7 +12,7 @@ export const fetchCreatePost = async (formData: FormData) => {
 };
 
 export const fetchReadAllPost = async (page: string) => {
-  const response = await axios
+  const response = await api
     .get<GetAllPostResponse>(`/api/posts?page=${page}`)
     .then((response) => response.data)
     .catch((error) => {
@@ -22,7 +22,7 @@ export const fetchReadAllPost = async (page: string) => {
 };
 
 export const fetchReadPostById = async (id: string) => {
-  const response = await axios
+  const response = await api
     .get<PostResponse>(`/api/posts/${id}`)
     .then((response) => response.data)
     .catch((error) => {
@@ -32,7 +32,7 @@ export const fetchReadPostById = async (id: string) => {
 };
 
 export const fetchUpdatePost = async (id: string, postRequest: PostRequest) => {
-  const response = await axios
+  const response = await api
     .patch<PostResponse>(`/api/posts/${id}`, postRequest)
     .then((response) => response.data)
     .catch((error) => {
@@ -42,7 +42,7 @@ export const fetchUpdatePost = async (id: string, postRequest: PostRequest) => {
 };
 
 export const fetchDeletePost = async (id: string) => {
-  const response = await axios
+  const response = await api
     .delete(`/api/posts/${id}`)
     .then((response) => response.data)
     .catch((error) => {

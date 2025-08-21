@@ -1,0 +1,12 @@
+.post-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post-title {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+

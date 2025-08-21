@@ -20,21 +20,16 @@ import {
 } from './constant';
 import ProtectedRoutes from './routes/ProtectedRoutes';
 import { useUserStore } from './store';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 function App() {
-  const initStore = useUserStore((state) => state.init);
-  const [isLoading, setIsLoading] = useState(true);
+  const { init, isInitialized } = useUserStore();
 
   useEffect(() => {
-    const initializeApp = async () => {
-      await initStore();
-      setIsLoading(false);
-    };
-    initializeApp();
-  }, [initStore]);
+    init();
+  }, [init]);
 
-  if (isLoading) {
+  if (!isInitialized) {
     return <div>로딩 중...</div>;
   }
 
@@ -43,7 +38,15 @@ function App() {
       <Route path={LOGIN_PATH()} element={<LoginPage />} />
       <Route path={JOIN_PATH()} element={<JoinPage />} />
       <Route element={<Container />}>
-        <Route path={MAIN_PATH()} element={<Main />} />
+        <Route
+          path={MAIN_PATH()}
+          element={
+            <>
+              <Main />
+              <PostReadPage />
+            </>
+          }
+        />
         <Route path={POST_DETAIL_PATH(':id')} element={<PostDetailPage />} />
         <Route path={POST_PATH()} element={<PostReadPage />} />
 

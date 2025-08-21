@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
-import type { LoginFormData } from '../../../types/interface';
+import type { LoginRequest, UserResponse } from '../../../types/interface';
 import { fetchLogin } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
 import { JOIN_PATH, MAIN_PATH } from '../../../constant';
 import { useUserStore } from '../../../store';
-import type { LoginResponse } from '../../../types/interface';
 import './style.css';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +13,7 @@ import { Link } from 'react-router-dom';
 // TODO: 로딩 스피너 추가하기
 const LoginPage = () => {
   const nav = useNavigate();
-  const [formData, setFormData] = useState<LoginFormData>({
+  const [formData, setFormData] = useState<LoginRequest>({
     email: '',
     password: '',
   });
@@ -28,10 +27,9 @@ const LoginPage = () => {
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const apiResponse: LoginResponse = await fetchLogin(formData);
-      const { message, user } = apiResponse;
-      login(user);
-      alert(message);
+      const loginResponse: UserResponse = await fetchLogin(formData);
+      const { user, accessToken } = loginResponse;
+      login(accessToken, user);
       nav(MAIN_PATH());
     } catch (error) {
       console.error(error);
