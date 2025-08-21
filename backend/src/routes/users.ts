@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createUser, login, logout, getUserProfile, refresh } from '../controllers/users.js';
 import multer from 'multer';
-import { authMiddleware } from '../middlewares/auth.js';
+import { refreshMiddleware } from '../middlewares/auth.js';
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -20,6 +20,6 @@ router.get('/refresh', refresh);
 router.post('/logout', logout);
 
 // GET /api/users/me
-router.get('/me', authMiddleware, getUserProfile);
+router.get('/me', refreshMiddleware, getUserProfile);
 
 export default router;

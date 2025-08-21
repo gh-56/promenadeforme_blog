@@ -91,17 +91,22 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const loginResponse = {
       _id: user._id,
       nickname: user.nickname,
+      email: user.email,
       profileImage: user.profileImage,
+      bio: user.bio,
     };
 
     const accessToken = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
 
     const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET as string, { expiresIn: '7d' });
 
+    const cookieMaxAge = 7 * 24 * 60 * 60 * 1000;
+
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
+      maxAge: cookieMaxAge,
     });
 
     res.status(200).json({ user: loginResponse, accessToken });
@@ -135,7 +140,7 @@ export const logout = (req: Request, res: Response) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
   });
   res.status(204).end();
 };
@@ -150,13 +155,16 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
     }
 
     const userProfileResponse = {
+      _id: user._id,
       nickname: user.nickname,
       email: user.email,
       profileImage: user.profileImage,
       bio: user.bio,
     };
 
-    res.status(200).json(userProfileResponse);
+    const newAccessToken = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
+
+    res.status(200).json({ user: userProfileResponse, accessToken: newAccessToken });
   } catch (error) {
     next(error);
   }
