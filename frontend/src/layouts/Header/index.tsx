@@ -1,13 +1,6 @@
 import './style.css';
 import { Link } from 'react-router-dom';
-import {
-  CATEGORY_PATH,
-  MAIN_PATH,
-  POST_PATH,
-  POST_WRITE_PATH,
-  LOGIN_PATH,
-  JOIN_PATH,
-} from '../../constant';
+import { CATEGORY_PATH, MAIN_PATH, POST_PATH, POST_WRITE_PATH, LOGIN_PATH, JOIN_PATH } from '../../constant';
 // import Input from '../../components/Input';
 import { useState } from 'react';
 import { useUserStore } from '../../store';
@@ -33,13 +26,7 @@ const Header = () => {
   return (
     <header className='header-container'>
       <div className='header-logo'>
-        <Link to={MAIN_PATH()}>
-          {isMenuOpen ? (
-            <h1 onClick={toggleMenu}>Promenadeforme</h1>
-          ) : (
-            <h1>Promenadeforme</h1>
-          )}
-        </Link>
+        <Link to={MAIN_PATH()}>{isMenuOpen ? <h1 onClick={toggleMenu}>Promenadeforme</h1> : <h1>Promenadeforme</h1>}</Link>
       </div>
       <nav className='header-menu'>
         <div className={`header-nav-list ${isMenuOpen ? 'open' : ''}`}>
@@ -60,9 +47,7 @@ const Header = () => {
                   <div className='profile-nickname'>{user?.nickname}</div>
                 </div>
 
-                <div
-                  className={`profile-detail ${isProfileOpen ? 'open' : ''}`}
-                >
+                <div className={`profile-detail ${isProfileOpen ? 'open' : ''}`}>
                   <div className='detail-header'>
                     <div className='detail-image-box'>
                       <img src={user?.profileImage} alt='프로필 이미지' />

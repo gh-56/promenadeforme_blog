@@ -105,6 +105,10 @@
   border-radius: 50%;
 }
 
+.profile-detail {
+  cursor: default;
+}
+
 .profile-detail.open {
   display: flex;
   flex-direction: column;
@@ -167,6 +171,7 @@
     width: 180px;
     height: 100px;
     box-shadow: 5px 5px 9px 7px rgba(0, 0, 0, 0.07);
+    background: #f9f9f9;
   }
 
   .hamburger-button {
@@ -208,13 +213,7 @@
   }
 
   .profile-detail {
-    display: none;
-    position: absolute;
-    margin-top: 0.7rem;
-    right: 30%;
-    padding: 1.5rem 0 1.5rem 0;
     width: 200px;
     height: 130px;
-    box-shadow: 5px 5px 9px 7px rgba(0, 0, 0, 0.07);
   }
 }
