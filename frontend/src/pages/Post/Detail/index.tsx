@@ -2,6 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchReadPostById } from '../../../api/posts';
 import type { PostResponse } from '../../../types/interface';
+import { formattedDate } from '../../../utils/date-format';
+import './style.css';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,10 +35,21 @@ const PostDetailPage = () => {
   }
 
   return (
-    <>
-      <h1>{post.title}</h1>
-      <p>{post.content}</p>
-    </>
+    <div className='postdetail-container'>
+      <div className='postdetail-top'>
+        <p className='postcard-category'>{post.category.name}</p>
+        <h1 className='postdetail-title'>{post.title}</h1>
+        <div className='postcard-profile'>
+          <img src={post.author.profileImage} alt='사용자 프로필 이미지' />
+          <p className='postcard-profile-nickname'>{post.author.nickname}</p>
+          <p className='postcard-profile-createdAt'>{formattedDate(post.createdAt)}</p>
+        </div>
+      </div>
+      <div className='postdetail-bottom'>
+        <img className='postdetail-img' src={post.images[0].url} alt='게시글 이미지' />
+        <p className='postdetail-content'>{post.content}</p>
+      </div>
+    </div>
   );
 };
 

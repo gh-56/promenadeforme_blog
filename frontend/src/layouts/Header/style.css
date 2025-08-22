@@ -3,6 +3,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: 60px;
 }
 .header-logo {
   flex: 1;
@@ -140,11 +141,10 @@
   }
 
   .header-nav-list.open {
-    right: 0;
+    position: static;
     background: none;
     justify-content: flex-end;
-    height: auto;
-    width: auto;
+    height: 0;
   }
   .header-nav-list a,
   .header-nav-list span {

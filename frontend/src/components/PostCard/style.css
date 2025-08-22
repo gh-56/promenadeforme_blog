@@ -47,7 +47,7 @@
   margin: 0;
 }
 
-.postcard-main h1 {
+.postcard-title {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

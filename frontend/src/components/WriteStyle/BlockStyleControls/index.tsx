@@ -14,15 +14,13 @@ const BLOCK_TYPES = [
   { label: 'UL', style: 'unordered-list-item' },
   { label: 'OL', style: 'ordered-list-item' },
   { label: 'Code Block', style: 'code-block' },
+  { label: 'Image', style: 'image' },
 ];
 
 const BlockStyleControls = (props: BlockStyleControlsProps) => {
   const { editorState } = props;
   const selection = editorState.getSelection();
-  const blockType = editorState
-    .getCurrentContent()
-    .getBlockForKey(selection.getStartKey())
-    .getType();
+  const blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
 
   return (
     <div className='RichEditor-controls'>

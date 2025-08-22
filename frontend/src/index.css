@@ -22,3 +22,19 @@ select,
 textarea {
   font-family: 'ChosunGu', sans-serif;
 }
+
+/* 전체 스크롤바의 너비를 얇게 만듭니다. */
+::-webkit-scrollbar {
+  width: 8px; /* ✅ 스크롤바의 너비를 8px로 설정 */
+}
+
+/* 스크롤바가 움직이는 트랙(Track) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* 스크롤바를 움직이는 Thumb */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
