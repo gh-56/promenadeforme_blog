@@ -2,7 +2,7 @@ import './style.css';
 import { Link } from 'react-router-dom';
 import { CATEGORY_PATH, MAIN_PATH, POST_PATH, POST_WRITE_PATH, LOGIN_PATH, JOIN_PATH } from '../../constant';
 // import Input from '../../components/Input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUserStore } from '../../store';
 
 const Header = () => {
@@ -14,6 +14,17 @@ const Header = () => {
   // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   setSearchValue(e.target.value);
   // };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, [isMenuOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

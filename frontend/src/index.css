@@ -6,6 +6,16 @@ body {
   overflow-x: hidden;
 }
 
+body.no-scroll {
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  body.no-scroll {
+    overflow: visible;
+  }
+}
+
 input,
 button,
 select,
