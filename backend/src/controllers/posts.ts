@@ -8,9 +8,8 @@ import Image from '../schemas/image.js';
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
-    const { title, content, category, tags } = req.body;
+    const { title, content, category, images, tags } = req.body;
     const userId = req.user!.userId;
-    const images = req.files as Express.Multer.File[];
 
     if (!title || !content || !category) {
       return next(new CustomError('필수 입력 항목이 누락되었습니다.', 400));
@@ -19,8 +18,7 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
     const imageIds: Types.ObjectId[] = [];
     if (images && images.length > 0) {
       for (const image of images) {
-        const newImage = await saveImageFile(image, userId);
-        imageIds.push(newImage._id);
+        imageIds.push(image);
       }
     } else {
       let defaultImage;

@@ -1,9 +1,9 @@
 import api from './axios.js';
 import type { GetAllPostResponse, PostRequest, PostResponse } from '../types/interface';
 
-export const fetchCreatePost = async (formData: FormData) => {
+export const fetchCreatePost = async (post: PostRequest) => {
   const response = await api
-    .post<PostResponse>('/api/posts', formData)
+    .post<PostResponse>('/api/posts', post)
     .then((response) => response.data)
     .catch((error) => {
       throw error;
