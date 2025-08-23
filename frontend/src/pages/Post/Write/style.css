@@ -1,5 +1,5 @@
 .editor-content {
-  padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 .editor-container input {
@@ -56,6 +56,14 @@
     border: none;
     border-top: 1px solid gray;
     margin: 2rem 0;
+  }
+
+  p.is-editor-empty:first-child::before {
+    color: gray;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
   }
 }
 

@@ -1,12 +1,88 @@
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
+import Image from '@tiptap/extension-image';
+import Placeholder from '@tiptap/extension-placeholder';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import MenuBar from './MenuBar';
 import './style.css';
+import { useEffect, useRef, useState } from 'react';
+import type { CategoryResponse, PostRequest } from '../../../types/interface';
+import { fetchReadCategories } from '../../../api/categories';
+import { fetchCreatePost } from '../../../api/posts';
+import { useNavigate } from 'react-router-dom';
+import { fetchUploadImage } from '../../../api/images';
+import type { UploadImageResponse } from '../../../types/interface/image.interface';
 
 const PostWritePage = () => {
+  const [post, setPost] = useState<PostRequest>({
+    title: '',
+    content: '',
+    category: '',
+    images: [],
+  });
+  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const focusEditorRef = useRef<HTMLInputElement>(null);
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const categoryData = await fetchReadCategories();
+        setCategories(categoryData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getCategories();
+    focusEditorRef.current?.focus();
+  }, []);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const images = e.target.files;
+      const form = new FormData();
+
+      for (const image of images) {
+        form.append('images', image);
+
+        try {
+          const response: UploadImageResponse = await fetchUploadImage(form);
+
+          editor?.chain().focus().setImage({ src: response.url }).run();
+
+          setUploadedImageIds([...uploadedImageIds, response._id]);
+        } catch (error) {
+          console.error('이미지 업로드 실패: ', error);
+        }
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const rawContent = editor.getJSON();
+
+      const payload = {
+        ...post,
+        content: JSON.stringify(rawContent),
+        images: uploadedImageIds,
+      };
+
+      await fetchCreatePost(payload);
+
+      alert('글이 성공적으로 작성되었습니다.');
+      nav('/');
+    } catch (error) {
+      console.error(error);
+      alert('글 작성에 실패했습니다.');
+    }
+  };
+
   const editor = useEditor({
     extensions: [
       TextStyleKit,
@@ -17,45 +93,43 @@ const PostWritePage = () => {
         defaultAlignment: 'left',
       }),
       Highlight,
+      Image,
+      Placeholder.configure({
+        placeholder: '내용을 입력하세요.',
+      }),
     ],
-    content: `
-<h2>
-  Hi there,
-</h2>
-<p>
-  this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-</p>
-<ul>
-  <li>
-    That’s a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul>
-<p>
-  Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
-</p>
-<pre><code class="language-css">body {
-  display: none;
-}</code></pre>
-<p>
-  I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
-</p>
-<blockquote>
-  Wow, that’s amazing. Good work, boy! 👏
-  <br />
-  — Mom
-</blockquote>
-`,
+    content: '',
   });
 
   return (
-    <div className='editor-container'>
-      <input placeholder='제목을 입력하세요.' />
-      <MenuBar editor={editor} />
-      <EditorContent className='editor-content' editor={editor} />
-    </div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <div className='editor-container'>
+          <div>
+            <select id='category' onChange={(e) => setPost({ ...post, category: e.target.value })}>
+              <option value=''>카테고리를 선택해주세요.</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <input
+            placeholder='제목을 입력하세요.'
+            onChange={(e) => setPost({ ...post, title: e.target.value })}
+            ref={focusEditorRef}
+          />
+          <MenuBar editor={editor} />
+          <input type='file' name='images' hidden ref={fileInputRef} onChange={handleFileChange} multiple />
+          <button type='button' onClick={() => fileInputRef.current?.click()}>
+            이미지 업로드
+          </button>
+          <EditorContent className='editor-content' editor={editor} />
+        </div>
+        <button type='submit'>제출하기</button>
+      </form>
+    </>
   );
 };
 

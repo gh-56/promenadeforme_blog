@@ -10,6 +10,7 @@ import indexRouter from './routes/index.js';
 import postsRouter from './routes/posts.js';
 import categoriesRouter from './routes/categories.js';
 import usersRouter from './routes/users.js';
+import imagesRouter from './routes/images.js';
 import swaggerUi from 'swagger-ui-express';
 import yaml from 'yamljs';
 
@@ -28,6 +29,7 @@ app.use(
   })
 );
 app.use(express.static(path.join(rootPath, 'public')));
+app.use('/images', express.static(path.join(rootPath, 'uploads')));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +38,7 @@ app.use('/api', indexRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/images', imagesRouter);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
