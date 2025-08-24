@@ -73,6 +73,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
     const posts = await Post.find({})
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .populate('category', 'name')
       .populate('author', '-password -username -bio')
       .populate('images', 'url')
@@ -120,6 +121,7 @@ export const getPostByUser = async (req: Request, res: Response, next: NextFunct
   const userPosts = await Post.find({ author: userId })
     .skip(skip)
     .limit(limit)
+    .sort({ createdAt: -1 })
     .populate('category', 'name')
     .populate('author', '-password -username -bio')
     .populate('images', 'url')
@@ -229,6 +231,7 @@ export const getDraftPosts = async (req: Request, res: Response, next: NextFunct
   const userId = req.user!.userId;
 
   const draftPosts = await Post.find({ author: userId, status: 'draft' })
+    .sort({ createdAt: -1 })
     .populate('category', 'name')
     .populate('author', '-password -username -bio')
     .populate('images', 'url')
