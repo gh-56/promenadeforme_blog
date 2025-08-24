@@ -182,6 +182,7 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
         category,
         images: imageIds,
         tags,
+        updatedAt: new Date(Date.now())
       },
       { new: true, runValidators: true }
     )
