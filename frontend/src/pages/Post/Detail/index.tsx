@@ -9,6 +9,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { POST_EDIT_PATH } from '../../../constant';
 import { Link } from 'react-router-dom';
+import { useUserStore } from '../../../store';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -74,8 +75,14 @@ const PostDetailPage = () => {
   return (
     <div className='postdetail-container'>
       <div className='postdetail-top'>
-        <Link to={POST_EDIT_PATH(id as string)}>수정하기</Link>
-        <button onClick={handleDeletePost}>삭제하기</button>
+        {post.author._id === useUserStore.getState().user?._id ? (
+          <>
+            <Link to={POST_EDIT_PATH(id as string)}>수정하기</Link>
+            <button onClick={handleDeletePost}>삭제하기</button>
+          </>
+        ) : (
+          <></>
+        )}
         <p className='postcard-category'>{post.category.name}</p>
         <h1 className='postdetail-title'>{post.title}</h1>
         <div className='postcard-profile'>
