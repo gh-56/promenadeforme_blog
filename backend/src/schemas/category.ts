@@ -4,7 +4,6 @@ const categorySchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   author: {
     type: Schema.Types.ObjectId,
@@ -16,6 +15,9 @@ const categorySchema = new Schema({
     default: Date.now,
   },
 });
+
+//* name과 author 필드의 조합을 unique로 설정
+categorySchema.index({ name: 1, author: 1 }, { unique: true });
 
 const Category = model('Category', categorySchema);
 
