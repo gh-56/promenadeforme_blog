@@ -114,9 +114,8 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
 export const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { title, content, category, tags } = req.body;
+    const { title, content, category, images, tags } = req.body;
     const userId = req.user!.userId;
-    const images = req.files as Express.Multer.File[];
 
     if (!title || !content || !category) {
       return next(new CustomError('필수 입력 항목이 누락되었습니다.', 400));
@@ -135,8 +134,7 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
     const imageIds: Types.ObjectId[] = [];
     if (images && images.length > 0) {
       for (const image of images) {
-        const updatedImage = await saveImageFile(image, userId, true);
-        imageIds.push(updatedImage._id);
+        imageIds.push(image._id);
       }
     }
 

@@ -241,7 +241,7 @@ paths:
         description: 게시글 수정
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/PostRequest'
       responses:
