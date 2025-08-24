@@ -18,11 +18,13 @@ import {
   LOGIN_PATH,
   JOIN_PATH,
   POST_EDIT_PATH,
+  POST_MY_PATH,
 } from './constant';
 import ProtectedRoutes from './routes/ProtectedRoutes';
 import { useUserStore } from './store';
 import { useEffect } from 'react';
 import PostEditPage from './pages/Post/Edit';
+import MyPostReadPage from './pages/Post/Me';
 
 function App() {
   const { init, isInitialized } = useUserStore();
@@ -54,6 +56,7 @@ function App() {
 
         <Route element={<ProtectedRoutes />}>
           <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
+          <Route path={POST_MY_PATH()} element={<MyPostReadPage />} />
           <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
           <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
         </Route>

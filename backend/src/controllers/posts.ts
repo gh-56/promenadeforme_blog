@@ -111,6 +111,30 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+export const getPostByUser = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user!.userId;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  const userPosts = await Post.find({ author: userId })
+    .skip(skip)
+    .limit(limit)
+    .populate('category', 'name')
+    .populate('author', '-password -username -bio')
+    .populate('images', 'url')
+    .exec();
+
+  const totalPosts = await Post.countDocuments({ author: userId });
+
+  res.status(200).json({
+    posts: userPosts,
+    totalPosts,
+    currentPage: page,
+    totalPages: Math.ceil(totalPosts / limit),
+  });
+};
+
 export const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;

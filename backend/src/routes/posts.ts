@@ -1,5 +1,13 @@
 import { Router } from 'express';
-import { createPost, getPosts, getPostById, updatePost, deletePost, getDraftPosts } from '../controllers/posts.js';
+import {
+  createPost,
+  getPosts,
+  getPostById,
+  getPostByUser,
+  updatePost,
+  deletePost,
+  getDraftPosts,
+} from '../controllers/posts.js';
 import { authMiddleware } from '../middlewares/auth.js';
 
 const router = Router();
@@ -9,6 +17,9 @@ router.post('/', authMiddleware, createPost);
 
 // GET /api/posts
 router.get('/', getPosts);
+
+// GET /api/posts/me
+router.get('/me', authMiddleware, getPostByUser);
 
 // GET /api/posts/drafts
 router.get('/drafts', authMiddleware, getDraftPosts);

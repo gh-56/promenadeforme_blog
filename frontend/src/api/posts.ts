@@ -21,6 +21,16 @@ export const fetchReadAllPost = async (page: string) => {
   return response;
 };
 
+export const fetchReadMyPost = async (page: string) => {
+  const response = await api
+    .get<GetAllPostResponse>(`/api/posts/me?page=${page}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+  return response;
+};
+
 export const fetchReadAllDraftPost = async () => {
   const response = await api
     .get<PostResponse[]>('/api/posts/drafts')

@@ -1,6 +1,6 @@
 import './style.css';
 import { Link } from 'react-router-dom';
-import { CATEGORY_PATH, MAIN_PATH, POST_PATH, POST_WRITE_PATH, LOGIN_PATH, JOIN_PATH } from '../../constant';
+import { CATEGORY_PATH, MAIN_PATH, POST_PATH, POST_WRITE_PATH, LOGIN_PATH, JOIN_PATH, POST_MY_PATH } from '../../constant';
 // import Input from '../../components/Input';
 import { useEffect, useState } from 'react';
 import { useUserStore } from '../../store';
@@ -44,7 +44,10 @@ const Header = () => {
           {isLoggedIn ? (
             <>
               <Link to={POST_PATH()} onClick={toggleMenu}>
-                글 목록
+                전체 글 보기
+              </Link>
+              <Link to={POST_MY_PATH()} onClick={toggleMenu}>
+                내 글 보기
               </Link>
               <Link to={POST_WRITE_PATH()} onClick={toggleMenu}>
                 글 쓰기
