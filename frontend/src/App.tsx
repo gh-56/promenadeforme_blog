@@ -17,10 +17,12 @@ import {
   HEALTH_CHECK_PATH,
   LOGIN_PATH,
   JOIN_PATH,
+  POST_EDIT_PATH,
 } from './constant';
 import ProtectedRoutes from './routes/ProtectedRoutes';
 import { useUserStore } from './store';
 import { useEffect } from 'react';
+import PostEditPage from './pages/Post/Edit';
 
 function App() {
   const { init, isInitialized } = useUserStore();
@@ -53,6 +55,7 @@ function App() {
         <Route element={<ProtectedRoutes />}>
           <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
           <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
+          <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
         </Route>
 
         <Route path='*' element={<h1>페이지가 존재하지 않습니다.</h1>} />

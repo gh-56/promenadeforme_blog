@@ -136,6 +136,16 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
       for (const image of images) {
         imageIds.push(image._id);
       }
+    } else {
+      let defaultImage;
+      defaultImage = await Image.findOne({ url: 'http://localhost:4000/images/default-post-image.jpg' });
+      if (defaultImage) {
+        imageIds.push(defaultImage._id);
+      } else {
+        defaultImage = new Image({ author: userId });
+        await defaultImage.save();
+        imageIds.push(defaultImage._id);
+      }
     }
 
     const updatedPost = await Post.findByIdAndUpdate(

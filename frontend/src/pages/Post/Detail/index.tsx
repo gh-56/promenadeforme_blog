@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchReadPostById } from '../../../api/posts';
 import type { PostResponse } from '../../../types/interface';
@@ -7,11 +7,14 @@ import './style.css';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import { POST_EDIT_PATH } from '../../../constant';
+import { Link } from 'react-router-dom';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<PostResponse | null>();
   const [isLoading, setIsLoading] = useState(true);
+  const nav = useNavigate();
 
   const editor = useEditor({
     editable: false,
@@ -58,6 +61,10 @@ const PostDetailPage = () => {
   return (
     <div className='postdetail-container'>
       <div className='postdetail-top'>
+        <Link to={POST_EDIT_PATH(id as string)}>수정하기</Link>
+        <button type='button' onClick={() => nav(POST_EDIT_PATH(id as string))}>
+          수정하기
+        </button>
         <p className='postcard-category'>{post.category.name}</p>
         <h1 className='postdetail-title'>{post.title}</h1>
         <div className='postcard-profile'>
