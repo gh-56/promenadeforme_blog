@@ -27,7 +27,6 @@ const PostWritePage = () => {
   const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
   const [temporaryPosts, setTemporaryPosts] = useState<PostResponse[]>([]);
   const [isTemporary, setIsTemporary] = useState<boolean>(false);
-  const [temporaryPostById, setTemporaryPostById] = useState<PostResponse>();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
@@ -48,20 +47,25 @@ const PostWritePage = () => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const images = e.target.files;
+      const uploadedIds: string[] = [];
       const form = new FormData();
 
       for (const image of images) {
         form.append('images', image);
+      }
 
-        try {
-          const response: UploadImageResponse = await fetchUploadImage(form);
+      try {
+        const response: UploadImageResponse[] = await fetchUploadImage(form);
 
-          editor?.chain().focus().setImage({ src: response.url }).run();
-
-          setUploadedImageIds([...uploadedImageIds, response._id]);
-        } catch (error) {
-          console.error('이미지 업로드 실패: ', error);
+        for (const image of response) {
+          editor?.commands.enter();
+          editor?.chain().focus('end').setImage({ src: image.url }).run();
+          uploadedIds.push(image._id);
         }
+
+        setUploadedImageIds((prevIds) => [...prevIds, ...uploadedIds]);
+      } catch (error) {
+        console.error('이미지 업로드 실패: ', error);
       }
     }
   };
@@ -91,10 +95,8 @@ const PostWritePage = () => {
     if (selectedPost) {
       //* 2. 작성 중인 글이 지워진다는 안내를 한다.
       if (confirm('임시 저장 글을 불러오시겠습니까? 작성 중인 내용이 모두 지워집니다.')) {
-        //* 3. 찾은 게시글을 새로운 상태(state)로 저장하고 불러온 내용으로 교체한다.
-        setTemporaryPostById(selectedPost);
+        //* 3. 찾은 게시글의 불러온 내용으로 교체한다.
         setPost({ ...post, title: selectedPost.title, category: selectedPost.category._id });
-
         editor.commands.setContent(JSON.parse(selectedPost.content));
       }
     }
@@ -113,7 +115,7 @@ const PostWritePage = () => {
       await fetchCreatePost(payload);
 
       alert(post.status === 'published' ? '글이 성공적으로 작성되었습니다.' : '임시 저장되었습니다.');
-      nav('/');
+      nav(post.status === 'published' ? '/' : '');
     } catch (error) {
       console.error(error);
       alert('글 작성에 실패했습니다.');

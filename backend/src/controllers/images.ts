@@ -1,17 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
 import { saveImageFile } from '../services/file.service';
+import { Types } from 'mongoose';
+
+interface UploadedImageResponse {
+  _id: Types.ObjectId;
+  url: string;
+}
 
 export const uploadImage = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const file = req.file as Express.Multer.File;
+    const images = req.files as Express.Multer.File[];
     const userId = req.user!.userId;
+    const imageResponse: UploadedImageResponse[] = [];
 
-    const image = await saveImageFile(file, userId);
-
-    const imageResponse = {
-      _id: image._id,
-      url: image.url,
-    };
+    for (const image of images) {
+      const savedImage = await saveImageFile(image, userId);
+      imageResponse.push({ _id: savedImage._id, url: savedImage.url });
+    }
 
     res.status(201).json(imageResponse);
   } catch (error) {
