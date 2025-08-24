@@ -8,9 +8,9 @@ import StarterKit from '@tiptap/starter-kit';
 import MenuBar from './MenuBar';
 import './style.css';
 import { useEffect, useRef, useState } from 'react';
-import type { CategoryResponse, PostRequest } from '../../../types/interface';
+import type { CategoryResponse, PostRequest, PostResponse } from '../../../types/interface';
 import { fetchReadCategories } from '../../../api/categories';
-import { fetchCreatePost } from '../../../api/posts';
+import { fetchCreatePost, fetchReadAllDraftPost } from '../../../api/posts';
 import { useNavigate } from 'react-router-dom';
 import { fetchUploadImage } from '../../../api/images';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';
@@ -25,6 +25,9 @@ const PostWritePage = () => {
   });
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
+  const [temporaryPosts, setTemporaryPosts] = useState<PostResponse[]>([]);
+  const [isTemporary, setIsTemporary] = useState<boolean>(false);
+  const [temporaryPostById, setTemporaryPostById] = useState<PostResponse>();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
@@ -63,10 +66,39 @@ const PostWritePage = () => {
     }
   };
 
-  const handleTemporarySave = (status: 'draft' | 'published') => {
+  //* 게시글 상태를 저장한다. (임시저장 | 발행)
+  const handleSaveTemporary = (status: 'draft' | 'published') => {
     setPost({ ...post, status });
   };
 
+  //* 임시 저장 게시글을 모두 불러오는 함수
+  const handleReadTemporary = async () => {
+    //* 1. 임시 저장된 글을 불러온다. (draft 상태인 글만 불러오기)
+    const getTemporaryPosts: PostResponse[] = await fetchReadAllDraftPost();
+
+    //* 2. 임시 저장된 글 목록을 제목만 전부 보여준다.
+    if (temporaryPosts && getTemporaryPosts.length > 0) {
+      setIsTemporary(true);
+      setTemporaryPosts(getTemporaryPosts);
+    }
+  };
+
+  //* 선택된 임시 저장 글을 불러오는 함수
+  const handleSelectTemporary = (id: string) => {
+    //* 1. 선택한 게시글을 찾는다.
+    const selectedPost = temporaryPosts.find((post) => post._id === id);
+
+    if (selectedPost) {
+      //* 2. 작성 중인 글이 지워진다는 안내를 한다.
+      if (confirm('임시 저장 글을 불러오시겠습니까? 작성 중인 내용이 모두 지워집니다.')) {
+        //* 3. 찾은 게시글을 새로운 상태(state)로 저장하고 불러온 내용으로 교체한다.
+        setTemporaryPostById(selectedPost);
+        setPost({ ...post, title: selectedPost.title, category: selectedPost.category._id });
+
+        editor.commands.setContent(JSON.parse(selectedPost.content));
+      }
+    }
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -111,7 +143,7 @@ const PostWritePage = () => {
       <form onSubmit={handleSubmit}>
         <div className='editor-container'>
           <div>
-            <select id='category' onChange={(e) => setPost({ ...post, category: e.target.value })}>
+            <select id='category' onChange={(e) => setPost({ ...post, category: e.target.value })} value={post.category}>
               <option value=''>카테고리를 선택해주세요.</option>
               {categories.map((category) => (
                 <option key={category._id} value={category._id}>
@@ -124,6 +156,7 @@ const PostWritePage = () => {
             placeholder='제목을 입력하세요.'
             onChange={(e) => setPost({ ...post, title: e.target.value })}
             ref={focusEditorRef}
+            value={post.title}
           />
           <MenuBar editor={editor} />
           <input type='file' name='images' hidden ref={fileInputRef} onChange={handleFileChange} multiple />
@@ -132,12 +165,33 @@ const PostWritePage = () => {
           </button>
           <EditorContent className='editor-content' editor={editor} />
         </div>
-        <button type='submit' onClick={() => handleTemporarySave('published')}>
+        <button type='submit' onClick={() => handleSaveTemporary('published')}>
           제출하기
         </button>
-        <button type='submit' onClick={() => handleTemporarySave('draft')}>
+        <button type='submit' onClick={() => handleSaveTemporary('draft')}>
           임시저장
         </button>
+        <button type='button' onClick={handleReadTemporary}>
+          임시저장 목록
+        </button>
+        <div className='popup'>
+          {isTemporary ? (
+            <div>
+              {temporaryPosts.map((post) => {
+                return (
+                  <div key={post._id}>
+                    <div>{post.title}</div>
+                    <button type='button' onClick={() => handleSelectTemporary(post._id)}>
+                      불러오기
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </form>
     </>
   );

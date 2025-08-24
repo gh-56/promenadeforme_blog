@@ -192,3 +192,19 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getDraftPosts = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user!.userId;
+
+  const draftPosts = await Post.find({ author: userId, status: 'draft' })
+    .populate('category', 'name')
+    .populate('author', '-password -username -bio')
+    .populate('images', 'url')
+    .exec();
+
+  if (!draftPosts) {
+    return next(new CustomError('임시 저장 된 게시글이 없습니다.', 404));
+  }
+
+  res.status(200).json(draftPosts);
+};

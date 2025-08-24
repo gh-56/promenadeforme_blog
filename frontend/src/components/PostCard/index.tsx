@@ -3,7 +3,6 @@ import { POST_DETAIL_PATH } from '../../constant';
 import type { PostResponse } from '../../types/interface';
 import { formattedDate } from '../../utils/date-format.js';
 import './style.css';
-import { useEffect } from 'react';
 
 interface PostCardProps {
   post: PostResponse;

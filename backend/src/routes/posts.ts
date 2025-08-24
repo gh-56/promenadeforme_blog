@@ -1,11 +1,5 @@
 import { Router } from 'express';
-import {
-  createPost,
-  getPosts,
-  getPostById,
-  updatePost,
-  deletePost,
-} from '../controllers/posts.js';
+import { createPost, getPosts, getPostById, updatePost, deletePost, getDraftPosts } from '../controllers/posts.js';
 import { authMiddleware } from '../middlewares/auth.js';
 import { upload } from '../middlewares/multer.js';
 
@@ -16,6 +10,9 @@ router.post('/', authMiddleware, upload.array('images'), createPost);
 
 // GET /api/posts
 router.get('/', getPosts);
+
+// GET /api/posts/drafts
+router.get('/drafts', authMiddleware, getDraftPosts);
 
 // GET /api/posts:id
 router.get('/:id', getPostById);
