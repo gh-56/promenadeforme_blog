@@ -8,7 +8,7 @@ import Image from '../schemas/image.js';
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
-    const { title, content, category, images, tags } = req.body;
+    const { title, content, category, images, tags, status } = req.body;
     const userId = req.user!.userId;
 
     if (!title || !content || !category) {
@@ -40,6 +40,8 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
       images: imageIds,
       tags,
       author: userId,
+      status,
+      expireAt: status === 'draft' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : null,
     });
 
     // DB에 저장하기

@@ -32,6 +32,11 @@ const postSchema = new Schema({
       required: false,
     },
   ],
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft',
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -40,7 +45,15 @@ const postSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  expireAt: {
+    type: Date,
+  },
 });
+
+postSchema.index(
+  { expireAt: 1 },
+  { expireAfterSeconds: 0, partialFilterExpression: { status: 'draft', expireAt: { $type: 'date' } } }
+);
 
 const Post = model('Post', postSchema);
 

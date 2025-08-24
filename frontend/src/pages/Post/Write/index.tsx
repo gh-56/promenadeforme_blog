@@ -21,6 +21,7 @@ const PostWritePage = () => {
     content: '',
     category: '',
     images: [],
+    status: '',
   });
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
@@ -62,6 +63,10 @@ const PostWritePage = () => {
     }
   };
 
+  const handleTemporarySave = (status: 'draft' | 'published') => {
+    setPost({ ...post, status });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -75,7 +80,7 @@ const PostWritePage = () => {
 
       await fetchCreatePost(payload);
 
-      alert('글이 성공적으로 작성되었습니다.');
+      alert(post.status === 'published' ? '글이 성공적으로 작성되었습니다.' : '임시 저장되었습니다.');
       nav('/');
     } catch (error) {
       console.error(error);
@@ -127,7 +132,12 @@ const PostWritePage = () => {
           </button>
           <EditorContent className='editor-content' editor={editor} />
         </div>
-        <button type='submit'>제출하기</button>
+        <button type='submit' onClick={() => handleTemporarySave('published')}>
+          제출하기
+        </button>
+        <button type='submit' onClick={() => handleTemporarySave('draft')}>
+          임시저장
+        </button>
       </form>
     </>
   );

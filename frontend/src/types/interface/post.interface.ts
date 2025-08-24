@@ -26,6 +26,7 @@ export interface PostRequest {
   category: string;
   images?: string[];
   tags?: string[];
+  status?: string;
 }
 
 // 포스트 응답
@@ -37,8 +38,10 @@ export interface PostResponse {
   author: PostAuthorResponse;
   images: PostImageResponse[];
   tags?: string[];
+  status: string;
   createdAt: string;
   updatedAt: string;
+  expireAt: string;
 }
 
 // 전체 게시글 응답
