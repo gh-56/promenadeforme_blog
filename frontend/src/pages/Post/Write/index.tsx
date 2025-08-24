@@ -10,7 +10,7 @@ import './style.css';
 import { useEffect, useRef, useState } from 'react';
 import type { CategoryResponse, PostRequest, PostResponse } from '../../../types/interface';
 import { fetchReadCategories } from '../../../api/categories';
-import { fetchCreatePost, fetchReadAllDraftPost } from '../../../api/posts';
+import { fetchCreatePost, fetchDeletePost, fetchReadAllDraftPost } from '../../../api/posts';
 import { useNavigate } from 'react-router-dom';
 import { fetchUploadImage } from '../../../api/images';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';
@@ -101,6 +101,19 @@ const PostWritePage = () => {
       }
     }
   };
+
+  const handleDeleteTemporary = async (id: string) => {
+    if (confirm('임시 저장 글을 삭제하시겠습니까?')) {
+      try {
+        await fetchDeletePost(id);
+        nav('');
+        alert('임시 저장 글을 성공적으로 삭제하였습니다.');
+      } catch (error) {
+        console.error(error);
+        alert('임시 저장 글 삭제에 실패하였습니다.');
+      }
+    }
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -183,15 +196,22 @@ const PostWritePage = () => {
                 return (
                   <div key={post._id}>
                     <div>{post.title}</div>
+                    <div>{post.createdAt}</div>
+                    <div>{post.updatedAt}</div>
                     <button type='button' onClick={() => handleSelectTemporary(post._id)}>
                       불러오기
+                    </button>
+                    <button type='button' onClick={() => handleDeleteTemporary(post._id)}>
+                      삭제하기
                     </button>
                   </div>
                 );
               })}
             </div>
           ) : (
-            <></>
+            <>
+              <div>임시 저장된 글이 없습니다.</div>
+            </>
           )}
         </div>
       </form>
