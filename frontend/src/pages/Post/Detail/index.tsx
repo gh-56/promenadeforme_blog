@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { fetchReadPostById } from '../../../api/posts';
+import { fetchDeletePost, fetchReadPostById } from '../../../api/posts';
 import type { PostResponse } from '../../../types/interface';
 import { formattedDate } from '../../../utils/date-format';
 import './style.css';
@@ -58,13 +58,24 @@ const PostDetailPage = () => {
     return <div>게시글을 찾을 수 없습니다.</div>;
   }
 
+  const handleDeletePost = async () => {
+    if (id && confirm('게시글을 정말 삭제하시겠습니까?')) {
+      try {
+        await fetchDeletePost(id);
+        nav('/');
+        alert('게시글이 성공적으로 삭제되었습니다.');
+      } catch (error) {
+        console.error(error);
+        alert('게시글 삭제에 실패했습니다.');
+      }
+    }
+  };
+
   return (
     <div className='postdetail-container'>
       <div className='postdetail-top'>
         <Link to={POST_EDIT_PATH(id as string)}>수정하기</Link>
-        <button type='button' onClick={() => nav(POST_EDIT_PATH(id as string))}>
-          수정하기
-        </button>
+        <button onClick={handleDeletePost}>삭제하기</button>
         <p className='postcard-category'>{post.category.name}</p>
         <h1 className='postdetail-title'>{post.title}</h1>
         <div className='postcard-profile'>
