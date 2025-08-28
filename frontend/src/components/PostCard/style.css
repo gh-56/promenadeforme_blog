@@ -52,6 +52,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 1.5rem;
+  width: 360px;
 }
 
 .postcard-content {
@@ -65,6 +66,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   height: 60px;
+  width: 360px;
 }
 
 .postcard-profile {
