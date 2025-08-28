@@ -1,15 +1,15 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { fetchDeletePost, fetchReadPostById } from '../../../api/posts';
-import type { PostResponse } from '../../../types/interface';
-import { formattedDate } from '../../../utils/date-format';
-import './style.css';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import { POST_EDIT_PATH } from '../../../constant';
-import { Link } from 'react-router-dom';
-import { useUserStore } from '../../../store';
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { fetchDeletePost, fetchReadPostById } from "../../../api/posts";
+import type { PostResponse } from "../../../types/interface";
+import { formattedDate } from "../../../utils/date-format";
+import "./style.css";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import { POST_EDIT_PATH } from "../../../constant";
+import { Link } from "react-router-dom";
+import { useUserStore } from "../../../store";
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,7 +26,7 @@ const PostDetailPage = () => {
         allowBase64: true,
       }),
     ],
-    content: '',
+    content: "",
   });
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const PostDetailPage = () => {
 
           setPost(postData);
         } catch (error) {
-          console.error('게시글을 가져오는 데 실패했습니다.', error);
+          console.error("게시글을 가져오는 데 실패했습니다.", error);
         } finally {
           setIsLoading(false);
         }
@@ -60,38 +60,54 @@ const PostDetailPage = () => {
   }
 
   const handleDeletePost = async () => {
-    if (id && confirm('게시글을 정말 삭제하시겠습니까?')) {
+    if (id && confirm("게시글을 정말 삭제하시겠습니까?")) {
       try {
         await fetchDeletePost(id);
-        nav('/');
-        alert('게시글이 성공적으로 삭제되었습니다.');
+        nav("/");
+        alert("게시글이 성공적으로 삭제되었습니다.");
       } catch (error) {
         console.error(error);
-        alert('게시글 삭제에 실패했습니다.');
+        alert("게시글 삭제에 실패했습니다.");
       }
     }
   };
 
   return (
-    <div className='postdetail-container'>
-      <div className='postdetail-top'>
-        {post.author._id === useUserStore.getState().user?._id ? (
-          <>
-            <Link to={POST_EDIT_PATH(id as string)}>수정하기</Link>
-            <button onClick={handleDeletePost}>삭제하기</button>
-          </>
-        ) : (
-          <></>
-        )}
-        <p className='postcard-category'>{post.category.name}</p>
-        <h1 className='postdetail-title'>{post.title}</h1>
-        <div className='postcard-profile'>
-          <img src={post.author.profileImage} alt='사용자 프로필 이미지' />
-          <p className='postcard-profile-nickname'>{post.author.nickname}</p>
-          <p className='postcard-profile-createdAt'>{formattedDate(post.createdAt)}</p>
+    <div className="postdetail-container">
+      <div className="postdetail-top">
+        <h1 className="postdetail-title">{post.title}</h1>
+        <div className="postdetail-profile">
+          <img src={post.author.profileImage} alt="사용자 프로필 이미지" />
+          <p className="postcard-profile-nickname">{post.author.nickname}</p>
+          <p className="postcard-profile-createdAt">
+            {formattedDate(post.createdAt)}
+          </p>
+          <div className="postcard-category">{post.category.name}</div>
+
+          {post.author._id === useUserStore.getState().user?._id ? (
+            <div className="postdetail-private">
+              <Link
+                to={POST_EDIT_PATH(id as string)}
+                className="postdetail-edit-button"
+              >
+                수정
+              </Link>
+              <button
+                onClick={handleDeletePost}
+                type="button"
+                className="postdetail-delete-button"
+              >
+                삭제
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
-      <div className='postdetail-bottom'>{editor && <EditorContent editor={editor} />}</div>
+      <div className="postdetail-bottom">
+        {editor && <EditorContent editor={editor} />}
+      </div>
     </div>
   );
 };
