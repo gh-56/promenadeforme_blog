@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import type { UserProfile, UserResponse } from '../types/interface';
-import { fetchGetProfile, fetchLogout } from '../api/users';
+import { create } from "zustand";
+import type { UserProfile, UserResponse } from "../types/interface";
+import { fetchGetProfile, fetchLogout } from "../api/users";
 
 interface UserStore {
   isLoggedIn: boolean;
@@ -27,7 +27,7 @@ export const useUserStore = create<UserStore>((set) => ({
     try {
       await fetchLogout();
     } catch (error) {
-      console.error('로그아웃 실패: ', error);
+      console.error("로그아웃 실패: ", error);
     } finally {
       set({ isLoggedIn: false, user: null, accessToken: null });
     }
@@ -43,7 +43,12 @@ export const useUserStore = create<UserStore>((set) => ({
       const { user, accessToken } = response;
       set({ isLoggedIn: true, user, accessToken, isInitialized: true });
     } catch (error) {
-      set({ isLoggedIn: false, user: null, accessToken: null, isInitialized: true });
+      set({
+        isLoggedIn: false,
+        user: null,
+        accessToken: null,
+        isInitialized: true,
+      });
     }
   },
 }));
