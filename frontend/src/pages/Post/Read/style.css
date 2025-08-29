@@ -13,7 +13,9 @@
 .post-main {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 @media (min-width: 768px) {
