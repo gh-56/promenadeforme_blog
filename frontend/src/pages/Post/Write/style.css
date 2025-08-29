@@ -1,3 +1,8 @@
+.postwrite-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .editor-content {
   padding: 0.5rem 0;
 }
@@ -10,6 +15,16 @@
   font-size: 2rem;
   outline: none;
   margin: 2rem 0;
+}
+
+#category {
+  border: none;
+  padding: 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.postwrite-submit-buttons {
+  display: flex;
 }
 
 .tiptap {
@@ -27,7 +42,7 @@
     background: black;
     border-radius: 1rem;
     color: white;
-    font-family: 'JetBrainsMono', monospace;
+    font-family: "JetBrainsMono", monospace;
     margin: 1.5rem 0;
     padding: 1.75rem 1.25rem;
 
