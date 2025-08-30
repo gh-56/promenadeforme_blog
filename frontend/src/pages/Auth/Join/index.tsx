@@ -25,7 +25,7 @@ const JoinPage = () => {
   });
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState(
-    import.meta.env.VITE_API_URL,
+    `${import.meta.env.VITE_API_URL}/images/default-profile.png`,
   );
 
   const fileInputRef = useRef<HTMLInputElement>(null);

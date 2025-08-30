@@ -9,7 +9,8 @@ const imageSchema = new Schema({
   url: {
     type: String,
     require: true,
-    default: 'http://localhost:4000/images/default-post-image.jpg'
+    default: `${process.env.SERVER_URL}:${process.env.PORT}/images/default-post-image.jpg`,
+    // default: 'http://localhost:4000/images/default-post-image.jpg'
   },
   referenceCount: {
     type: Number,

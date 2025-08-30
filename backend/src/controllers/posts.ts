@@ -5,7 +5,11 @@ import { deleteImageFile, saveImageFile } from '../services/file.service.js';
 import CustomError from '../utils/customError.js';
 import Image from '../schemas/image.js';
 
-export const createPost = async (req: Request, res: Response, next: NextFunction) => {
+export const createPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     // 클라이언트에서 넘어온 정보들을 req.body에서 가져오기
     const { title, content, category, images, tags, status } = req.body;
@@ -22,7 +26,9 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
       }
     } else {
       let defaultImage;
-      defaultImage = await Image.findOne({ url: 'http://localhost:4000/images/default-post-image.jpg' });
+      defaultImage = await Image.findOne({
+        url: 'http://localhost:4000/images/default-post-image.jpg',
+      });
       if (defaultImage) {
         imageIds.push(defaultImage._id);
       } else {
@@ -41,7 +47,10 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
       tags,
       author: userId,
       status,
-      expireAt: status === 'draft' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : null,
+      expireAt:
+        status === 'draft'
+          ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          : null,
     });
 
     // DB에 저장하기
@@ -64,7 +73,11 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = 10;
@@ -92,7 +105,11 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export const getPostById = async (req: Request, res: Response, next: NextFunction) => {
+export const getPostById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
 
@@ -112,7 +129,11 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const getPostByUser = async (req: Request, res: Response, next: NextFunction) => {
+export const getPostByUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const userId = req.user!.userId;
   const page = parseInt(req.query.page as string) || 1;
   const limit = 10;
@@ -137,7 +158,11 @@ export const getPostByUser = async (req: Request, res: Response, next: NextFunct
   });
 };
 
-export const updatePost = async (req: Request, res: Response, next: NextFunction) => {
+export const updatePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const { title, content, category, images, tags } = req.body;
@@ -164,7 +189,9 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
       }
     } else {
       let defaultImage;
-      defaultImage = await Image.findOne({ url: 'http://localhost:4000/images/default-post-image.jpg' });
+      defaultImage = await Image.findOne({
+        url: 'http://localhost:4000/images/default-post-image.jpg',
+      });
       if (defaultImage) {
         imageIds.push(defaultImage._id);
       } else {
@@ -182,9 +209,9 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
         category,
         images: imageIds,
         tags,
-        updatedAt: new Date(Date.now())
+        updatedAt: new Date(Date.now()),
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
       .populate('category', 'name')
       .populate('author', '-password -username -bio')
@@ -197,7 +224,11 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+export const deletePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const userId = req.user!.userId;
@@ -228,7 +259,11 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getDraftPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getDraftPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const userId = req.user!.userId;
 
   const draftPosts = await Post.find({ author: userId, status: 'draft' })
