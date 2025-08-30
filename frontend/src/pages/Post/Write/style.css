@@ -3,6 +3,26 @@
   justify-content: center;
   align-items: center;
 }
+
+.postwrite-iscategory {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+
+  p {
+    margin: 0;
+    color: red;
+    font-size: 0.725rem;
+  }
+
+  a {
+    text-decoration: underline;
+    font-size: 0.725rem;
+    color: black;
+  }
+}
+
 .editor-content {
   padding: 0.5rem 0;
 }
@@ -25,9 +45,11 @@
 
 .postwrite-submit-buttons {
   display: flex;
+  justify-content: flex-end;
 }
 
 .tiptap {
+  max-width: 820px;
   margin-top: 2rem;
 
   code {
@@ -42,7 +64,7 @@
     background: black;
     border-radius: 1rem;
     color: white;
-    font-family: "JetBrainsMono", monospace;
+    font-family: 'JetBrainsMono', monospace;
     margin: 1.5rem 0;
     padding: 1.75rem 1.25rem;
 

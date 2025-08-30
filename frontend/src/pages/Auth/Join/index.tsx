@@ -13,7 +13,9 @@ import { Link } from 'react-router-dom';
 // TODO: 필수 입력, 선택 입력 알기 쉽게 구분하기
 const JoinPage = () => {
   const nav = useNavigate();
-  const [formData, setFormData] = useState<RegisterRequest & { password_check: string }>({
+  const [formData, setFormData] = useState<
+    RegisterRequest & { password_check: string }
+  >({
     username: '',
     email: '',
     password: '',
@@ -22,7 +24,9 @@ const JoinPage = () => {
     bio: '',
   });
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState('http://localhost:4000/images/default-profile.png');
+  const [previewImage, setPreviewImage] = useState(
+    import.meta.env.VITE_API_URL,
+  );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -82,7 +86,11 @@ const JoinPage = () => {
       <form className='join-form' onSubmit={handleJoinSubmit}>
         <div>
           <div onClick={handleClickImage} style={{ cursor: 'pointer' }}>
-            <img src={previewImage} alt='프로필 미리보기' style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
+            <img
+              src={previewImage}
+              alt='프로필 미리보기'
+              style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+            />
           </div>
           <input
             id='profileImage'
