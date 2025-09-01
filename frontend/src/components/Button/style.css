@@ -28,3 +28,22 @@
 .button-add-image:hover {
   background-color: #c0a0ff;
 }
+
+.category-button {
+  padding: 0.3rem;
+  font-size: 0.4rem;
+}
+
+@media (min-width: 500px) {
+  .category-button {
+    padding: 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .category-button {
+    padding: 0.7rem;
+    font-size: 0.8rem;
+  }
+}

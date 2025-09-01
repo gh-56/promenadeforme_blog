@@ -13,3 +13,22 @@
   width: 100%;
   padding: 15px;
 }
+
+.category-input {
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .category-input {
+    flex: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-input {
+    flex: 3;
+  }
+}
