@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# 소스코드는 바인드 마운트로 가져옴, COPY 안 해도 됨
+COPY . .
 
 EXPOSE 4000
 

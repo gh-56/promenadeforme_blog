@@ -1,7 +1,7 @@
-import axios from "axios";
-import { useUserStore } from "../store/index";
-import { fetchAccessToken } from "./users";
-import type { RefreshResponse } from "../types/interface";
+import axios from 'axios';
+import { useUserStore } from '../store/index';
+import { fetchAccessToken } from './users';
+import type { RefreshResponse } from '../types/interface';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -12,7 +12,7 @@ api.interceptors.request.use(
   (config) => {
     const accessToken = useUserStore.getState().accessToken;
     if (accessToken && config.headers) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return config;
   },
@@ -27,8 +27,8 @@ api.interceptors.response.use(
   },
   async (error) => {
     if (
-      error.config.url === "/api/users/login" ||
-      error.config.url === "/api/users/refresh"
+      error.config.url === '/api/users/login' ||
+      error.config.url === '/api/users/refresh'
     ) {
       return Promise.reject(error);
     }
@@ -40,7 +40,7 @@ api.interceptors.response.use(
         const newAccessToken = newAccessTokenResponse.accessToken;
 
         useUserStore.getState().setAccessToken(newAccessToken);
-        error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        error.config.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
         return api(error.config);
       } catch (error) {
