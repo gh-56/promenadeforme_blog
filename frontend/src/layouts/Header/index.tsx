@@ -8,6 +8,7 @@ import {
   LOGIN_PATH,
   JOIN_PATH,
   POST_MY_PATH,
+  MYPAGE_PATH,
 } from '../../constant';
 // import Input from '../../components/Input';
 import { useEffect, useState } from 'react';
@@ -89,7 +90,7 @@ const Header = () => {
                   </div>
 
                   <div className='detail-links'>
-                    <Link to={CATEGORY_PATH()} onClick={toggleMenu}>
+                    <Link to={MYPAGE_PATH()} onClick={toggleMenu}>
                       마이페이지
                     </Link>
                     <span
