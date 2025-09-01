@@ -10,12 +10,14 @@
 .button-group-others {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .button-group button {
   border: none;
   border-radius: 1rem;
   padding: 0.5rem;
+  font-size: 0.5rem;
 }
 
 .button-group button:hover {
@@ -25,4 +27,16 @@
 .is-active {
   background-color: #c0a0ff;
   /* color: white; */
+}
+
+@media (min-width: 768px) {
+  .button-group button {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .button-group button {
+    font-size: 1rem;
+  }
 }
