@@ -74,7 +74,7 @@ const Header = () => {
               <div className='profile-box' onClick={toggleProfile}>
                 <div className='profile-info'>
                   <div className='profile-image-box'>
-                    <img src={user?.profileImage} alt='프로필 이미지' />
+                    <img src={user?.profileImage.url} alt='프로필 이미지' />
                   </div>
                   <div className='profile-nickname'>{user?.nickname}</div>
                 </div>
@@ -84,14 +84,14 @@ const Header = () => {
                 >
                   <div className='detail-header'>
                     <div className='detail-image-box'>
-                      <img src={user?.profileImage} alt='프로필 이미지' />
+                      <img src={user?.profileImage.url} alt='프로필 이미지' />
                     </div>
                     <div className='detail-nickname'>{user?.nickname}</div>
                   </div>
 
                   <div className='detail-links'>
                     <Link to={MYPAGE_PATH()} onClick={toggleMenu}>
-                      마이페이지
+                      설정
                     </Link>
                     <span
                       onClick={() => {

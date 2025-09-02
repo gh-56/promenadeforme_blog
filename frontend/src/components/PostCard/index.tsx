@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
-import { POST_DETAIL_PATH } from "../../constant";
-import type { PostResponse } from "../../types/interface";
-import { formattedDate } from "../../utils/date-format.js";
-import "./style.css";
+import { Link } from 'react-router-dom';
+import { POST_DETAIL_PATH } from '../../constant';
+import type { PostResponse } from '../../types/interface';
+import { formattedDate } from '../../utils/date-format.js';
+import './style.css';
 
 interface PostCardProps {
   post: PostResponse;
@@ -10,7 +10,7 @@ interface PostCardProps {
 
 // 블록 내부의 텍스트 아이템 타입
 interface TextItem {
-  type: "text";
+  type: 'text';
   text: string;
 }
 
@@ -31,17 +31,17 @@ interface ContentBlock {
 }
 
 const PostCard = ({ post }: PostCardProps) => {
-  let textArray = "";
-  let imageUrl = "";
+  let textArray = '';
+  let imageUrl = '';
 
-  if (post.content && post.status === "published") {
+  if (post.content && post.status === 'published') {
     imageUrl = post.images[0].url;
     const parsedContent = JSON.parse(post.content);
     textArray = parsedContent.content.reduce(
       (acc: string[], block: ContentBlock) => {
         if (block.content && block.content.length > 0) {
           block.content.forEach((item: ContentItem) => {
-            if (item.type === "text" && item.text) {
+            if (item.type === 'text' && item.text) {
               acc.push(item.text);
             }
           });
@@ -54,28 +54,28 @@ const PostCard = ({ post }: PostCardProps) => {
 
   return (
     <>
-      {post.status === "published" ? (
-        <Link to={POST_DETAIL_PATH(post._id)} className="postcard-link">
-          <div className="postcard-container">
-            <div className="postcard-thumbnail">
-              <img src={imageUrl} alt="게시글 썸네일 이미지" />
+      {post.status === 'published' ? (
+        <Link to={POST_DETAIL_PATH(post._id)} className='postcard-link'>
+          <div className='postcard-container'>
+            <div className='postcard-thumbnail'>
+              <img src={imageUrl} alt='게시글 썸네일 이미지' />
             </div>
-            <div className="postcard-main">
-              <p className="postcard-category">{post.category.name}</p>
-              <h1 className="postcard-title">{post.title}</h1>
-              <div className="postcard-content">
+            <div className='postcard-main'>
+              <p className='postcard-category'>{post.category.name}</p>
+              <h1 className='postcard-title'>{post.title}</h1>
+              <div className='postcard-content'>
                 {textArray}
                 {/* <EditorContent editor={editor} /> */}
               </div>
-              <div className="postcard-profile">
+              <div className='postcard-profile'>
                 <img
-                  src={post.author.profileImage}
-                  alt="사용자 프로필 이미지"
-                ></img>
-                <p className="postcard-profile-nickname">
+                  src={post.author.profileImage.url}
+                  alt='사용자 프로필 이미지'
+                />
+                <p className='postcard-profile-nickname'>
                   {post.author.nickname}
                 </p>
-                <p className="postcard-profile-createdAt">
+                <p className='postcard-profile-createdAt'>
                   {formattedDate(post.createdAt)}
                 </p>
               </div>

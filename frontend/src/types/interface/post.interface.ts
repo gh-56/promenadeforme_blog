@@ -2,7 +2,10 @@
 export interface PostAuthorResponse {
   _id: string;
   nickname: string;
-  profileImage: string;
+  profileImage: {
+    _id: string;
+    url: string;
+  };
   createdAt: string;
   updatedAt: string;
 }

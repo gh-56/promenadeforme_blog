@@ -39,8 +39,12 @@ export interface RefreshResponse {
 // 상태 관리용 프로필 정보 응답
 export interface UserProfile {
   _id: string;
+  username: string;
   nickname: string;
   email: string;
-  profileImage: string;
+  profileImage: {
+    _id: string;
+    url: string;
+  };
   bio: string;
 }

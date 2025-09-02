@@ -7,13 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import { LOGIN_PATH, MAIN_PATH } from '../../../constant';
 import './style.css';
 import { Link } from 'react-router-dom';
+import { fetchProfileUploadImage } from '../../../api/images';
+import type { UploadImageResponse } from '../../../types/interface/image.interface';
 
 // TODO: alert 대신 인라인이나 토스트 스타일로 변경하기
 // TODO: 프로필 이미지 우측 하단에 카메라 아이콘 css 연출하기
 // TODO: 필수 입력, 선택 입력 알기 쉽게 구분하기
 const JoinPage = () => {
   const nav = useNavigate();
-  const [formData, setFormData] = useState<
+  const [registerData, setRegisterData] = useState<
     RegisterRequest & { password_check: string }
   >({
     username: '',
@@ -21,9 +23,9 @@ const JoinPage = () => {
     password: '',
     password_check: '',
     nickname: '',
+    profileImage: '',
     bio: '',
   });
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState(
     `${import.meta.env.VITE_API_URL}/images/default-profile.png`,
   );
@@ -32,44 +34,39 @@ const JoinPage = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setRegisterData({
+      ...registerData,
       [name]: value,
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      setProfileImageFile(file);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] as File;
+    const form = new FormData();
+    try {
+      form.append('profileImage', file);
+      const profileImageFile: UploadImageResponse =
+        await fetchProfileUploadImage(form);
+      setRegisterData({ ...registerData, profileImage: profileImageFile._id });
+      setPreviewImage(profileImageFile.url);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const handleJoinSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (formData.password !== formData.password_check) {
+      if (registerData.password !== registerData.password_check) {
         alert('비밀번호와 재확인 비밀번호가 일치하지 않습니다.');
         return;
       }
-      const form = new FormData();
-      form.append('username', formData.username);
-      form.append('email', formData.email);
-      form.append('nickname', formData.nickname);
-      form.append('password', formData.password);
-      form.append('bio', formData.bio || '');
-      if (profileImageFile) {
-        form.append('profileImage', profileImageFile);
-      }
-      await fetchCreateUser(form);
+
+      await fetchCreateUser(registerData);
       alert('회원가입이 완료되었습니다.');
       nav(LOGIN_PATH());
-    } catch (error) {
+    } catch (error: any) {
+      alert(error?.response?.data?.message);
       console.error(error);
     }
   };
@@ -107,7 +104,7 @@ const JoinPage = () => {
             type='text'
             id='username'
             name='username'
-            value={formData.username}
+            value={registerData.username}
             placeholder='이름'
             onChange={handleChange}
           />
@@ -118,7 +115,7 @@ const JoinPage = () => {
             type='email'
             id='email'
             name='email'
-            value={formData.email}
+            value={registerData.email}
             placeholder='이메일'
             onChange={handleChange}
           />
@@ -129,7 +126,7 @@ const JoinPage = () => {
             type='password'
             id='password'
             name='password'
-            value={formData.password}
+            value={registerData.password}
             placeholder='비밀번호'
             onChange={handleChange}
           />
@@ -140,7 +137,7 @@ const JoinPage = () => {
             type='password'
             id='password_check'
             name='password_check'
-            value={formData.password_check}
+            value={registerData.password_check}
             placeholder='비밀번호 확인'
             onChange={handleChange}
           />
@@ -151,7 +148,7 @@ const JoinPage = () => {
             type='text'
             id='nickname'
             name='nickname'
-            value={formData.nickname}
+            value={registerData.nickname}
             placeholder='닉네임'
             onChange={handleChange}
           />
@@ -163,7 +160,7 @@ const JoinPage = () => {
             type='text'
             id='bio'
             name='bio'
-            value={formData.bio || ''}
+            value={registerData.bio || ''}
             placeholder='상태메세지'
             onChange={handleChange}
           />

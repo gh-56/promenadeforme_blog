@@ -21,6 +21,10 @@
   flex: 1;
 }
 
+.edit-profile-input {
+  width: 100%;
+}
+
 @media (min-width: 768px) {
   .category-input {
     flex: 2;

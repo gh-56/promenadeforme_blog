@@ -1,10 +1,16 @@
 import api from './axios.js';
 import axios from 'axios';
-import type { LoginRequest, UserResponse, RefreshResponse, RegisterResponse } from '../types/interface/';
+import type {
+  LoginRequest,
+  UserResponse,
+  RefreshResponse,
+  RegisterResponse,
+  RegisterRequest,
+} from '../types/interface/';
 
-export const fetchCreateUser = async (formData: FormData) => {
+export const fetchCreateUser = async (registerRequest: RegisterRequest) => {
   const response = await api
-    .post<RegisterResponse>('/api/users/join', formData)
+    .post<RegisterResponse>('/api/users/join', registerRequest)
     .then((response) => response.data)
     .catch((error) => {
       throw error;
@@ -45,6 +51,18 @@ export const fetchAccessToken = async () => {
 export const fetchGetProfile = async () => {
   const response = await axios
     .get<UserResponse>('/api/users/me')
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+  return response;
+};
+
+export const fetchUpdateUser = async (
+  request: RegisterRequest & { newPassword: string },
+) => {
+  const response = await api
+    .patch<RegisterResponse>('/api/users/me', request)
     .then((response) => response.data)
     .catch((error) => {
       throw error;
