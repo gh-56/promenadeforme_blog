@@ -1,7 +1,9 @@
 .postwrite-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 2rem;
 }
 
 .postwrite-iscategory {
@@ -111,4 +113,14 @@
 
 .ProseMirror-focused {
   outline: none;
+}
+
+.temporary-post h3 {
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .postwrite-container {
+    flex-direction: row;
+  }
 }

@@ -96,7 +96,7 @@ const PostWritePage = () => {
 
     //* 2. 임시 저장된 글 목록을 제목만 전부 보여준다.
     if (temporaryPosts && getTemporaryPosts.length > 0) {
-      setIsTemporary(true);
+      setIsTemporary(!isTemporary);
       setTemporaryPosts(getTemporaryPosts);
     }
   };
@@ -245,46 +245,48 @@ const PostWritePage = () => {
           >
             임시저장
           </Button>
+
           <Button
             type='button'
-            className='button-list'
+            className='button-list open-modal-button'
             onClick={handleReadTemporary}
           >
             임시저장 목록
           </Button>
         </div>
-        <div className='popup'>
-          {isTemporary ? (
-            <div>
-              {temporaryPosts.map((post) => {
-                return (
-                  <div key={post._id}>
-                    <div>{post.title}</div>
-                    <div>{post.createdAt}</div>
-                    <div>{post.updatedAt}</div>
-                    <button
-                      type='button'
-                      onClick={() => handleSelectTemporary(post._id)}
-                    >
-                      불러오기
-                    </button>
-                    <button
-                      type='button'
-                      onClick={() => handleDeleteTemporary(post._id)}
-                    >
-                      삭제하기
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <>
-              <div>임시 저장된 글이 없습니다.</div>
-            </>
-          )}
-        </div>
       </form>
+
+      <div className='temporary-container'>
+        {isTemporary ? (
+          <div>
+            {temporaryPosts.map((post) => {
+              return (
+                <div key={post._id} className='temporary-post'>
+                  <h3>{post.title}</h3>
+                  <div>{new Date(post.createdAt).toLocaleDateString()}</div>
+                  <div>{new Date(post.updatedAt).toLocaleDateString()}</div>
+                  <Button
+                    type='button'
+                    onClick={() => handleSelectTemporary(post._id)}
+                    className='temporary-button'
+                  >
+                    불러오기
+                  </Button>
+                  <Button
+                    type='button'
+                    onClick={() => handleDeleteTemporary(post._id)}
+                    className='temporary-button delete'
+                  >
+                    삭제하기
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 };

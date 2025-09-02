@@ -34,6 +34,14 @@
   font-size: 0.4rem;
 }
 
+.temporary-button {
+  padding: 0.4rem;
+  font-size: 0.7rem;
+}
+.delete {
+  background-color: red;
+}
+
 @media (min-width: 500px) {
   .category-button {
     padding: 0.6rem;
