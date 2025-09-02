@@ -16,7 +16,7 @@ services:
     volumes:
       - public:/app/public
       - uploads:/app/uploads
-      - ./backend/src:/app/src
+      - ./backend:/app
       - /app/node_modules
     depends_on:
       - mongodb
