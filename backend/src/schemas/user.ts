@@ -20,8 +20,9 @@ const userSchema = new Schema({
     required: true,
   },
   profileImage: {
-    type: String,
-    default: 'http://localhost:4000/images/default-profile.png',
+    type: Schema.Types.ObjectId,
+    ref: 'Image',
+    required: false,
   },
   bio: {
     type: String,

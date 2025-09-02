@@ -1,7 +1,14 @@
 import { Router } from 'express';
-import { createUser, login, logout, getUserProfile, refresh } from '../controllers/users.js';
+import {
+  createUser,
+  login,
+  logout,
+  getUserProfile,
+  refresh,
+  updateUser,
+} from '../controllers/users.js';
 import multer from 'multer';
-import { refreshMiddleware } from '../middlewares/auth.js';
+import { authMiddleware, refreshMiddleware } from '../middlewares/auth.js';
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -21,5 +28,8 @@ router.post('/logout', logout);
 
 // GET /api/users/me
 router.get('/me', refreshMiddleware, getUserProfile);
+
+// PATCH /api/users/me
+router.patch('/me', authMiddleware, updateUser);
 
 export default router;

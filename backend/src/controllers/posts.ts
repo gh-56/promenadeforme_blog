@@ -58,7 +58,11 @@ export const createPost = async (
 
     const populatedPost = await Post.findById(newPost._id)
       .populate('category', 'name')
-      .populate('author', '-password -username -bio')
+      .populate({
+        path: 'author',
+        select: '-password -username -bio',
+        populate: { path: 'profileImage', select: 'url' },
+      })
       .populate('images', 'url')
       .exec();
 
@@ -88,7 +92,11 @@ export const getPosts = async (
       .limit(limit)
       .sort({ createdAt: -1 })
       .populate('category', 'name')
-      .populate('author', '-password -username -bio')
+      .populate({
+        path: 'author',
+        select: '-password -username -bio',
+        populate: { path: 'profileImage', select: 'url' },
+      })
       .populate('images', 'url')
       .exec();
 
@@ -115,7 +123,11 @@ export const getPostById = async (
 
     const post = await Post.findById(id)
       .populate('category', 'name')
-      .populate('author', '-password -username -bio')
+      .populate({
+        path: 'author',
+        select: '-password -username -bio',
+        populate: { path: 'profileImage', select: 'url' },
+      })
       .populate('images', 'url')
       .exec();
 
@@ -144,7 +156,11 @@ export const getPostByUser = async (
     .limit(limit)
     .sort({ createdAt: -1 })
     .populate('category', 'name')
-    .populate('author', '-password -username -bio')
+    .populate({
+      path: 'author',
+      select: '-password -username -bio',
+      populate: { path: 'profileImage', select: 'url' },
+    })
     .populate('images', 'url')
     .exec();
 
@@ -214,7 +230,11 @@ export const updatePost = async (
       { new: true, runValidators: true },
     )
       .populate('category', 'name')
-      .populate('author', '-password -username -bio')
+      .populate({
+        path: 'author',
+        select: '-password -username -bio',
+        populate: { path: 'profileImage', select: 'url' },
+      })
       .populate('images', 'url')
       .exec();
 
@@ -269,7 +289,11 @@ export const getDraftPosts = async (
   const draftPosts = await Post.find({ author: userId, status: 'draft' })
     .sort({ createdAt: -1 })
     .populate('category', 'name')
-    .populate('author', '-password -username -bio')
+    .populate({
+      path: 'author',
+      select: '-password -username -bio',
+      populate: { path: 'profileImage', select: 'url' },
+    })
     .populate('images', 'url')
     .exec();
 
