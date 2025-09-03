@@ -7,10 +7,8 @@ import {
   refresh,
   updateUser,
 } from '../controllers/users.js';
-import multer from 'multer';
 import { authMiddleware, refreshMiddleware } from '../middlewares/auth.js';
-
-const upload = multer({ dest: 'uploads/' });
+import { upload } from '../middlewares/multer.js';
 
 const router = Router();
 

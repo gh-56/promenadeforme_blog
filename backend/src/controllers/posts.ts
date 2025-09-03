@@ -27,7 +27,8 @@ export const createPost = async (
     } else {
       let defaultImage;
       defaultImage = await Image.findOne({
-        url: 'http://localhost:4000/images/default-post-image.jpg',
+        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+        // url: 'http://localhost:4000/images/default-post-image.jpg',
       });
       if (defaultImage) {
         imageIds.push(defaultImage._id);
@@ -206,7 +207,8 @@ export const updatePost = async (
     } else {
       let defaultImage;
       defaultImage = await Image.findOne({
-        url: 'http://localhost:4000/images/default-post-image.jpg',
+        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+        // url: 'http://localhost:4000/images/default-post-image.jpg',
       });
       if (defaultImage) {
         imageIds.push(defaultImage._id);

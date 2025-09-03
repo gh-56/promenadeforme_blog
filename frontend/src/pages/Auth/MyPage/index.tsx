@@ -23,7 +23,7 @@ const MyPage = () => {
     bio: '',
   });
   const [previewImage, setPreviewImage] = useState(
-    `${import.meta.env.VITE_API_URL}/images/default-profile.png`,
+    `${import.meta.env.VITE_GCLOUD_STORAGE_IMAGE_URL}/${import.meta.env.VITE_GCLOUD_STORAGE_BUCKET}/default-profile.png`,
   );
   const nav = useNavigate();
   const { init } = useUserStore();
@@ -37,7 +37,7 @@ const MyPage = () => {
       nickname: user.nickname,
       bio: user.bio,
     });
-    setPreviewImage(user.profileImage.url);
+    setPreviewImage(user.profileImage?.url);
   }, []);
 
   const fileInputRef = useRef<HTMLInputElement>(null);

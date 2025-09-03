@@ -27,7 +27,7 @@ const JoinPage = () => {
     bio: '',
   });
   const [previewImage, setPreviewImage] = useState(
-    `${import.meta.env.VITE_API_URL}/images/default-profile.png`,
+    `${import.meta.env.VITE_GCLOUD_STORAGE_IMAGE_URL}/${import.meta.env.VITE_GCLOUD_STORAGE_BUCKET}/default-profile.png`,
   );
 
   const fileInputRef = useRef<HTMLInputElement>(null);

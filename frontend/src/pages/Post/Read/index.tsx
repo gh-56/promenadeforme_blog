@@ -37,7 +37,7 @@ const PostReadPage = () => {
     <div className='post-container'>
       <h1 className='post-title'>전체 글 보기</h1>
       <div className='post-main'>
-        {postsData.posts.length !== 0 ? (
+        {postsData.posts ? (
           postsData.posts.map((post) => {
             return <PostCard key={post._id} post={post} />;
           })

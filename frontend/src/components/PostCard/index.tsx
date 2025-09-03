@@ -69,7 +69,7 @@ const PostCard = ({ post }: PostCardProps) => {
               </div>
               <div className='postcard-profile'>
                 <img
-                  src={post.author.profileImage.url}
+                  src={post.author.profileImage?.url}
                   alt='사용자 프로필 이미지'
                 />
                 <p className='postcard-profile-nickname'>

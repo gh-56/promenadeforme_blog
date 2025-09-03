@@ -3,6 +3,11 @@ import path from 'path';
 import fs from 'fs/promises';
 import Image from '../schemas/image';
 import { Types } from 'mongoose';
+import { Storage } from '@google-cloud/storage';
+
+const storage = new Storage();
+
+const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string;
 
 export interface File {
   buffer: Buffer;
@@ -20,7 +25,8 @@ export const saveImageFile = async (
     .digest('hex');
   const fileExt = path.extname(file.originalname);
   const newFileName = `${fileHash}${fileExt}`;
-  const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
+  // 로컬에 저장할 경로
+  // const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
 
   let existingImage = await Image.findOne({ hash: fileHash });
 
@@ -31,12 +37,22 @@ export const saveImageFile = async (
     await existingImage.save();
   } else {
     try {
-      await fs.writeFile(savePath, file.buffer);
+      // GCP 버킷에 파일 업로드
+      const bucket = storage.bucket(bucketName);
+      const fileRef = bucket.file(newFileName);
+
+      await fileRef.save(file.buffer);
+      console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
+
+      // 로컬에 파일 업로드
+      // await fs.writeFile(savePath, file.buffer);
     } catch (error) {
       console.error('파일 저장에 실패했습니다.', error);
       throw new Error('파일 저장에 실패했습니다.');
     }
-    const imageUrl = `http://localhost:4000/images/${newFileName}`;
+
+    const imageUrl = `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${bucketName}/${newFileName}`;
+    // const imageUrl = `http://localhost:4000/images/${newFileName}`;
     existingImage = new Image({
       hash: fileHash,
       url: imageUrl,
@@ -56,7 +72,7 @@ export const saveProfileImageFile = async (file: File) => {
     .digest('hex');
   const fileExt = path.extname(file.originalname);
   const newFileName = `${fileHash}${fileExt}`;
-  const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
+  // const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
 
   let existingImage = await Image.findOne({ hash: fileHash });
 
@@ -64,12 +80,27 @@ export const saveProfileImageFile = async (file: File) => {
     await existingImage.save();
   } else {
     try {
-      await fs.writeFile(savePath, file.buffer);
+      // GCP 버킷에 파일 업로드
+      const bucket = storage.bucket(bucketName);
+      //? 디버그
+      console.log(bucketName);
+      const fileRef = bucket.file(newFileName);
+      console.log(newFileName);
+
+      await fileRef.save(file.buffer);
+      console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
+
+      // 로컬에 저장
+      // await fs.writeFile(savePath, file.buffer);
     } catch (error) {
       console.error('파일 저장에 실패했습니다.', error);
       throw new Error('파일 저장에 실패했습니다.');
     }
-    const imageUrl = `http://localhost:4000/images/${newFileName}`;
+
+    // GCS 저장 경로
+    const imageUrl = `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${bucketName}/${newFileName}`;
+    // 로컬 저장
+    // const imageUrl = `http://localhost:4000/images/${newFileName}`;
     existingImage = new Image({
       hash: fileHash,
       url: imageUrl,
@@ -90,7 +121,9 @@ export const deleteImageFile = async (imageIds: Types.ObjectId[]) => {
         continue;
       } else {
         if (
-          image.url === 'http://localhost:4000/images/default-post-image.jpg'
+          image.url ===
+          `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${bucketName}/default-post-image.jpg`
+          // image.url === 'http://localhost:4000/images/default-post-image.jpg'
         ) {
           image.referenceCount = 1;
         } else {

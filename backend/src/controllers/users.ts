@@ -51,15 +51,14 @@ export const createUser = async (
       imageId = profileImage;
     } else {
       let defaultImage = await Image.findOne({
-        hash: 'default-profile-image-hash',
+        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-profile.png`,
       });
       if (defaultImage) {
         imageId = defaultImage._id;
       } else {
         defaultImage = new Image({
-          hash: 'default-profile-image-hash',
-          url: 'http://localhost:4000/images/default-profile.png',
-          referenceCount: 0,
+          url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-profile.png`,
+          // url: 'http://localhost:4000/images/default-profile.png',
         });
         await defaultImage.save();
         imageId = defaultImage._id;

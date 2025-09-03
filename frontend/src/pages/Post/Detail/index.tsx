@@ -77,7 +77,7 @@ const PostDetailPage = () => {
       <div className='postdetail-top'>
         <h1 className='postdetail-title'>{post.title}</h1>
         <div className='postdetail-profile'>
-          <img src={post.author.profileImage.url} alt='사용자 프로필 이미지' />
+          <img src={post.author.profileImage?.url} alt='사용자 프로필 이미지' />
           <p className='postcard-profile-nickname'>{post.author.nickname}</p>
           <p className='postcard-profile-createdAt'>
             {formattedDate(post.createdAt)}
