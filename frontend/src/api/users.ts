@@ -1,5 +1,4 @@
 import api from './axios.js';
-import axios from 'axios';
 import type {
   LoginRequest,
   UserResponse,
