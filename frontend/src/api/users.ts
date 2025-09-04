@@ -49,7 +49,7 @@ export const fetchAccessToken = async () => {
 };
 
 export const fetchGetProfile = async () => {
-  const response = await axios
+  const response = await api
     .get<UserResponse>('/api/users/me')
     .then((response) => response.data)
     .catch((error) => {
