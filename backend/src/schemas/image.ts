@@ -9,7 +9,7 @@ const imageSchema = new Schema({
   url: {
     type: String,
     require: true,
-    default: `${process.env.SERVER_URL}:${process.env.PORT}/images/default-post-image.jpg`,
+    default: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
     // default: 'http://localhost:4000/images/default-post-image.jpg'
   },
   referenceCount: {

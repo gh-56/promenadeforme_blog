@@ -57,6 +57,7 @@ export const createUser = async (
         imageId = defaultImage._id;
       } else {
         defaultImage = new Image({
+          hash: 'default-profile-hash',
           url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-profile.png`,
           // url: 'http://localhost:4000/images/default-profile.png',
         });
@@ -146,7 +147,7 @@ export const login = async (
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: cookieMaxAge,
     });
 
@@ -184,7 +185,7 @@ export const logout = (req: Request, res: Response) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   });
   res.status(204).end();
 };

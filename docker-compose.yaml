@@ -1,39 +1,43 @@
 version: '3.8'
 services:
-  # mongodb:
-  #   image: 'mongo'
-  #   volumes:
-  #     - data:/data/db
-  #   env_file:
-  #     - mongo.env
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - data:/data/db
+    env_file:
+      - mongo.env
   backend:
     build:
       context: './backend'
-      dockerfile: Dockerfile.prod
+      # dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     env_file: ./backend/.env
     ports:
       - '4000:4000'
     volumes:
       - ./backend/src/utils/key.json:/app/src/utils/key.json
-      # - public:/app/public
-      # - uploads:/app/uploads
-      # - ./backend:/app
-      # - /app/node_modules
-    # depends_on:
-    #   - mongodb
+      - ./backend/public:/app/public
+      - ./backend/uploads:/app/uploads
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
   frontend:
     build:
       context: './frontend'
-      dockerfile: Dockerfile.prod
+      # dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     env_file: ./frontend/.env
     ports:
-      - '80:80'
-      # - '5173:5173'
+      # - '80:80'
+      - '5173:5173'
     stdin_open: true # -i 옵션과 동일
     tty: true # -t 옵션과 동일
     volumes:
-      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
-      # - ./frontend/:/app
-      # - /app/node_modules
+      # - ./frontend/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/:/app
+      - /app/node_modules
     depends_on:
       - backend
+volumes:
+  data:

@@ -33,7 +33,11 @@ export const createPost = async (
       if (defaultImage) {
         imageIds.push(defaultImage._id);
       } else {
-        defaultImage = new Image({ author: userId });
+        defaultImage = new Image({
+          hash: 'default-post-image-hash',
+          url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+        });
+
         await defaultImage.save();
         imageIds.push(defaultImage._id);
       }
@@ -213,7 +217,11 @@ export const updatePost = async (
       if (defaultImage) {
         imageIds.push(defaultImage._id);
       } else {
-        defaultImage = new Image({ author: userId });
+        defaultImage = new Image({
+          hash: 'default-post-image-hash',
+          url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+          author: userId,
+        });
         await defaultImage.save();
         imageIds.push(defaultImage._id);
       }

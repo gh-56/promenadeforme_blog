@@ -25,8 +25,6 @@ export const saveImageFile = async (
     .digest('hex');
   const fileExt = path.extname(file.originalname);
   const newFileName = `${fileHash}${fileExt}`;
-  // 로컬에 저장할 경로
-  // const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
 
   let existingImage = await Image.findOne({ hash: fileHash });
 
@@ -37,15 +35,18 @@ export const saveImageFile = async (
     await existingImage.save();
   } else {
     try {
-      // GCP 버킷에 파일 업로드
-      const bucket = storage.bucket(bucketName);
-      const fileRef = bucket.file(newFileName);
+      if (process.env.NODE_ENV === 'production') {
+        // GCP 버킷에 파일 업로드
+        const bucket = storage.bucket(bucketName);
+        const fileRef = bucket.file(newFileName);
 
-      await fileRef.save(file.buffer);
-      console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
-
-      // 로컬에 파일 업로드
-      // await fs.writeFile(savePath, file.buffer);
+        await fileRef.save(file.buffer);
+        console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
+      } else {
+        // 로컬에 파일 업로드
+        const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
+        await fs.writeFile(savePath, file.buffer);
+      }
     } catch (error) {
       console.error('파일 저장에 실패했습니다.', error);
       throw new Error('파일 저장에 실패했습니다.');
@@ -72,7 +73,6 @@ export const saveProfileImageFile = async (file: File) => {
     .digest('hex');
   const fileExt = path.extname(file.originalname);
   const newFileName = `${fileHash}${fileExt}`;
-  // const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
 
   let existingImage = await Image.findOne({ hash: fileHash });
 
@@ -80,18 +80,18 @@ export const saveProfileImageFile = async (file: File) => {
     await existingImage.save();
   } else {
     try {
-      // GCP 버킷에 파일 업로드
-      const bucket = storage.bucket(bucketName);
-      //? 디버그
-      console.log(bucketName);
-      const fileRef = bucket.file(newFileName);
-      console.log(newFileName);
+      if (process.env.NODE_ENV === 'production') {
+        // GCP 버킷에 파일 업로드
+        const bucket = storage.bucket(bucketName);
+        const fileRef = bucket.file(newFileName);
 
-      await fileRef.save(file.buffer);
-      console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
-
-      // 로컬에 저장
-      // await fs.writeFile(savePath, file.buffer);
+        await fileRef.save(file.buffer);
+        console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
+      } else {
+        // 로컬에 파일 업로드
+        const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
+        await fs.writeFile(savePath, file.buffer);
+      }
     } catch (error) {
       console.error('파일 저장에 실패했습니다.', error);
       throw new Error('파일 저장에 실패했습니다.');
@@ -133,12 +133,17 @@ export const deleteImageFile = async (imageIds: Types.ObjectId[]) => {
         await image.save();
 
         if (image.referenceCount <= 0) {
-          const fileName = path.basename(image.url as string);
-          const filePath = path.resolve(process.cwd(), 'uploads', fileName);
           try {
-            await fs.unlink(filePath);
-            await Image.findOneAndDelete({ _id: imageId });
-            console.log(`${imageId}번 이미지가 삭제되었습니다.`);
+            const fileName = path.basename(image.url as string);
+            if (process.env.NODE_ENV === 'production') {
+              await storage.bucket(bucketName).file(fileName).delete();
+              console.log(`${imageId}번 이미지가 GCS에서 삭제되었습니다.`);
+            } else {
+              const filePath = path.resolve(process.cwd(), 'uploads', fileName);
+              await fs.unlink(filePath);
+              await Image.findOneAndDelete({ _id: imageId });
+              console.log(`${imageId}번 이미지가 삭제되었습니다.`);
+            }
           } catch (fileError) {
             console.error(
               `${imageId}번 이미지 삭제에 실패했습니다.`,
