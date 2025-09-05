@@ -10,6 +10,9 @@ import Image from '@tiptap/extension-image';
 import { POST_EDIT_PATH } from '../../../constant';
 import { Link } from 'react-router-dom';
 import { useUserStore } from '../../../store';
+import TextAlign from '@tiptap/extension-text-align';
+import { TextStyleKit } from '@tiptap/extension-text-style';
+import Highlight from '@tiptap/extension-highlight';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +23,14 @@ const PostDetailPage = () => {
   const editor = useEditor({
     editable: false,
     extensions: [
+      TextStyleKit,
       StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+        alignments: ['left', 'center', 'right', 'justify'],
+        defaultAlignment: 'left',
+      }),
+      Highlight,
       Image.configure({
         inline: true,
         allowBase64: true,
@@ -73,42 +83,46 @@ const PostDetailPage = () => {
   };
 
   return (
-    <div className='postdetail-container'>
-      <div className='postdetail-top'>
-        <h1 className='postdetail-title'>{post.title}</h1>
-        <div className='postdetail-profile'>
-          <img src={post.author.profileImage?.url} alt='사용자 프로필 이미지' />
-          <p className='postcard-profile-nickname'>{post.author.nickname}</p>
-          <p className='postcard-profile-createdAt'>
-            {formattedDate(post.createdAt)}
-          </p>
-          <div className='postcard-category'>{post.category.name}</div>
+    <>
+      <div className='postdetail-container'>
+        <div className='postdetail-top'>
+          <h1 className='postdetail-title'>{post.title}</h1>
+          <div className='postdetail-profile'>
+            <img
+              src={post.author.profileImage?.url}
+              alt='사용자 프로필 이미지'
+            />
+            <p className='postcard-profile-nickname'>{post.author.nickname}</p>
+            <p className='postcard-profile-createdAt'>
+              {formattedDate(post.createdAt)}
+            </p>
+            <div className='postcard-category'>{post.category.name}</div>
 
-          {post.author._id === useUserStore.getState().user?._id ? (
-            <div className='postdetail-private'>
-              <Link
-                to={POST_EDIT_PATH(id as string)}
-                className='postdetail-edit-button'
-              >
-                수정
-              </Link>
-              <button
-                onClick={handleDeletePost}
-                type='button'
-                className='postdetail-delete-button'
-              >
-                삭제
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
+            {post.author._id === useUserStore.getState().user?._id ? (
+              <div className='postdetail-private'>
+                <Link
+                  to={POST_EDIT_PATH(id as string)}
+                  className='postdetail-edit-button'
+                >
+                  수정
+                </Link>
+                <button
+                  onClick={handleDeletePost}
+                  type='button'
+                  className='postdetail-delete-button'
+                >
+                  삭제
+                </button>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
       </div>
-      <div className='postdetail-bottom'>
-        {editor && <EditorContent editor={editor} />}
-      </div>
-    </div>
+
+      {editor && <EditorContent editor={editor} />}
+    </>
   );
 };
 
