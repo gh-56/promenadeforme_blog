@@ -4,6 +4,7 @@
   justify-content: space-around;
   align-items: center;
   height: 60px;
+  position: relative;
 }
 .header-logo {
   flex: 1;
@@ -29,20 +30,41 @@
 .header-nav-list {
   flex: 2;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-start;
   flex-direction: column;
+
   font-size: 1rem;
-  position: absolute;
-  right: -100%;
-  margin-top: 3rem;
-  transition: right 0.3s ease-in-out;
+  position: fixed;
+  top: 60px;
+  right: 0;
+
+  background-color: #f9f9f9;
+  height: 100vh;
+  width: 100%;
+  z-index: 100;
+
+  /* --- 애니메이션을 위한 핵심 코드 --- */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(100%); /* 오른쪽 화면 밖으로 이동 */
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.3s ease-in-out,
+    visibility 0.3s;
 }
 .header-nav-list.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
   right: 0;
+  top: 60px;
   position: fixed;
   background-color: #f9f9f9;
-  justify-content: flex-start;
   height: 100vh;
   width: 100%;
   z-index: 100;
@@ -133,18 +155,35 @@
 /* 태블릿 */
 @media (min-width: 768px) {
   .header-nav-list {
+    justify-content: flex-end;
+    align-items: center;
     flex-direction: row;
     position: static;
     right: auto;
     margin-top: 0;
     transition: none;
+
+    background: none;
+    height: auto;
+    width: 100%;
+    z-index: 100;
+
+    /* --- 애니메이션을 위한 핵심 코드 --- */
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0); /* 오른쪽 화면 밖으로 이동 */
+    transition: none;
   }
 
   .header-nav-list.open {
-    position: static;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
     background: none;
     justify-content: flex-end;
     height: 0;
+    position: static;
+    height: auto;
   }
   .header-nav-list a,
   .header-nav-list span {
