@@ -29,20 +29,25 @@
   padding: 0.5rem 0;
 }
 
-.editor-container input {
+.postwrite-title {
   background: none;
   border: none;
   width: 100%;
   height: 40px;
   font-size: 2rem;
   outline: none;
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 #category {
   border: none;
   padding: 0.5rem 0;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.postwrite-upload-button {
+  margin: 1rem 0;
 }
 
 .postwrite-submit-buttons {

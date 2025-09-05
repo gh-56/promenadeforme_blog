@@ -6,14 +6,24 @@ import { TextStyleKit } from '@tiptap/extension-text-style';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import MenuBar from '../Write/MenuBar';
-// import './style.css';
+import './style.css';
 import { useEffect, useRef, useState } from 'react';
-import type { CategoryResponse, PostRequest, PostResponse } from '../../../types/interface';
+import type {
+  CategoryResponse,
+  PostRequest,
+  PostResponse,
+} from '../../../types/interface';
 import { fetchReadCategories } from '../../../api/categories';
-import { fetchReadAllDraftPost, fetchReadPostById, fetchUpdatePost } from '../../../api/posts';
+import {
+  fetchDeletePost,
+  fetchReadAllDraftPost,
+  fetchReadPostById,
+  fetchUpdatePost,
+} from '../../../api/posts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchUploadImage } from '../../../api/images';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';
+import Button from '../../../components/Button';
 
 const PostEditPage = () => {
   const [post, setPost] = useState<PostRequest>({
@@ -56,7 +66,11 @@ const PostEditPage = () => {
         try {
           const originalPostData: PostResponse = await fetchReadPostById(id);
           // setPost({ ...post, title: originalPostData.title, category: originalPostData.category._id });
-          setPost((prevPost) => ({ ...prevPost, title: originalPostData.title, category: originalPostData.category._id }));
+          setPost((prevPost) => ({
+            ...prevPost,
+            title: originalPostData.title,
+            category: originalPostData.category._id,
+          }));
           editor?.commands.setContent(JSON.parse(originalPostData.content));
         } catch (error) {
           console.error('게시글을 불러오는 데 실패했습니다. ', error);
@@ -126,10 +140,31 @@ const PostEditPage = () => {
 
     if (selectedPost) {
       //* 2. 작성 중인 글이 지워진다는 안내를 한다.
-      if (confirm('임시 저장 글을 불러오시겠습니까? 작성 중인 내용이 모두 지워집니다.')) {
+      if (
+        confirm(
+          '임시 저장 글을 불러오시겠습니까? 작성 중인 내용이 모두 지워집니다.',
+        )
+      ) {
         //* 3. 찾은 게시글의 불러온 내용으로 교체한다.
-        setPost({ ...post, title: selectedPost.title, category: selectedPost.category._id });
+        setPost({
+          ...post,
+          title: selectedPost.title,
+          category: selectedPost.category._id,
+        });
         editor.commands.setContent(JSON.parse(selectedPost.content));
+      }
+    }
+  };
+
+  const handleDeleteTemporary = async (id: string) => {
+    if (confirm('임시 저장 글을 삭제하시겠습니까?')) {
+      try {
+        await fetchDeletePost(id);
+        nav('');
+        alert('임시 저장 글을 성공적으로 삭제하였습니다.');
+      } catch (error) {
+        console.error(error);
+        alert('임시 저장 글 삭제에 실패하였습니다.');
       }
     }
   };
@@ -146,7 +181,11 @@ const PostEditPage = () => {
 
       await fetchUpdatePost(id as string, payload);
 
-      alert(post.status === 'published' ? '글이 성공적으로 작성되었습니다.' : '임시 저장되었습니다.');
+      alert(
+        post.status === 'published'
+          ? '글이 성공적으로 작성되었습니다.'
+          : '임시 저장되었습니다.',
+      );
       nav(post.status === 'published' ? '/' : '');
     } catch (error) {
       console.error(error);
@@ -155,11 +194,15 @@ const PostEditPage = () => {
   };
 
   return (
-    <>
+    <div className='postedit-container'>
       <form onSubmit={handleSubmit}>
         <div className='editor-container'>
           <div>
-            <select id='category' onChange={(e) => setPost({ ...post, category: e.target.value })} value={post.category}>
+            <select
+              id='category'
+              onChange={(e) => setPost({ ...post, category: e.target.value })}
+              value={post.category}
+            >
               <option value=''>카테고리를 선택해주세요.</option>
               {categories.map((category) => (
                 <option key={category._id} value={category._id}>
@@ -173,43 +216,87 @@ const PostEditPage = () => {
             onChange={(e) => setPost({ ...post, title: e.target.value })}
             ref={focusEditorRef}
             value={post.title}
+            className='postedit-title'
           />
           <MenuBar editor={editor} />
-          <input type='file' name='images' hidden ref={fileInputRef} onChange={handleFileChange} multiple />
-          <button type='button' onClick={() => fileInputRef.current?.click()}>
-            이미지 업로드
-          </button>
+          <input
+            type='file'
+            name='images'
+            hidden
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            multiple
+          />
+
+          <div className='postedit-upload-button'>
+            <Button
+              type='button'
+              onClick={() => fileInputRef.current?.click()}
+              className='button-add-image'
+            >
+              이미지 업로드
+            </Button>
+          </div>
           <EditorContent className='editor-content' editor={editor} />
         </div>
-        <button type='submit' onClick={() => handleSaveTemporary('published')}>
-          수정하기
-        </button>
-        <button type='submit' onClick={() => handleSaveTemporary('draft')}>
-          임시저장
-        </button>
-        <button type='button' onClick={handleReadTemporary}>
-          임시저장 목록
-        </button>
-        <div className='popup'>
-          {isTemporary ? (
-            <div>
-              {temporaryPosts.map((post) => {
-                return (
-                  <div key={post._id}>
-                    <div>{post.title}</div>
-                    <button type='button' onClick={() => handleSelectTemporary(post._id)}>
-                      불러오기
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <></>
-          )}
+
+        <div className='postedit-submit-buttons'>
+          <Button
+            type='submit'
+            onClick={() => handleSaveTemporary('published')}
+            className='button-submit'
+          >
+            수정하기
+          </Button>
+          <Button
+            type='submit'
+            onClick={() => handleSaveTemporary('draft')}
+            className='button-submit'
+          >
+            임시저장
+          </Button>
+          <Button
+            type='button'
+            onClick={handleReadTemporary}
+            className='button-list open-modal-button'
+          >
+            임시저장 목록
+          </Button>
         </div>
       </form>
-    </>
+
+      <div className='temporary-container'>
+        {isTemporary ? (
+          <div>
+            {temporaryPosts.map((post) => {
+              return (
+                <div key={post._id} className='temporary-post'>
+                  <h3>{post.title}</h3>
+                  <div>{new Date(post.createdAt).toLocaleDateString()}</div>
+                  <div>{new Date(post.updatedAt).toLocaleDateString()}</div>
+                  <Button
+                    type='button'
+                    onClick={() => handleSelectTemporary(post._id)}
+                    className='temporary-button'
+                  >
+                    불러오기
+                  </Button>
+                  <Button
+                    type='button'
+                    onClick={() => handleDeleteTemporary(post._id)}
+                    className='temporary-button delete'
+                  >
+                    삭제하기
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -17,7 +17,7 @@
   border: none;
   border-radius: 1rem;
   padding: 0.5rem;
-  font-size: 0.5rem;
+  font-size: 0.7rem;
 }
 
 .button-group button:hover {
@@ -29,14 +29,14 @@
   /* color: white; */
 }
 
-@media (min-width: 768px) {
-  .button-group button {
-    font-size: 0.7rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .button-group button {
-    font-size: 1rem;
-  }
-}
+/* @media (min-width: 768px) { */
+/*   .button-group button { */
+/*     font-size: 1rem; */
+/*   } */
+/* } */
+/**/
+/* @media (min-width: 1024px) { */
+/*   .button-group button { */
+/*     font-size: 1rem; */
+/*   } */
+/* } */

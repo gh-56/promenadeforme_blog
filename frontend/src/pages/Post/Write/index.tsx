@@ -211,6 +211,7 @@ const PostWritePage = () => {
             onChange={(e) => setPost({ ...post, title: e.target.value })}
             ref={focusEditorRef}
             value={post.title}
+            className='postwrite-title'
           />
           <MenuBar editor={editor} />
           <input
@@ -221,13 +222,15 @@ const PostWritePage = () => {
             onChange={handleFileChange}
             multiple
           />
-          <Button
-            type='button'
-            onClick={() => fileInputRef.current?.click()}
-            className='button-add-image'
-          >
-            이미지 업로드
-          </Button>
+          <div className='postwrite-upload-button'>
+            <Button
+              type='button'
+              onClick={() => fileInputRef.current?.click()}
+              className='button-add-image'
+            >
+              이미지 업로드
+            </Button>
+          </div>
           <EditorContent className='editor-content' editor={editor} />
         </div>
         <div className='postwrite-submit-buttons'>
