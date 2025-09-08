@@ -1,6 +1,7 @@
 export type {
   RegisterRequest,
   RegisterResponse,
+  UpdateUserRequest,
   LoginRequest,
   UserResponse,
   RefreshResponse,

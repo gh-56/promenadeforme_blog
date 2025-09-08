@@ -24,7 +24,7 @@ const PostEditPage = () => {
     if (!postId) return;
     await fetchUpdatePost(postId, payload);
     alert('글이 성공적으로 수정되었습니다.');
-    nav(`/posts/${postId}`); // 수정된 글로 이동
+    nav(`/posts/${postId}`);
   };
 
   if (!initialPost) {

@@ -234,9 +234,8 @@ export const updateUser = async (
   try {
     const {
       username,
-      email,
       nickname,
-      password,
+      currentPassword,
       newPassword,
       bio,
       profileImage,
@@ -249,11 +248,14 @@ export const updateUser = async (
       return next(new CustomError('사용자를 찾을 수 없습니다.', 404));
     }
 
-    if (!password) {
+    if (!currentPassword) {
       return next(new CustomError('비밀번호를 입력하여야 합니다.', 400));
     }
 
-    const isMatch = await bcrypt.compare(password, registerdUser.password);
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      registerdUser.password,
+    );
     if (!isMatch) {
       return next(new CustomError('비밀번호가 일치하지 않습니다.', 400));
     }
@@ -275,7 +277,6 @@ export const updateUser = async (
     }
 
     if (username) registerdUser.username = username;
-    if (email) registerdUser.email = email;
     if (nickname) registerdUser.nickname = nickname;
     if (bio) registerdUser.bio = bio;
     if (profileImage) registerdUser.profileImage = profileImage;
@@ -284,7 +285,6 @@ export const updateUser = async (
 
     const updatedUser = {
       username,
-      email,
       nickname,
       bio,
       profileImage,

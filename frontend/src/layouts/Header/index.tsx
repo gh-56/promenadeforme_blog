@@ -69,7 +69,9 @@ const Header = () => {
           to={MAIN_PATH()}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
-          <Title order={3}>Promenadeforme</Title>
+          <Title order={3} lts={'3px'}>
+            Promenadeforme
+          </Title>
         </Link>
         <ThemeToggleButton />
       </Group>
@@ -82,6 +84,7 @@ const Header = () => {
               component={Link}
               to={POST_PATH()}
               color={textColor}
+              fw={'normal'}
             >
               전체 글
             </Button>
@@ -90,6 +93,7 @@ const Header = () => {
               component={Link}
               to={POST_MY_PATH()}
               color={textColor}
+              fw={'normal'}
             >
               내 글
             </Button>
@@ -98,6 +102,7 @@ const Header = () => {
               component={Link}
               to={POST_WRITE_PATH()}
               color={textColor}
+              fw={'normal'}
             >
               글쓰기
             </Button>
@@ -106,6 +111,7 @@ const Header = () => {
               component={Link}
               to={CATEGORY_PATH()}
               color={textColor}
+              fw={'normal'}
             >
               카테고리
             </Button>
@@ -155,14 +161,16 @@ const Header = () => {
               component={Link}
               to={LOGIN_PATH()}
               color={textColor}
+              fw={'normal'}
             >
               로그인
             </Button>
             <Button
-              variant='default'
+              variant='subtle'
               component={Link}
               to={JOIN_PATH()}
               color={textColor}
+              fw={'normal'}
             >
               회원가입
             </Button>
@@ -188,6 +196,7 @@ const Header = () => {
                 to={POST_PATH()}
                 onClick={toggle}
                 color={textColor}
+                fw={'normal'}
               >
                 전체 글
               </Button>
@@ -197,6 +206,7 @@ const Header = () => {
                 to={POST_MY_PATH()}
                 onClick={toggle}
                 color={textColor}
+                fw={'normal'}
               >
                 내 글
               </Button>
@@ -206,6 +216,7 @@ const Header = () => {
                 to={POST_WRITE_PATH()}
                 onClick={toggle}
                 color={textColor}
+                fw={'normal'}
               >
                 글쓰기
               </Button>
@@ -215,6 +226,7 @@ const Header = () => {
                 to={CATEGORY_PATH()}
                 onClick={toggle}
                 color={textColor}
+                fw={'normal'}
               >
                 카테고리
               </Button>
@@ -224,10 +236,16 @@ const Header = () => {
                 to={MYPAGE_PATH()}
                 onClick={toggle}
                 color={textColor}
+                fw={'normal'}
               >
                 설정
               </Button>
-              <Button color='red' onClick={handleLogout}>
+              <Button
+                color='red'
+                variant='subtle'
+                onClick={handleLogout}
+                fw={'normal'}
+              >
                 로그아웃
               </Button>
             </>
@@ -239,14 +257,16 @@ const Header = () => {
                 to={LOGIN_PATH()}
                 onClick={toggle}
                 color={textColor}
+                fw={'normal'}
               >
                 로그인
               </Button>
               <Button
-                variant='default'
+                variant='subtle'
                 component={Link}
                 to={JOIN_PATH()}
                 onClick={toggle}
+                fw={'normal'}
               >
                 회원가입
               </Button>

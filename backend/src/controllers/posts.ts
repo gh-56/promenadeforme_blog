@@ -4,6 +4,8 @@ import { Types } from 'mongoose';
 import { deleteImageFile, saveImageFile } from '../services/file.service.js';
 import CustomError from '../utils/customError.js';
 import Image from '../schemas/image.js';
+import Category from '../schemas/category.js';
+import { decode } from 'punycode';
 
 export const createPost = async (
   req: Request,
@@ -180,6 +182,51 @@ export const getPostByUser = async (
     currentPage: page,
     totalPages: Math.ceil(totalPosts / limit),
   });
+};
+
+export const getPostsByCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { categoryName } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const category = await Category.findOne({ name: categoryName });
+    if (!category) {
+      return next(new CustomError('해당 카테고리를 찾을 수 없습니다.', 404));
+    }
+
+    const filter = { category: category._id, status: 'published' };
+
+    const totalPosts = await Post.countDocuments(filter);
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    const posts = await Post.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .populate('category', 'name')
+      .populate({
+        path: 'author',
+        select: '-password -username -bio',
+        populate: { path: 'profileImage', select: 'url' },
+      })
+      .populate('images', 'url')
+      .exec();
+
+    res.status(200).json({
+      posts,
+      totalPosts,
+      currentPage: page,
+      totalPages,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updatePost = async (

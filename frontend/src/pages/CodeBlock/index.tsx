@@ -5,8 +5,12 @@ import {
 } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 
+import { Select, ActionIcon, Tooltip, Box, Flex } from '@mantine/core';
+import { IconCopy, IconCheck } from '@tabler/icons-react';
+
+import classes from './CodeBlockNodeView.module.css';
+
 const LANGUAGES = [
-  'language',
   'bash',
   'c',
   'css',
@@ -23,20 +27,18 @@ export function CodeBlockNodeView({ editor, node }: NodeViewRendererProps) {
   const [isCopied, setIsCopied] = useState(false);
 
   const code = node.textContent;
-  const language = node.attrs.language || 'bash'; // 기본 언어 설정
+  const language = node.attrs.language || 'bash';
 
   useEffect(() => {
     const lineCount = code.split('\n').length;
     setLines(lineCount);
-  }, [node.textContent]);
+  }, [code]);
 
-  const handleLangChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = event.target.value;
-
+  const handleLangChange = (value: string | null) => {
     editor
       .chain()
       .focus()
-      .updateAttributes('codeBlock', { language: newLanguage })
+      .updateAttributes('codeBlock', { language: value })
       .run();
   };
 
@@ -53,36 +55,47 @@ export function CodeBlockNodeView({ editor, node }: NodeViewRendererProps) {
   };
 
   return (
-    <NodeViewWrapper className='custom-code-block'>
-      <select
-        contentEditable={false}
-        value={language}
-        onChange={handleLangChange}
-      >
-        {LANGUAGES.map((lang) => (
-          <option key={lang} value={lang}>
-            {lang}
-          </option>
-        ))}
-      </select>
+    <NodeViewWrapper as={Box} className={classes.wrapper}>
+      <div className={classes.header}>
+        <Select
+          data={LANGUAGES}
+          value={language}
+          onChange={handleLangChange}
+          size='xs'
+          contentEditable={false}
+          allowDeselect={false}
+        />
+        <Tooltip
+          label={isCopied ? '복사됨!' : '코드 복사'}
+          withArrow
+          position='left'
+        >
+          <ActionIcon
+            variant='light'
+            color={isCopied ? 'teal' : 'gray'}
+            onClick={handleCopy}
+            aria-label='코드 복사'
+          >
+            {isCopied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+          </ActionIcon>
+        </Tooltip>
+      </div>
 
-      <button
-        className={`copy-button ${isCopied ? 'copied' : ''}`}
-        onClick={handleCopy}
-        aria-label='Copy code to clipboard'
-        type='button'
-      >
-        {isCopied ? 'Copied!' : 'Copy'}
-      </button>
+      <div className={classes.contentWrapper}>
+        <pre className={classes.pre}>
+          <Flex>
+            {/* 컬럼 1: 줄 번호 */}
+            <div className={classes.lineNumbers}>
+              {Array.from({ length: lines }, (_, i) => (
+                <div key={i}>{i + 1}</div>
+              ))}
+            </div>
 
-      <div className='code-block-content'>
-        <div className='line-numbers'>
-          {Array.from({ length: lines }, (_, i) => (
-            <div key={i}>{i + 1}</div>
-          ))}
-        </div>
-        <pre>
-          <NodeViewContent as='code' />
+            {/* 컬럼 2: 코드 */}
+            <div className={classes.code}>
+              <NodeViewContent as='code' />
+            </div>
+          </Flex>
         </pre>
       </div>
     </NodeViewWrapper>

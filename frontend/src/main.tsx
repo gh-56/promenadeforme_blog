@@ -8,6 +8,7 @@ import './assets/fonts.css';
 import { createTheme, MantineProvider } from '@mantine/core';
 
 const theme = createTheme({
+  fontFamily: 'ChosunGu, sans-serif',
   primaryColor: 'gray',
   components: {
     AppShell: {

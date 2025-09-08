@@ -1,5 +1,9 @@
 import api from './axios.js';
-import type { GetAllPostResponse, PostRequest, PostResponse } from '../types/interface';
+import type {
+  GetAllPostResponse,
+  PostRequest,
+  PostResponse,
+} from '../types/interface';
 
 export const fetchCreatePost = async (post: PostRequest) => {
   const response = await api
@@ -34,6 +38,22 @@ export const fetchReadMyPost = async (page: string) => {
 export const fetchReadAllDraftPost = async () => {
   const response = await api
     .get<PostResponse[]>('/api/posts/drafts')
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+  return response;
+};
+
+export const fetchPostsByCategory = async (
+  categoryName: string,
+  page: string,
+) => {
+  const encodedCategoryName = encodeURIComponent(categoryName);
+  const response = await api
+    .get<GetAllPostResponse>(
+      `/api/posts/category/${encodedCategoryName}?page=${page}`,
+    )
     .then((response) => response.data)
     .catch((error) => {
       throw error;

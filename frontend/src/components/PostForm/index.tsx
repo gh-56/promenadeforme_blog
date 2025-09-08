@@ -33,6 +33,7 @@ import {
   IconFileImport,
   IconTrash,
   IconArrowLeft,
+  IconTerminal2,
 } from '@tabler/icons-react';
 
 interface PostFormProps {
@@ -50,7 +51,7 @@ const PostForm = ({
 }: PostFormProps) => {
   const [post, setPost] = useState<PostRequest>({
     title: initialPost?.title || '',
-    content: initialPost ? JSON.stringify(initialPost.content) : '',
+    content: initialPost?.content || '',
     category: initialPost?.category._id || '',
     images: initialPost?.images.map((img) => img._id) || [],
     status: initialPost?.status || '',
@@ -65,9 +66,38 @@ const PostForm = ({
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
+  const handleContentUpdate = (newContent: string) => {
+    setPost((currentPost) => ({
+      ...currentPost,
+      content: newContent,
+    }));
+  };
+
   const editor = useTiptapEditor({
-    content: initialPost ? JSON.parse(initialPost.content) : '',
+    content: post.content,
+    onUpdate: handleContentUpdate,
+    titleInputRef: focusEditorRef,
+    isEditable: true,
   });
+  useEffect(() => {
+    if (initialPost) {
+      setPost({
+        title: initialPost.title,
+        content: initialPost.content,
+        category: initialPost.category._id,
+        images: initialPost.images.map((img) => img._id),
+        status: initialPost.status || 'draft',
+      });
+
+      if (editor && initialPost.content) {
+        const isSameContent =
+          JSON.stringify(editor.getJSON()) === initialPost.content;
+        if (!isSameContent) {
+          editor.commands.setContent(JSON.parse(initialPost.content));
+        }
+      }
+    }
+  }, [initialPost, editor]);
 
   useEffect(() => {
     if (editor) {
@@ -291,7 +321,9 @@ const PostForm = ({
                 <RichTextEditor.ClearFormatting />
                 <RichTextEditor.Highlight />
                 <RichTextEditor.Code />
-                <RichTextEditor.CodeBlock />
+                <RichTextEditor.CodeBlock
+                  icon={() => <IconTerminal2 size='1rem' stroke={1.5} />}
+                />
                 <InsertImageControl />
               </RichTextEditor.ControlsGroup>
 
@@ -324,7 +356,7 @@ const PostForm = ({
               </RichTextEditor.ControlsGroup>
             </RichTextEditor.Toolbar>
 
-            <RichTextEditor.Content h={'300px'} />
+            <RichTextEditor.Content mih={'300px'} />
           </RichTextEditor>
           {/* <EditorContent className='editor-content' editor={editor} /> */}
         </Box>

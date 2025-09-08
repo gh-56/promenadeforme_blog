@@ -22,6 +22,8 @@ import {
   Box,
 } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
+import { CATEGORY_POSTS_PATH } from '../../../constant/index.js';
 
 const MyPostReadPage = () => {
   const [postsData, setPostsData] = useState<GetAllPostResponse>({
@@ -58,11 +60,12 @@ const MyPostReadPage = () => {
       <Grid>
         <Grid.Col span={{ base: 12, md: 2.5 }}>
           <Stack>
-            <Title order={3}>카테고리</Title>
+            <Title order={4}>카테고리</Title>
             {categoriesData.map((category) => (
               <NavLink
                 key={category._id}
-                href={`/category/${category.name}`}
+                component={Link}
+                to={CATEGORY_POSTS_PATH(category.name)}
                 label={category.name}
                 rightSection={<IconChevronRight size='0.8rem' stroke={1.5} />}
               />
@@ -72,7 +75,7 @@ const MyPostReadPage = () => {
 
         <Grid.Col span={{ base: 12, md: 7 }}>
           <Stack gap='xl'>
-            <Title order={2}>내 글 보기</Title>
+            <Title order={4}>내 글 보기</Title>
 
             <Box pos='relative' mih={500}>
               <LoadingOverlay

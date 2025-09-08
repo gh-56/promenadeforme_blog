@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import Category from '../schemas/category.js';
 import CustomError from '../utils/customError.js';
 
-export const createCategory = async (req: Request, res: Response, next: NextFunction) => {
+export const createCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { name } = req.body;
     const userId = req.user!.userId;
@@ -22,7 +26,11 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
+export const getCategories = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const userId = req.user!.userId;
     const categories = await Category.find({ author: userId });
@@ -35,7 +43,11 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
+export const updateCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -48,7 +60,7 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
     const updatedCategory = await Category.findByIdAndUpdate(
       { _id: id, author: userId },
       { name },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedCategory) {
@@ -68,7 +80,11 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const userId = req.user!.userId;

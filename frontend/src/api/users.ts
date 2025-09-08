@@ -5,6 +5,7 @@ import type {
   RefreshResponse,
   RegisterResponse,
   RegisterRequest,
+  UpdateUserRequest,
 } from '../types/interface/';
 
 export const fetchCreateUser = async (registerRequest: RegisterRequest) => {
@@ -57,9 +58,7 @@ export const fetchGetProfile = async () => {
   return response;
 };
 
-export const fetchUpdateUser = async (
-  request: RegisterRequest & { newPassword: string },
-) => {
+export const fetchUpdateUser = async (request: UpdateUserRequest) => {
   const response = await api
     .patch<RegisterResponse>('/api/users/me', request)
     .then((response) => response.data)

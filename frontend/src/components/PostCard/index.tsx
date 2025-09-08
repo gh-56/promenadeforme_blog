@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { POST_DETAIL_PATH } from '../../constant';
+import { CATEGORY_POSTS_PATH, POST_DETAIL_PATH } from '../../constant';
 import type { PostResponse } from '../../types/interface';
 import { formattedDate } from '../../utils/date-format.js';
 import { useMemo } from 'react';
@@ -69,15 +69,22 @@ const PostCard = ({ post }: { post: PostResponse }) => {
         <Image src={imageUrl} height={200} alt='게시글 썸네일 이미지' />
       </Card.Section>
 
-      <Group justify='space-between' mt='md' mb='xs'>
-        <Badge color='pink'>{post.category.name}</Badge>
+      <Group justify='start' mt='md' mb='xs'>
+        <Badge
+          color='pink'
+          component={Link}
+          to={CATEGORY_POSTS_PATH(post.category.name)}
+          style={{ cursor: 'pointer' }}
+        >
+          {post.category.name}
+        </Badge>
       </Group>
 
       <Text fw={700} fz='lg' component='h2' truncate='end'>
         {post.title}
       </Text>
 
-      <Text size='sm' c='dimmed' mt='sm' lineClamp={3}>
+      <Text size='sm' c='dimmed' mt='sm' lineClamp={3} mih={'100px'}>
         {summary}
       </Text>
 

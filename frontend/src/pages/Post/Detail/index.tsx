@@ -5,15 +5,8 @@ import type { PostResponse } from '../../../types/interface';
 import { formattedDate } from '../../../utils/date-format';
 import { useUserStore } from '../../../store';
 
-import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import { POST_EDIT_PATH } from '../../../constant';
-import TextAlign from '@tiptap/extension-text-align';
-import { TextStyleKit } from '@tiptap/extension-text-style';
-import Highlight from '@tiptap/extension-highlight';
-import CodeBlockShiki from 'tiptap-extension-code-block-shiki';
-import { CodeBlockNodeView } from '../../CodeBlock';
+import { EditorContent } from '@tiptap/react';
+import { CATEGORY_POSTS_PATH, POST_EDIT_PATH } from '../../../constant';
 
 import {
   Container,
@@ -32,6 +25,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { useTiptapEditor } from '../../../hooks/useTiptapEditor';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,21 +38,9 @@ const PostDetailPage = () => {
     { open: openDeleteModal, close: closeDeleteModal },
   ] = useDisclosure(false);
 
-  const editor = useEditor({
-    editable: false,
-    extensions: [
-      TextStyleKit,
-      StarterKit.configure({ codeBlock: false }),
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      Highlight,
-      Image.configure({ inline: true, allowBase64: true }),
-      CodeBlockShiki.extend({
-        addNodeView() {
-          return ReactNodeViewRenderer(CodeBlockNodeView);
-        },
-      }).configure({ defaultTheme: 'github-dark' }),
-    ],
-    content: '',
+  const editor = useTiptapEditor({
+    content: post?.content || '',
+    isEditable: false,
   });
 
   useEffect(() => {
@@ -66,10 +48,7 @@ const PostDetailPage = () => {
       if (id) {
         setIsLoading(true);
         try {
-          const postData: PostResponse = await fetchReadPostById(id);
-          if (postData.content && editor) {
-            editor.commands.setContent(JSON.parse(postData.content));
-          }
+          const postData = await fetchReadPostById(id);
           setPost(postData);
         } catch (error) {
           console.error('게시글을 가져오는 데 실패했습니다.', error);
@@ -80,7 +59,7 @@ const PostDetailPage = () => {
       }
     };
     getPost();
-  }, [id, editor]);
+  }, [id]);
 
   const handleDeleteConfirm = async () => {
     if (!id) return;
@@ -119,7 +98,15 @@ const PostDetailPage = () => {
       <Container py='xl' size='md'>
         <Stack gap='lg'>
           <Stack gap='xs'>
-            <Badge color='pink' variant='light' size='lg' mb='sm'>
+            <Badge
+              color='pink'
+              variant='light'
+              size='lg'
+              mb='sm'
+              component={Link}
+              to={CATEGORY_POSTS_PATH(post.category.name)}
+              style={{ cursor: 'pointer' }}
+            >
               {post.category.name}
             </Badge>
             <Title order={1}>{post.title}</Title>

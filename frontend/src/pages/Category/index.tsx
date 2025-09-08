@@ -88,7 +88,7 @@ const CategoryPage = () => {
           cat._id === updatedCategory._id ? updatedCategory : cat,
         ),
       );
-      setEditingCategoryId(null); // Exit edit mode
+      setEditingCategoryId(null);
     } catch (error) {
       console.error(error);
       alert('카테고리 수정에 실패했습니다.');
@@ -125,7 +125,7 @@ const CategoryPage = () => {
     <>
       <Container py='lg'>
         <Stack gap='xl'>
-          <Title order={2}>Category Management</Title>
+          <Title order={4}>카테고리 관리</Title>
 
           <form onSubmit={handleAddCategory}>
             <Group>
