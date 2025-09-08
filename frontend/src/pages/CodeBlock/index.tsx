@@ -84,16 +84,14 @@ export function CodeBlockNodeView({ editor, node }: NodeViewRendererProps) {
       <div className={classes.contentWrapper}>
         <pre className={classes.pre}>
           <Flex>
-            {/* 컬럼 1: 줄 번호 */}
             <div className={classes.lineNumbers}>
               {Array.from({ length: lines }, (_, i) => (
                 <div key={i}>{i + 1}</div>
               ))}
             </div>
 
-            {/* 컬럼 2: 코드 */}
             <div className={classes.code}>
-              <NodeViewContent as='code' />
+              <NodeViewContent as='div' />
             </div>
           </Flex>
         </pre>
