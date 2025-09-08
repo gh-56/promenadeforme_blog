@@ -1,11 +1,3 @@
-import Highlight from '@tiptap/extension-highlight';
-import TextAlign from '@tiptap/extension-text-align';
-import Image from '@tiptap/extension-image';
-import Placeholder from '@tiptap/extension-placeholder';
-import { TextStyleKit } from '@tiptap/extension-text-style';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import MenuBar from './MenuBar';
 import './style.css';
 import { useEffect, useRef, useState } from 'react';
 import type {
@@ -24,6 +16,9 @@ import { fetchUploadImage } from '../../../api/images';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';
 import Button from '../../../components/Button';
 import { CATEGORY_PATH } from '../../../constant';
+import { RichTextEditor } from '@mantine/tiptap';
+import { useTiptapEditor } from '../../../hooks/useTiptapEditor';
+import { IconPhotoScan } from '@tabler/icons-react';
 
 const PostWritePage = () => {
   const [post, setPost] = useState<PostRequest>({
@@ -38,9 +33,44 @@ const PostWritePage = () => {
   const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
   const [temporaryPosts, setTemporaryPosts] = useState<PostResponse[]>([]);
   const [isTemporary, setIsTemporary] = useState<boolean>(false);
+  const [, forceUpdate] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
+
+  const editor = useTiptapEditor({ content: post.content });
+
+  useEffect(() => {
+    if (editor) {
+      const handleUpdate = () => {
+        forceUpdate((prev) => prev + 1);
+      };
+
+      editor.on('update', handleUpdate);
+      editor.on('selectionUpdate', handleUpdate);
+
+      return () => {
+        editor.off('update', handleUpdate);
+        editor.off('selectionUpdate', handleUpdate);
+      };
+    }
+  }, [editor]);
+
+  if (!editor) {
+    return null; // 또는 <LoadingSpinner />
+  }
+
+  function InsertImageControl() {
+    return (
+      <RichTextEditor.Control
+        onClick={() => fileInputRef.current?.click()}
+        aria-label='Insert Image'
+        title='Insert Image'
+      >
+        <IconPhotoScan stroke={1.5} size={16} />
+      </RichTextEditor.Control>
+    );
+  }
 
   useEffect(() => {
     const getCategories = async () => {
@@ -70,6 +100,7 @@ const PostWritePage = () => {
 
       try {
         const response: UploadImageResponse[] = await fetchUploadImage(form);
+        console.log('response', response);
 
         for (const image of response) {
           editor?.commands.enter();
@@ -161,24 +192,6 @@ const PostWritePage = () => {
     }
   };
 
-  const editor = useEditor({
-    extensions: [
-      TextStyleKit,
-      StarterKit,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['left', 'center', 'right', 'justify'],
-        defaultAlignment: 'left',
-      }),
-      Highlight,
-      Image,
-      Placeholder.configure({
-        placeholder: '내용을 입력하세요.',
-      }),
-    ],
-    content: '',
-  });
-
   return (
     <div className='postwrite-container'>
       <form onSubmit={handleSubmit}>
@@ -213,7 +226,7 @@ const PostWritePage = () => {
             value={post.title}
             className='postwrite-title'
           />
-          <MenuBar editor={editor} />
+
           <input
             type='file'
             name='images'
@@ -222,16 +235,55 @@ const PostWritePage = () => {
             onChange={handleFileChange}
             multiple
           />
-          <div className='postwrite-upload-button'>
-            <Button
-              type='button'
-              onClick={() => fileInputRef.current?.click()}
-              className='button-add-image'
+          <RichTextEditor editor={editor}>
+            <RichTextEditor.Toolbar
+              sticky
+              stickyOffset='var(--docs-header-height)'
             >
-              이미지 업로드
-            </Button>
-          </div>
-          <EditorContent className='editor-content' editor={editor} />
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Bold />
+                <RichTextEditor.Italic />
+                <RichTextEditor.Underline />
+                <RichTextEditor.Strikethrough />
+                <RichTextEditor.ClearFormatting />
+                <RichTextEditor.Highlight />
+                <RichTextEditor.Code />
+                <RichTextEditor.CodeBlock />
+                <InsertImageControl />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.H1 />
+                <RichTextEditor.H2 />
+                <RichTextEditor.H3 />
+                <RichTextEditor.H4 />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Blockquote />
+                <RichTextEditor.Hr />
+                <RichTextEditor.BulletList />
+                <RichTextEditor.OrderedList />
+                {/* <RichTextEditor.Subscript /> */}
+                {/* <RichTextEditor.Superscript /> */}
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.AlignLeft />
+                <RichTextEditor.AlignCenter />
+                <RichTextEditor.AlignJustify />
+                <RichTextEditor.AlignRight />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Undo />
+                <RichTextEditor.Redo />
+              </RichTextEditor.ControlsGroup>
+            </RichTextEditor.Toolbar>
+
+            <RichTextEditor.Content h={'300px'} />
+          </RichTextEditor>
+          {/* <EditorContent className='editor-content' editor={editor} /> */}
         </div>
         <div className='postwrite-submit-buttons'>
           <Button
@@ -248,7 +300,6 @@ const PostWritePage = () => {
           >
             임시저장
           </Button>
-
           <Button
             type='button'
             className='button-list open-modal-button'

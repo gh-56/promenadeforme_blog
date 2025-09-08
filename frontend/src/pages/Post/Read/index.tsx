@@ -3,6 +3,7 @@ import type { GetAllPostResponse } from '../../../types/interface';
 import { useEffect, useState } from 'react';
 import './style.css';
 import PostCard from '../../../components/PostCard/index.js';
+import { LoadingOverlay } from '@mantine/core';
 
 const PostReadPage = () => {
   const [postsData, setPostsData] = useState<GetAllPostResponse>({
@@ -30,7 +31,16 @@ const PostReadPage = () => {
   }, [page]);
 
   if (loading) {
-    return <div>로딩 중...</div>;
+    return (
+      <div>
+        <LoadingOverlay
+          visible={true}
+          zIndex={1000}
+          overlayProps={{ radius: 'sm', blur: 2 }}
+          loaderProps={{ color: 'black' }}
+        />
+      </div>
+    );
   }
 
   return (

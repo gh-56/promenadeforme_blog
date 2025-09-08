@@ -25,7 +25,9 @@
 }
 
 .is-active {
-  background-color: #c0a0ff;
+  background-color: #add392;
+
+  /* background-color: #c0a0ff; */
   /* color: white; */
 }
 

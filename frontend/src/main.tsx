@@ -5,10 +5,14 @@ import App from './App.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import './assets/fonts.css';
 
+import { MantineProvider } from '@mantine/core';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <MantineProvider>
+        <App />
+      </MantineProvider>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

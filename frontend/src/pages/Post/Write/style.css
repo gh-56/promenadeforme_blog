@@ -55,9 +55,20 @@
   justify-content: flex-end;
 }
 
+.ProseMirror {
+  white-space: pre-wrap;
+}
+
 .tiptap {
   /* max-width: 820px; */
-  margin-top: 2rem;
+  /* margin-top: 2rem;  */
+  /* :first-child { */
+  /*   margin-top: 0; */
+  /* } */
+
+  /* .node-codeBlock { */
+  /*   background: none !important; */
+  /* } */
 
   code {
     background-color: black;
@@ -69,19 +80,35 @@
 
   pre {
     background: black;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     color: white;
-    font-family: 'JetBrainsMono', monospace;
-    margin: 1.5rem 0;
-    padding: 1.75rem 1.25rem;
+    /* font-family: 'JetBrainsMono', monospace; */
+    /* margin-top: 1rem; */
+    margin: 0;
+    padding: 0.75rem 1rem;
 
     code {
       background: none;
       color: inherit;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       padding: 0;
     }
   }
+  /* pre { */
+  /*   background: black; */
+  /*   border-radius: 1rem; */
+  /*   color: white; */
+  /*   font-family: 'JetBrainsMono', monospace; */
+  /*   margin: 1.5rem 0; */
+  /*   padding: 1.75rem 1.25rem; */
+  /**/
+  /*   code { */
+  /*     background: none; */
+  /*     color: inherit; */
+  /*     font-size: 1.15rem; */
+  /*     padding: 0; */
+  /*   } */
+  /* } */
 
   mark {
     background-color: #faf594;
@@ -114,10 +141,6 @@
     display: block;
     width: 300px;
   }
-}
-
-.ProseMirror-focused {
-  outline: none;
 }
 
 .temporary-post h3 {

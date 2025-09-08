@@ -1,10 +1,4 @@
-import Highlight from '@tiptap/extension-highlight';
-import TextAlign from '@tiptap/extension-text-align';
-import Image from '@tiptap/extension-image';
-import Placeholder from '@tiptap/extension-placeholder';
-import { TextStyleKit } from '@tiptap/extension-text-style';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { EditorContent } from '@tiptap/react';
 import MenuBar from '../Write/MenuBar';
 import './style.css';
 import { useEffect, useRef, useState } from 'react';
@@ -24,6 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchUploadImage } from '../../../api/images';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';
 import Button from '../../../components/Button';
+import { useTiptapEditor } from '../../../hooks/useTiptapEditor';
 
 const PostEditPage = () => {
   const [post, setPost] = useState<PostRequest>({
@@ -37,28 +32,33 @@ const PostEditPage = () => {
   const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
   const [temporaryPosts, setTemporaryPosts] = useState<PostResponse[]>([]);
   const [isTemporary, setIsTemporary] = useState<boolean>(false);
+  const [, forceUpdate] = useState(0);
   const { id } = useParams<string>();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
-  const editor = useEditor({
-    extensions: [
-      TextStyleKit,
-      StarterKit,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['left', 'center', 'right', 'justify'],
-        defaultAlignment: 'left',
-      }),
-      Highlight,
-      Image,
-      Placeholder.configure({
-        placeholder: '내용을 입력하세요.',
-      }),
-    ],
-    content: '',
-  });
+  const editor = useTiptapEditor({ content: post.content });
+
+  useEffect(() => {
+    if (editor) {
+      const handleUpdate = () => {
+        forceUpdate((prev) => prev + 1);
+      };
+
+      editor.on('update', handleUpdate);
+      editor.on('selectionUpdate', handleUpdate);
+
+      return () => {
+        editor.off('update', handleUpdate);
+        editor.off('selectionUpdate', handleUpdate);
+      };
+    }
+  }, [editor]);
+
+  if (!editor) {
+    return null; // 또는 <LoadingSpinner />
+  }
 
   useEffect(() => {
     const getOriginalPost = async () => {

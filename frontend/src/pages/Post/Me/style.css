@@ -1,0 +1,25 @@
+.me-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* .me-title { */
+/*   align-self: center; */
+/* } */
+
+.me-main {
+  display: flex;
+}
+
+.me-category-main {
+  flex: 1;
+
+  .category-main-item {
+    color: greenyellow;
+    font-weight: bold;
+  }
+}
+
+.me-post-main {
+  flex: 4;
+}

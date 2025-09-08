@@ -35,7 +35,7 @@ const PostCard = ({ post }: PostCardProps) => {
   let imageUrl = '';
 
   if (post.content && post.status === 'published') {
-    imageUrl = post.images[0].url;
+    imageUrl = post.images[0]?.url;
     const parsedContent = JSON.parse(post.content);
     textArray = parsedContent.content.reduce(
       (acc: string[], block: ContentBlock) => {

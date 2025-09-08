@@ -4,7 +4,7 @@ import { fetchDeletePost, fetchReadPostById } from '../../../api/posts';
 import type { PostResponse } from '../../../types/interface';
 import { formattedDate } from '../../../utils/date-format';
 import './style.css';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { POST_EDIT_PATH } from '../../../constant';
@@ -13,6 +13,8 @@ import { useUserStore } from '../../../store';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
+import CodeBlockShiki from 'tiptap-extension-code-block-shiki';
+import { CodeBlockNodeView } from '../../CodeBlock';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +26,7 @@ const PostDetailPage = () => {
     editable: false,
     extensions: [
       TextStyleKit,
-      StarterKit,
+      StarterKit.configure({ codeBlock: false }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
         alignments: ['left', 'center', 'right', 'justify'],
@@ -34,6 +36,14 @@ const PostDetailPage = () => {
       Image.configure({
         inline: true,
         allowBase64: true,
+      }),
+
+      CodeBlockShiki.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockNodeView);
+        },
+      }).configure({
+        defaultTheme: 'github-dark',
       }),
     ],
     content: '',

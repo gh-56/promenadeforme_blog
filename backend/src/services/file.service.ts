@@ -7,7 +7,11 @@ import { Storage } from '@google-cloud/storage';
 
 const storage = new Storage();
 
-const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string;
+let bucketName = process.env.GCLOUD_STORAGE_BUCKET as string;
+
+if (process.env.NODE_ENV !== 'production') {
+  bucketName = 'uploads';
+}
 
 export interface File {
   buffer: Buffer;

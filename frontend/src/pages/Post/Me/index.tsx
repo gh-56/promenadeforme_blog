@@ -1,8 +1,13 @@
 import { fetchReadMyPost } from '../../../api/posts';
-import type { GetAllPostResponse } from '../../../types/interface';
+import type {
+  CategoryResponse,
+  GetAllPostResponse,
+} from '../../../types/interface';
 import { useEffect, useState } from 'react';
-// import './style.css';
+import './style.css';
 import PostCard from '../../../components/PostCard/index.js';
+import { LoadingOverlay } from '@mantine/core';
+import { fetchReadCategories } from '../../../api/categories.js';
 
 const MyPostReadPage = () => {
   const [postsData, setPostsData] = useState<GetAllPostResponse>({
@@ -13,13 +18,18 @@ const MyPostReadPage = () => {
   });
   const [loading, setLoading] = useState(true);
   // const [page, setPage] = useState('1');
+  const [categoriesData, setCategoriesData] = useState<CategoryResponse[]>([]);
   const page = '1';
 
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const postsData = await fetchReadMyPost(page);
-        setPostsData(postsData);
+        const [postsResponse, categoriesResponse] = await Promise.all([
+          fetchReadMyPost(page),
+          fetchReadCategories(),
+        ]);
+        setPostsData(postsResponse);
+        setCategoriesData(categoriesResponse);
       } catch (error) {
         console.error(error);
       } finally {
@@ -30,20 +40,41 @@ const MyPostReadPage = () => {
   }, [page]);
 
   if (loading) {
-    return <div>로딩 중...</div>;
+    return (
+      <div>
+        <LoadingOverlay
+          visible={true}
+          zIndex={1000}
+          overlayProps={{ radius: 'sm', blur: 2 }}
+          loaderProps={{ color: 'black' }}
+        />
+      </div>
+    );
   }
 
   return (
-    <div className='post-container'>
-      <h1 className='post-title'>내 글 보기</h1>
-      <div className='post-main'>
-        {postsData.posts.length !== 0 ? (
-          postsData.posts.map((post) => {
-            return <PostCard key={post._id} post={post} />;
-          })
-        ) : (
-          <div>게시글이 없습니다.</div>
-        )}
+    <div className='me-container'>
+      {/* <h1 className='me-title'>내 글 보기</h1> */}
+
+      <div className='me-main'>
+        <div className='me-category-main'>
+          <h1>카테고리</h1>
+          {categoriesData.map((category) => (
+            <span key={category._id} className='category-main-item'>
+              {category.name}
+            </span>
+          ))}
+        </div>
+        <div className='me-post-main'>
+          <h1>내 글 보기</h1>
+          {postsData.posts.length !== 0 ? (
+            postsData.posts.map((post) => {
+              return <PostCard key={post._id} post={post} />;
+            })
+          ) : (
+            <div>게시글이 없습니다.</div>
+          )}
+        </div>
       </div>
     </div>
   );

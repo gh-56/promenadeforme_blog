@@ -39,7 +39,8 @@
   align-items: flex-start;
 }
 .postcard-category {
-  background-color: #c0a0ff;
+  /* background-color: #c0a0ff; */
+  background-color: #add392;
   color: #4a4453;
   padding: 0.5rem 0.7rem;
   border-radius: 0.5rem;
