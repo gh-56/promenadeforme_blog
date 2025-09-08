@@ -166,7 +166,7 @@ const JoinPage = () => {
             />
             <TextInput
               label='이메일'
-              placeholder='hello@mantine.dev'
+              placeholder='promenadeforme@example.com'
               withAsterisk
               name='email'
               value={registerData.email}

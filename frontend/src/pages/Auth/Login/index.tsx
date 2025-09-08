@@ -100,7 +100,7 @@ const LoginPage = () => {
             )}
             <TextInput
               label='이메일'
-              placeholder='hello@mantine.dev'
+              placeholder='promenadeforme@example.com'
               required
               name='email'
               type='email'
