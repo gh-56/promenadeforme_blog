@@ -4,28 +4,42 @@ import type {
   GetAllPostResponse,
 } from '../../../types/interface';
 import { useEffect, useState } from 'react';
-import './style.css';
 import PostCard from '../../../components/PostCard/index.js';
-import { LoadingOverlay } from '@mantine/core';
 import { fetchReadCategories } from '../../../api/categories.js';
+
+import {
+  LoadingOverlay,
+  Container,
+  Title,
+  Grid,
+  Stack,
+  NavLink,
+  SimpleGrid,
+  Center,
+  Text,
+  Pagination,
+  Group,
+  Box,
+} from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons-react';
 
 const MyPostReadPage = () => {
   const [postsData, setPostsData] = useState<GetAllPostResponse>({
     posts: [],
     totalPosts: 0,
-    currentPage: 0,
-    totalPages: 0,
+    currentPage: 1,
+    totalPages: 1,
   });
-  const [loading, setLoading] = useState(true);
-  // const [page, setPage] = useState('1');
   const [categoriesData, setCategoriesData] = useState<CategoryResponse[]>([]);
-  const page = '1';
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const getPosts = async () => {
+    setLoading(true);
+    const getPostsAndCategories = async () => {
       try {
         const [postsResponse, categoriesResponse] = await Promise.all([
-          fetchReadMyPost(page),
+          fetchReadMyPost(String(page)),
           fetchReadCategories(),
         ]);
         setPostsData(postsResponse);
@@ -36,47 +50,66 @@ const MyPostReadPage = () => {
         setLoading(false);
       }
     };
-    getPosts();
+    getPostsAndCategories();
   }, [page]);
 
-  if (loading) {
-    return (
-      <div>
-        <LoadingOverlay
-          visible={true}
-          zIndex={1000}
-          overlayProps={{ radius: 'sm', blur: 2 }}
-          loaderProps={{ color: 'black' }}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className='me-container'>
-      {/* <h1 className='me-title'>내 글 보기</h1> */}
+    <Container py='lg' size='xl'>
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 2.5 }}>
+          <Stack>
+            <Title order={3}>카테고리</Title>
+            {categoriesData.map((category) => (
+              <NavLink
+                key={category._id}
+                href={`/category/${category.name}`}
+                label={category.name}
+                rightSection={<IconChevronRight size='0.8rem' stroke={1.5} />}
+              />
+            ))}
+          </Stack>
+        </Grid.Col>
 
-      <div className='me-main'>
-        <div className='me-category-main'>
-          <h1>카테고리</h1>
-          {categoriesData.map((category) => (
-            <span key={category._id} className='category-main-item'>
-              {category.name}
-            </span>
-          ))}
-        </div>
-        <div className='me-post-main'>
-          <h1>내 글 보기</h1>
-          {postsData.posts.length !== 0 ? (
-            postsData.posts.map((post) => {
-              return <PostCard key={post._id} post={post} />;
-            })
-          ) : (
-            <div>게시글이 없습니다.</div>
-          )}
-        </div>
-      </div>
-    </div>
+        <Grid.Col span={{ base: 12, md: 7 }}>
+          <Stack gap='xl'>
+            <Title order={2}>내 글 보기</Title>
+
+            <Box pos='relative' mih={500}>
+              <LoadingOverlay
+                visible={loading}
+                zIndex={1000}
+                overlayProps={{ radius: 'sm', blur: 2 }}
+              />
+
+              {!loading && postsData.posts.length > 0 ? (
+                <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                  {postsData.posts.map((post) => (
+                    <PostCard key={post._id} post={post} />
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <Center h={500}>
+                  <Text>{loading ? '' : '작성한 글이 없습니다.'}</Text>
+                </Center>
+              )}
+            </Box>
+
+            {postsData.totalPages > 1 && (
+              <Group justify='center'>
+                <Pagination
+                  total={postsData.totalPages}
+                  value={page}
+                  onChange={setPage}
+                />
+              </Group>
+            )}
+          </Stack>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 2.5 }} />
+      </Grid>
+    </Container>
   );
 };
+
 export default MyPostReadPage;

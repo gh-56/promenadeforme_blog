@@ -105,7 +105,7 @@ export const getPosts = async (
       .populate('images', 'url')
       .exec();
 
-    const totalPosts = await Post.countDocuments();
+    const totalPosts = await Post.countDocuments({ status: 'published' });
 
     res.status(200).json({
       posts,
@@ -169,7 +169,10 @@ export const getPostByUser = async (
     .populate('images', 'url')
     .exec();
 
-  const totalPosts = await Post.countDocuments({ author: userId });
+  const totalPosts = await Post.countDocuments({
+    author: userId,
+    status: 'published',
+  });
 
   res.status(200).json({
     posts: userPosts,

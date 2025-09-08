@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import Input from '../../../components/Input';
-import Button from '../../../components/Button';
+import {Button} from '@mantine/core';
 import type { LoginRequest, UserResponse } from '../../../types/interface';
 import { fetchLogin } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
 import { JOIN_PATH, MAIN_PATH } from '../../../constant';
 import { useUserStore } from '../../../store';
-import './style.css';
+
 import { Link } from 'react-router-dom';
 
 // TODO: alert을 인라인 혹은 토스트 방식으로 변경하기

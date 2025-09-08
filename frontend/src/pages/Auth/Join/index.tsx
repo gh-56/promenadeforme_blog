@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import type { RegisterRequest } from '../../../types/interface';
 import Input from '../../../components/Input';
-import Button from '../../../components/Button';
+import { Button } from '@mantine/core';
 import { fetchCreateUser } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
 import { LOGIN_PATH, MAIN_PATH } from '../../../constant';
-import './style.css';
+
 import { Link } from 'react-router-dom';
 import { fetchProfileUploadImage } from '../../../api/images';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';

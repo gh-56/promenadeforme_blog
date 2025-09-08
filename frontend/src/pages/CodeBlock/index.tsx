@@ -3,7 +3,6 @@ import {
   NodeViewContent,
   type NodeViewRendererProps,
 } from '@tiptap/react';
-import './style.css';
 import { useEffect, useState } from 'react';
 
 const LANGUAGES = [

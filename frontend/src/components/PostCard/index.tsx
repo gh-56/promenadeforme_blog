@@ -2,90 +2,101 @@ import { Link } from 'react-router-dom';
 import { POST_DETAIL_PATH } from '../../constant';
 import type { PostResponse } from '../../types/interface';
 import { formattedDate } from '../../utils/date-format.js';
-import './style.css';
+import { useMemo } from 'react';
+import { Card, Image, Text, Group, Badge, Avatar } from '@mantine/core';
 
-interface PostCardProps {
-  post: PostResponse;
-}
-
-// 블록 내부의 텍스트 아이템 타입
 interface TextItem {
   type: 'text';
   text: string;
 }
-
-// 이미지, 구분선 등 텍스트가 아닌 아이템 타입
-interface NonTextItem {
-  type: string;
-  attrs?: Record<string, string>;
-}
-
-// 블록 내부의 아이템들을 포함하는 유니온 타입
-type ContentItem = TextItem & NonTextItem;
-
-// Tiptap 콘텐츠 블록의 타입
 interface ContentBlock {
-  type: string;
-  attrs?: Record<string, string>;
-  content?: ContentItem[];
+  content?: TextItem[];
 }
 
-const PostCard = ({ post }: PostCardProps) => {
-  let textArray = '';
-  let imageUrl = '';
+const PostCard = ({ post }: { post: PostResponse }) => {
+  const { summary, imageUrl } = useMemo(() => {
+    if (post.status !== 'published' || !post.content) {
+      return { summary: '', imageUrl: '' };
+    }
 
-  if (post.content && post.status === 'published') {
-    imageUrl = post.images[0]?.url;
-    const parsedContent = JSON.parse(post.content);
-    textArray = parsedContent.content.reduce(
-      (acc: string[], block: ContentBlock) => {
-        if (block.content && block.content.length > 0) {
-          block.content.forEach((item: ContentItem) => {
-            if (item.type === 'text' && item.text) {
-              acc.push(item.text);
+    const firstImageUrl =
+      post.images?.[0]?.url || `https://placehold.co/600x400?text=No+Image`;
+    let textContent = '';
+
+    try {
+      const parsedContent: { content?: ContentBlock[] } = JSON.parse(
+        post.content,
+      );
+
+      if (parsedContent.content) {
+        for (const block of parsedContent.content) {
+          if (block.content) {
+            for (const item of block.content) {
+              if (item.type === 'text' && item.text) {
+                textContent += item.text + ' ';
+              }
             }
-          });
+          }
+          if (textContent.length > 150) break;
         }
-        return acc;
-      },
-      [],
-    );
+      }
+    } catch (error) {
+      console.error('콘텐츠 파싱 실패:', error);
+      textContent = '내용을 불러올 수 없습니다.';
+    }
+
+    return {
+      summary: textContent.trim(),
+      imageUrl: firstImageUrl,
+    };
+  }, [post]);
+
+  if (post.status !== 'published') {
+    return null;
   }
 
   return (
-    <>
-      {post.status === 'published' ? (
-        <Link to={POST_DETAIL_PATH(post._id)} className='postcard-link'>
-          <div className='postcard-container'>
-            <div className='postcard-thumbnail'>
-              <img src={imageUrl} alt='게시글 썸네일 이미지' />
-            </div>
-            <div className='postcard-main'>
-              <p className='postcard-category'>{post.category.name}</p>
-              <h1 className='postcard-title'>{post.title}</h1>
-              <div className='postcard-content'>
-                {textArray}
-                {/* <EditorContent editor={editor} /> */}
-              </div>
-              <div className='postcard-profile'>
-                <img
-                  src={post.author.profileImage?.url}
-                  alt='사용자 프로필 이미지'
-                />
-                <p className='postcard-profile-nickname'>
-                  {post.author.nickname}
-                </p>
-                <p className='postcard-profile-createdAt'>
-                  {formattedDate(post.createdAt)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Link>
-      ) : (
-        <></>
-      )}
-    </>
+    <Card
+      shadow='sm'
+      padding='lg'
+      radius='md'
+      withBorder
+      component={Link}
+      to={POST_DETAIL_PATH(post._id)}
+      style={{ textDecoration: 'none' }}
+    >
+      <Card.Section>
+        <Image src={imageUrl} height={200} alt='게시글 썸네일 이미지' />
+      </Card.Section>
+
+      <Group justify='space-between' mt='md' mb='xs'>
+        <Badge color='pink'>{post.category.name}</Badge>
+      </Group>
+
+      <Text fw={700} fz='lg' component='h2' truncate='end'>
+        {post.title}
+      </Text>
+
+      <Text size='sm' c='dimmed' mt='sm' lineClamp={3}>
+        {summary}
+      </Text>
+
+      <Group mt='lg'>
+        <Avatar
+          src={post.author.profileImage?.url}
+          alt='사용자 프로필 이미지'
+          radius='xl'
+        />
+        <div>
+          <Text size='sm' fw={500}>
+            {post.author.nickname}
+          </Text>
+          <Text size='xs' c='dimmed'>
+            {formattedDate(post.createdAt)}
+          </Text>
+        </div>
+      </Group>
+    </Card>
   );
 };
 

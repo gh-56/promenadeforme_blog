@@ -27,7 +27,8 @@ import { useEffect } from 'react';
 import PostEditPage from './pages/Post/Edit';
 import MyPostReadPage from './pages/Post/Me';
 import MyPage from './pages/Auth/MyPage';
-import { LoadingOverlay } from '@mantine/core';
+import { AppShell, Button, Group, LoadingOverlay, Text } from '@mantine/core';
+import Header from './layouts/Header';
 
 function App() {
   const { init, isInitialized } = useUserStore();
@@ -50,34 +51,45 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path={LOGIN_PATH()} element={<LoginPage />} />
-      <Route path={JOIN_PATH()} element={<JoinPage />} />
-      <Route element={<Container />}>
-        <Route
-          path={MAIN_PATH()}
-          element={
-            <>
-              <Main />
-              <PostReadPage />
-            </>
-          }
-        />
-        <Route path={POST_DETAIL_PATH(':id')} element={<PostDetailPage />} />
-        <Route path={POST_PATH()} element={<PostReadPage />} />
+    <>
+      <AppShell header={{ height: 60 }} padding='md'>
+        <AppShell.Header withBorder={false}>
+          <Header />
+        </AppShell.Header>
 
-        <Route element={<ProtectedRoutes />}>
-          <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
-          <Route path={POST_MY_PATH()} element={<MyPostReadPage />} />
-          <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
-          <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
-          <Route path={MYPAGE_PATH()} element={<MyPage />} />
-        </Route>
+        <AppShell.Main>
+          <Routes>
+            <Route path={LOGIN_PATH()} element={<LoginPage />} />
+            <Route path={JOIN_PATH()} element={<JoinPage />} />
+            <Route
+              path={MAIN_PATH()}
+              element={
+                <>
+                  <Main />
+                  <PostReadPage />
+                </>
+              }
+            />
+            <Route
+              path={POST_DETAIL_PATH(':id')}
+              element={<PostDetailPage />}
+            />
+            <Route path={POST_PATH()} element={<PostReadPage />} />
 
-        <Route path='*' element={<h1>페이지가 존재하지 않습니다.</h1>} />
-      </Route>
-      <Route path={HEALTH_CHECK_PATH()} element={<HealthCheckPage />} />
-    </Routes>
+            <Route element={<ProtectedRoutes />}>
+              <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
+              <Route path={POST_MY_PATH()} element={<MyPostReadPage />} />
+              <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
+              <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
+              <Route path={MYPAGE_PATH()} element={<MyPage />} />
+            </Route>
+
+            <Route path='*' element={<h1>페이지가 존재하지 않습니다.</h1>} />
+            <Route path={HEALTH_CHECK_PATH()} element={<HealthCheckPage />} />
+          </Routes>
+        </AppShell.Main>
+      </AppShell>
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import Button from '../../../components/Button';
+import {Button} from '@mantine/core';
 import Input from '../../../components/Input';
 import type { RegisterRequest, UserProfile } from '../../../types/interface';
 import { useUserStore } from '../../../store';
@@ -7,7 +7,7 @@ import { fetchUpdateUser } from '../../../api/users';
 import { useNavigate } from 'react-router-dom';
 import type { UploadImageResponse } from '../../../types/interface/image.interface';
 import { fetchProfileUploadImage } from '../../../api/images';
-import './style.css';
+
 
 const MyPage = () => {
   const [registerData, setRegisterData] = useState<

@@ -5,21 +5,38 @@ import {
   fetchUpdateCategory,
   fetchDeleteCategory,
 } from '../../api/categories';
-import type { CategoryRequest, CategoryResponse } from '../../types/interface';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import './style.css';
+import type { CategoryResponse } from '../../types/interface';
+
+import {
+  Container,
+  Title,
+  Stack,
+  Group,
+  TextInput,
+  Button,
+  Paper,
+  Text,
+  Loader,
+  Center,
+  Modal,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 const CategoryPage = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
-  const [newCategoryName, setNewCategoryName] = useState<CategoryRequest>({
-    name: '',
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
   );
-  const [editingCategoryName, setEditingCategoryName] =
-    useState<CategoryRequest>({ name: '' });
+  const [editingCategoryName, setEditingCategoryName] = useState('');
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
+  const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const getCategories = async () => {
@@ -28,132 +45,176 @@ const CategoryPage = () => {
         setCategories(categoriesData);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
     getCategories();
   }, []);
 
   const handleAddCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!newCategoryName) return alert('카테고리 이름을 입력하세요.');
+    if (!newCategoryName.trim()) {
+      alert('카테고리 이름을 입력하세요.');
+      return;
+    }
     try {
-      const newCategory = await fetchCreateCategory(newCategoryName);
+      const newCategory = await fetchCreateCategory({ name: newCategoryName });
       setCategories([...categories, newCategory]);
-      setNewCategoryName({ name: '' });
-      alert('새로운 카테고리가 생성되었습니다.');
+      setNewCategoryName('');
     } catch (error) {
       console.error(error);
       alert('카테고리 추가에 실패했습니다.');
     }
   };
 
-  const handleUpdateClick = (id: string, name: CategoryRequest) => {
-    setEditingCategoryId(id);
-    setEditingCategoryName(name);
+  const handleUpdateClick = (category: CategoryResponse) => {
+    setEditingCategoryId(category._id);
+    setEditingCategoryName(category.name);
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!editingCategoryName) return alert('수정할 이름을 입력해 주세요.');
+    if (!editingCategoryId || !editingCategoryName.trim()) return;
     try {
       const updatedCategory: CategoryResponse = await fetchUpdateCategory(
-        editingCategoryId as string,
-        editingCategoryName,
+        editingCategoryId,
+        {
+          name: editingCategoryName,
+        },
       );
-      const updatedCategories = categories.map((category) =>
-        category._id === updatedCategory._id ? updatedCategory : category,
+      setCategories(
+        categories.map((cat) =>
+          cat._id === updatedCategory._id ? updatedCategory : cat,
+        ),
       );
-      setCategories(updatedCategories);
-      setEditingCategoryId(null);
-      setEditingCategoryName({ name: '' });
+      setEditingCategoryId(null); // Exit edit mode
     } catch (error) {
       console.error(error);
       alert('카테고리 수정에 실패했습니다.');
     }
   };
 
-  const handleDeleteClick = async (id: string) => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      try {
-        await fetchDeleteCategory(id);
-        setCategories(categories.filter((category) => category._id !== id));
-      } catch (error) {
-        console.error(error);
-        alert('카테고리 삭제에 실패했습니다.');
-      }
+  const handleDeleteClick = (id: string) => {
+    setDeletingCategoryId(id);
+    openDeleteModal();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingCategoryId) return;
+    try {
+      await fetchDeleteCategory(deletingCategoryId);
+      setCategories(categories.filter((cat) => cat._id !== deletingCategoryId));
+    } catch (error) {
+      console.error(error);
+      alert('카테고리 삭제에 실패했습니다.');
+    } finally {
+      closeDeleteModal();
     }
   };
 
+  if (isLoading) {
+    return (
+      <Center h={300}>
+        <Loader />
+      </Center>
+    );
+  }
+
   return (
-    <div className='category-container'>
-      <h1 className='category-title'>카테고리 관리</h1>
-      <form onSubmit={handleAddCategory} className='category-add-item'>
-        <Input
-          type='text'
-          value={newCategoryName.name}
-          onChange={(e) => setNewCategoryName({ name: e.target.value })}
-          placeholder='카테고리 입력'
-          className='category-input'
-        />
-        <Button type='submit'>추가</Button>
-      </form>
+    <>
+      <Container py='lg'>
+        <Stack gap='xl'>
+          <Title order={2}>Category Management</Title>
 
-      <ul className='category-list'>
-        {categories.map((category) => (
-          <li key={category._id}>
-            {editingCategoryId === category._id ? (
-              <form onSubmit={handleUpdateSubmit}>
-                <div className='category-item'>
-                  <Input
-                    type='text'
-                    value={editingCategoryName.name}
-                    onChange={(e) =>
-                      setEditingCategoryName({ name: e.target.value })
-                    }
-                    placeholder='카테고리 입력'
-                    className='category-input'
-                  />
-                  <div className='category-buttons'>
-                    <Button type='submit' className='category-button'>
-                      저장
-                    </Button>
-                    <Button
-                      type='button'
-                      onClick={() => setEditingCategoryId(null)}
-                      className='category-button'
-                    >
-                      취소
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            ) : (
-              <div className='category-item'>
-                <div className='category-name'>
-                  <div>{category.name}</div>
-                </div>
+          <form onSubmit={handleAddCategory}>
+            <Group>
+              <TextInput
+                placeholder='새로운 카테고리 이름'
+                style={{ flex: 1 }}
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.currentTarget.value)}
+                required
+              />
+              <Button type='submit'>추가</Button>
+            </Group>
+          </form>
 
-                <div className='category-buttons'>
-                  <Button
-                    onClick={() => handleUpdateClick(category._id, category)}
-                    className='category-button'
-                  >
-                    수정
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteClick(category._id)}
-                    className='category-button'
-                  >
-                    삭제
-                  </Button>
-                </div>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+          <Stack gap='xs'>
+            {categories.map((category) => (
+              <Paper withBorder p='md' radius='md' key={category._id}>
+                {editingCategoryId === category._id ? (
+                  <form onSubmit={handleUpdateSubmit}>
+                    <Group justify='space-between'>
+                      <TextInput
+                        style={{ flex: 1 }}
+                        value={editingCategoryName}
+                        onChange={(e) =>
+                          setEditingCategoryName(e.currentTarget.value)
+                        }
+                        autoFocus
+                      />
+                      <Group>
+                        <Button type='submit' size='xs'>
+                          저장
+                        </Button>
+                        <Button
+                          variant='default'
+                          size='xs'
+                          onClick={() => setEditingCategoryId(null)}
+                        >
+                          취소
+                        </Button>
+                      </Group>
+                    </Group>
+                  </form>
+                ) : (
+                  <Group justify='space-between'>
+                    <Text fw={500}>{category.name}</Text>
+                    <Group>
+                      <Button
+                        variant='default'
+                        size='xs'
+                        onClick={() => handleUpdateClick(category)}
+                      >
+                        수정
+                      </Button>
+                      <Button
+                        variant='light'
+                        color='red'
+                        size='xs'
+                        onClick={() => handleDeleteClick(category._id)}
+                      >
+                        삭제
+                      </Button>
+                    </Group>
+                  </Group>
+                )}
+              </Paper>
+            ))}
+          </Stack>
+        </Stack>
+      </Container>
+
+      <Modal
+        opened={deleteModalOpened}
+        onClose={closeDeleteModal}
+        title='카테고리 삭제'
+        centered
+      >
+        <Stack>
+          <Text size='sm'>정말로 이 카테고리를 삭제하시겠습니까?</Text>
+          <Group justify='flex-end' mt='md'>
+            <Button variant='default' onClick={closeDeleteModal}>
+              취소
+            </Button>
+            <Button color='red' onClick={handleDeleteConfirm}>
+              삭제
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 };
 

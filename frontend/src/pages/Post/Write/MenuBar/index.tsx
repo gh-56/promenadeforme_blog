@@ -1,7 +1,7 @@
 import type { Editor } from '@tiptap/react';
 import { useEditorState } from '@tiptap/react';
 
-import './style.css';
+
 
 const MenuBar = ({ editor }: { editor: Editor }) => {
   const editorState = useEditorState({

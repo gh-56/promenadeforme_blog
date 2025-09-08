@@ -1,140 +1,260 @@
-import './style.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../store';
 import {
-  CATEGORY_PATH,
   MAIN_PATH,
   POST_PATH,
+  POST_MY_PATH,
   POST_WRITE_PATH,
+  CATEGORY_PATH,
+  MYPAGE_PATH,
   LOGIN_PATH,
   JOIN_PATH,
-  POST_MY_PATH,
-  MYPAGE_PATH,
 } from '../../constant';
-// import Input from '../../components/Input';
-import { useEffect, useState } from 'react';
-import { useUserStore } from '../../store';
+
+import {
+  Group,
+  Title,
+  Button,
+  Menu,
+  Avatar,
+  Text,
+  Burger,
+  Drawer,
+  Stack,
+  ActionIcon,
+  useMantineColorScheme,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import {
+  IconLogout,
+  IconMoon,
+  IconSettings,
+  IconSun,
+} from '@tabler/icons-react';
+
+function ThemeToggleButton() {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  return (
+    <ActionIcon
+      onClick={toggleColorScheme}
+      variant='default'
+      size='lg'
+      aria-label='Toggle color scheme'
+    >
+      {colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+    </ActionIcon>
+  );
+}
 
 const Header = () => {
-  const { isLoggedIn, user, logout } = useUserStore();
-  // const [searchValue, setSearchValue] = useState('');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
 
-  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearchValue(e.target.value);
-  // };
+  const [opened, { toggle }] = useDisclosure(false);
 
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.classList.add('no-scroll');
-    } else {
-      document.body.classList.remove('no-scroll');
-    }
-    return () => {
-      document.body.classList.remove('no-scroll');
-    };
-  }, [isMenuOpen]);
+  const { user, isLoggedIn, logout } = useUserStore();
+  const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handleLogout = () => {
+    logout();
+    navigate(MAIN_PATH());
+    toggle();
   };
 
-  const toggleProfile = () => {
-    setIsProfileOpen(!isProfileOpen);
-  };
+  const textColor = colorScheme === 'dark' ? 'gray' : 'black';
 
   return (
-    <header className='header-container'>
-      <div className='header-logo'>
-        <Link to={MAIN_PATH()}>
-          {isMenuOpen ? (
-            <h1 onClick={toggleMenu}>Promenadeforme</h1>
-          ) : (
-            <h1>Promenadeforme</h1>
-          )}
+    <Group h='100%' px='md' justify='space-between'>
+      <Group>
+        <Link
+          to={MAIN_PATH()}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <Title order={3}>Promenadeforme</Title>
         </Link>
-      </div>
-      <nav className='header-menu'>
-        <div className={`header-nav-list ${isMenuOpen ? 'open' : ''}`}>
+        <ThemeToggleButton />
+      </Group>
+
+      <Group visibleFrom='sm'>
+        {isLoggedIn ? (
+          <>
+            <Button
+              variant='subtle'
+              component={Link}
+              to={POST_PATH()}
+              color={textColor}
+            >
+              전체 글
+            </Button>
+            <Button
+              variant='subtle'
+              component={Link}
+              to={POST_MY_PATH()}
+              color={textColor}
+            >
+              내 글
+            </Button>
+            <Button
+              variant='subtle'
+              component={Link}
+              to={POST_WRITE_PATH()}
+              color={textColor}
+            >
+              글쓰기
+            </Button>
+            <Button
+              variant='subtle'
+              component={Link}
+              to={CATEGORY_PATH()}
+              color={textColor}
+            >
+              카테고리
+            </Button>
+
+            <Menu shadow='md' width={200}>
+              <Menu.Target>
+                <Button variant='subtle' p={4} radius='xl' color={textColor}>
+                  <Group>
+                    <Avatar
+                      src={user?.profileImage?.url}
+                      alt='프로필 이미지'
+                      radius='xl'
+                      size={'sm'}
+                    />
+                    <Text size='sm' fw={500}>
+                      {user?.nickname}
+                    </Text>
+                  </Group>
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>{user?.email}</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconSettings size={14} />}
+                  component={Link}
+                  to={MYPAGE_PATH()}
+                >
+                  설정
+                </Menu.Item>
+                <Menu.Item
+                  color='red'
+                  leftSection={<IconLogout size={14} />}
+                  onClick={() => {
+                    logout();
+                    navigate(MAIN_PATH());
+                  }}
+                >
+                  로그아웃
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </>
+        ) : (
+          <>
+            <Button
+              variant='subtle'
+              component={Link}
+              to={LOGIN_PATH()}
+              color={textColor}
+            >
+              로그인
+            </Button>
+            <Button
+              variant='default'
+              component={Link}
+              to={JOIN_PATH()}
+              color={textColor}
+            >
+              회원가입
+            </Button>
+          </>
+        )}
+      </Group>
+
+      <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
+
+      <Drawer
+        opened={opened}
+        onClose={toggle}
+        position='right'
+        title='메뉴'
+        overlayProps={{ backgroundOpacity: 0.5, blur: 4 }}
+      >
+        <Stack>
           {isLoggedIn ? (
             <>
-              <Link to={POST_PATH()} onClick={toggleMenu}>
-                전체 글 보기
-              </Link>
-              <Link to={POST_MY_PATH()} onClick={toggleMenu}>
-                내 글 보기
-              </Link>
-              <Link to={POST_WRITE_PATH()} onClick={toggleMenu}>
-                글 쓰기
-              </Link>
-              <Link to={CATEGORY_PATH()} onClick={toggleMenu}>
+              <Button
+                variant='subtle'
+                component={Link}
+                to={POST_PATH()}
+                onClick={toggle}
+                color={textColor}
+              >
+                전체 글
+              </Button>
+              <Button
+                variant='subtle'
+                component={Link}
+                to={POST_MY_PATH()}
+                onClick={toggle}
+                color={textColor}
+              >
+                내 글
+              </Button>
+              <Button
+                variant='subtle'
+                component={Link}
+                to={POST_WRITE_PATH()}
+                onClick={toggle}
+                color={textColor}
+              >
+                글쓰기
+              </Button>
+              <Button
+                variant='subtle'
+                component={Link}
+                to={CATEGORY_PATH()}
+                onClick={toggle}
+                color={textColor}
+              >
                 카테고리
-              </Link>
-
-              <div className='profile-box' onClick={toggleProfile}>
-                <div className='profile-info'>
-                  <div className='profile-image-box'>
-                    <img src={user?.profileImage?.url} alt='프로필 이미지' />
-                  </div>
-                  <div className='profile-nickname'>{user?.nickname}</div>
-                </div>
-
-                <div
-                  className={`profile-detail ${isProfileOpen ? 'open' : ''}`}
-                >
-                  <div className='detail-header'>
-                    <div className='detail-image-box'>
-                      <img src={user?.profileImage?.url} alt='프로필 이미지' />
-                    </div>
-                    <div className='detail-nickname'>{user?.nickname}</div>
-                  </div>
-
-                  <div className='detail-links'>
-                    <Link to={MYPAGE_PATH()} onClick={toggleMenu}>
-                      설정
-                    </Link>
-                    <span
-                      onClick={() => {
-                        logout();
-                        toggleMenu();
-                      }}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      로그아웃
-                    </span>
-                  </div>
-                </div>
-              </div>
+              </Button>
+              <Button
+                variant='subtle'
+                component={Link}
+                to={MYPAGE_PATH()}
+                onClick={toggle}
+                color={textColor}
+              >
+                설정
+              </Button>
+              <Button color='red' onClick={handleLogout}>
+                로그아웃
+              </Button>
             </>
           ) : (
             <>
-              {/* <Link to={POST_PATH()} onClick={toggleMenu}>
-                글 목록
-              </Link> */}
-              <Link to={LOGIN_PATH()} onClick={toggleMenu}>
+              <Button
+                variant='subtle'
+                component={Link}
+                to={LOGIN_PATH()}
+                onClick={toggle}
+                color={textColor}
+              >
                 로그인
-              </Link>
-              <Link to={JOIN_PATH()} onClick={toggleMenu}>
+              </Button>
+              <Button
+                variant='default'
+                component={Link}
+                to={JOIN_PATH()}
+                onClick={toggle}
+              >
                 회원가입
-              </Link>
+              </Button>
             </>
           )}
-        </div>
-        <button className='hamburger-button' onClick={toggleMenu}>
-          ☰
-        </button>
-        {/* <div className='header-search'>
-          <Input
-            className='header-input'
-            id='search'
-            type='text'
-            placeholder='검색어를 입력하세요.'
-            value={searchValue}
-            onChange={handleSearchChange}
-          />
-        </div> */}
-      </nav>
-    </header>
+        </Stack>
+      </Drawer>
+    </Group>
   );
 };
 

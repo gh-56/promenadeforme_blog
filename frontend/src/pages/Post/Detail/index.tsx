@@ -1,50 +1,62 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchDeletePost, fetchReadPostById } from '../../../api/posts';
 import type { PostResponse } from '../../../types/interface';
 import { formattedDate } from '../../../utils/date-format';
-import './style.css';
+import { useUserStore } from '../../../store';
+
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { POST_EDIT_PATH } from '../../../constant';
-import { Link } from 'react-router-dom';
-import { useUserStore } from '../../../store';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import CodeBlockShiki from 'tiptap-extension-code-block-shiki';
 import { CodeBlockNodeView } from '../../CodeBlock';
 
+import {
+  Container,
+  Title,
+  Text,
+  Group,
+  Avatar,
+  Badge,
+  Button,
+  Stack,
+  Center,
+  Loader,
+  Alert,
+  Divider,
+  Modal,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconAlertCircle } from '@tabler/icons-react';
+
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<PostResponse | null>();
+  const [post, setPost] = useState<PostResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useUserStore();
   const nav = useNavigate();
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
 
   const editor = useEditor({
     editable: false,
     extensions: [
       TextStyleKit,
       StarterKit.configure({ codeBlock: false }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['left', 'center', 'right', 'justify'],
-        defaultAlignment: 'left',
-      }),
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Highlight,
-      Image.configure({
-        inline: true,
-        allowBase64: true,
-      }),
-
+      Image.configure({ inline: true, allowBase64: true }),
       CodeBlockShiki.extend({
         addNodeView() {
           return ReactNodeViewRenderer(CodeBlockNodeView);
         },
-      }).configure({
-        defaultTheme: 'github-dark',
-      }),
+      }).configure({ defaultTheme: 'github-dark' }),
     ],
     content: '',
   });
@@ -52,17 +64,16 @@ const PostDetailPage = () => {
   useEffect(() => {
     const getPost = async () => {
       if (id) {
+        setIsLoading(true);
         try {
           const postData: PostResponse = await fetchReadPostById(id);
-
           if (postData.content && editor) {
-            const parsedContent = JSON.parse(postData.content);
-            editor.commands.setContent(parsedContent);
+            editor.commands.setContent(JSON.parse(postData.content));
           }
-
           setPost(postData);
         } catch (error) {
           console.error('게시글을 가져오는 데 실패했습니다.', error);
+          setPost(null);
         } finally {
           setIsLoading(false);
         }
@@ -71,67 +82,116 @@ const PostDetailPage = () => {
     getPost();
   }, [id, editor]);
 
-  if (isLoading) {
-    return <div>게시글을 불러오는 중...</div>;
-  }
-
-  if (!post) {
-    return <div>게시글을 찾을 수 없습니다.</div>;
-  }
-
-  const handleDeletePost = async () => {
-    if (id && confirm('게시글을 정말 삭제하시겠습니까?')) {
-      try {
-        await fetchDeletePost(id);
-        nav('/');
-        alert('게시글이 성공적으로 삭제되었습니다.');
-      } catch (error) {
-        console.error(error);
-        alert('게시글 삭제에 실패했습니다.');
-      }
+  const handleDeleteConfirm = async () => {
+    if (!id) return;
+    try {
+      await fetchDeletePost(id);
+      alert('게시글이 성공적으로 삭제되었습니다.');
+      nav('/');
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+      alert('게시글 삭제에 실패했습니다.');
+    } finally {
+      closeDeleteModal();
     }
   };
 
+  if (isLoading) {
+    return (
+      <Center h={400}>
+        <Loader />
+      </Center>
+    );
+  }
+
+  if (!post) {
+    return (
+      <Container py='lg'>
+        <Alert icon={<IconAlertCircle size='1rem' />} title='Error' color='red'>
+          게시글을 찾을 수 없거나 불러오는 데 실패했습니다.
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <>
-      <div className='postdetail-container'>
-        <div className='postdetail-top'>
-          <h1 className='postdetail-title'>{post.title}</h1>
-          <div className='postdetail-profile'>
-            <img
-              src={post.author.profileImage?.url}
-              alt='사용자 프로필 이미지'
-            />
-            <p className='postcard-profile-nickname'>{post.author.nickname}</p>
-            <p className='postcard-profile-createdAt'>
-              {formattedDate(post.createdAt)}
-            </p>
-            <div className='postcard-category'>{post.category.name}</div>
+      <Container py='xl' size='md'>
+        <Stack gap='lg'>
+          <Stack gap='xs'>
+            <Badge color='pink' variant='light' size='lg' mb='sm'>
+              {post.category.name}
+            </Badge>
+            <Title order={1}>{post.title}</Title>
+            <Group justify='space-between'>
+              <Group>
+                <Avatar
+                  src={post.author.profileImage?.url}
+                  alt="Author's profile image"
+                  radius='xl'
+                />
+                <Text size='sm' fw={500}>
+                  {post.author.nickname}
+                </Text>
+                <Text size='sm' c='dimmed'>
+                  ·
+                </Text>
+                <Text size='sm' c='dimmed'>
+                  {formattedDate(post.createdAt)}
+                </Text>
+              </Group>
 
-            {post.author._id === useUserStore.getState().user?._id ? (
-              <div className='postdetail-private'>
-                <Link
-                  to={POST_EDIT_PATH(id as string)}
-                  className='postdetail-edit-button'
-                >
-                  수정
-                </Link>
-                <button
-                  onClick={handleDeletePost}
-                  type='button'
-                  className='postdetail-delete-button'
-                >
-                  삭제
-                </button>
-              </div>
-            ) : (
-              <></>
-            )}
+              {user && post.author._id === user._id && (
+                <Group>
+                  <Button
+                    component={Link}
+                    to={POST_EDIT_PATH(id!)}
+                    variant='default'
+                    size='xs'
+                  >
+                    수정
+                  </Button>
+                  <Button
+                    onClick={openDeleteModal}
+                    variant='light'
+                    color='red'
+                    size='xs'
+                  >
+                    삭제
+                  </Button>
+                </Group>
+              )}
+            </Group>
+          </Stack>
+
+          <Divider my='md' />
+
+          <div className='prose-styles'>
+            {editor && <EditorContent editor={editor} />}
           </div>
-        </div>
-      </div>
+        </Stack>
+      </Container>
 
-      {editor && <EditorContent editor={editor} />}
+      <Modal
+        opened={deleteModalOpened}
+        onClose={closeDeleteModal}
+        title='게시글 삭제'
+        centered
+      >
+        <Stack>
+          <Text size='sm'>
+            게시글을 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+          </Text>
+          <Group justify='flex-end' mt='md'>
+            <Button variant='default' onClick={closeDeleteModal}>
+              취소
+            </Button>
+            <Button color='red' onClick={handleDeleteConfirm}>
+              삭제하기
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </>
   );
 };

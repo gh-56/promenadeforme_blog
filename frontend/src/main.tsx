@@ -5,12 +5,30 @@ import App from './App.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import './assets/fonts.css';
 
-import { MantineProvider } from '@mantine/core';
+import { createTheme, MantineProvider } from '@mantine/core';
+
+const theme = createTheme({
+  primaryColor: 'gray',
+  components: {
+    AppShell: {
+      styles: {
+        header: {
+          maxWidth: '1300px',
+          margin: '0 auto',
+        },
+        main: {
+          maxWidth: '1300px',
+          margin: '0 auto',
+        },
+      },
+    },
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <MantineProvider>
+      <MantineProvider theme={theme}>
         <App />
       </MantineProvider>
     </BrowserRouter>

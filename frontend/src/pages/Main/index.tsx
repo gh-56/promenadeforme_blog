@@ -1,12 +1,13 @@
-import './style.css';
+import { Stack, Text } from '@mantine/core';
+
 const Main = () => {
   return (
-    <div className='main-container'>
-      <p className='main-top'>함께 걷는 코딩 산책길</p>
-      <p className='main-bottom'>
+    <Stack justify='center' gap={'xs'}>
+      <Text ta={'center'}>함께 걷는 코딩 산책길</Text>
+      <Text ta={'center'}>
         개발자를 위한 특별한 공간에 오신 것을 환영합니다
-      </p>
-    </div>
+      </Text>
+    </Stack>
   );
 };
 
