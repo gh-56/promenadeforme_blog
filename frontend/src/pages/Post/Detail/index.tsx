@@ -26,6 +26,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useTiptapEditor } from '../../../hooks/useTiptapEditor';
+import { notifications } from '@mantine/notifications';
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -65,11 +66,18 @@ const PostDetailPage = () => {
     if (!id) return;
     try {
       await fetchDeletePost(id);
-      alert('게시글이 성공적으로 삭제되었습니다.');
+      notifications.show({
+        title: '게시글 삭제 성공',
+        message: '게시글이 성공적으로 삭제되었습니다.',
+        color: 'teal',
+      });
       nav('/');
     } catch (error) {
-      console.error('Failed to delete post:', error);
-      alert('게시글 삭제에 실패했습니다.');
+      notifications.show({
+        title: '게시글 삭제 실패',
+        message: '게시글 삭제에 실패했습니다.',
+        color: 'red',
+      });
     } finally {
       closeDeleteModal();
     }

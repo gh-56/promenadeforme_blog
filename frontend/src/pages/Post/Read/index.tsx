@@ -45,9 +45,11 @@ const PostReadPage = () => {
   }, [page]);
 
   return (
-    <Container py='lg'>
+    <Container py='xl'>
       <Stack gap='xl'>
-        <Title order={4}>전체 글 보기</Title>
+        <Center>
+          <Title order={4}>전체 글 보기</Title>
+        </Center>
 
         <Box pos='relative' mih={400}>
           <LoadingOverlay
@@ -57,7 +59,7 @@ const PostReadPage = () => {
           />
 
           {!loading && postsData.posts.length > 0 && (
-            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }}>
               {postsData.posts.map((post) => (
                 <PostCard key={post._id} post={post} />
               ))}

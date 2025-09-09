@@ -56,10 +56,10 @@ const MyPostReadPage = () => {
   }, [page]);
 
   return (
-    <Container py='lg' size='xl'>
+    <Container py='lg' size='xl' mt='md'>
       <Grid>
-        <Grid.Col span={{ base: 12, md: 2.5 }}>
-          <Stack>
+        <Grid.Col span={{ base: 12, md: 2 }}>
+          <Stack mt={'xl'}>
             <Title order={4}>카테고리</Title>
             {categoriesData.map((category) => (
               <NavLink
@@ -73,9 +73,11 @@ const MyPostReadPage = () => {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span={{ base: 12, md: 7 }}>
+        <Grid.Col span={{ base: 12, md: 10 }}>
           <Stack gap='xl'>
-            <Title order={4}>내 글 보기</Title>
+            <Center>
+              <Title order={4}>내 글 보기</Title>
+            </Center>
 
             <Box pos='relative' mih={500}>
               <LoadingOverlay
@@ -109,7 +111,7 @@ const MyPostReadPage = () => {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span={{ base: 12, md: 2.5 }} />
+        {/* <Grid.Col span={{ base: 12, md: 2.5 }} /> */}
       </Grid>
     </Container>
   );

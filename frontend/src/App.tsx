@@ -56,6 +56,10 @@ function App() {
       <Route path={LOGIN_PATH()} element={<LoginPage />} />
       <Route path={JOIN_PATH()} element={<JoinPage />} />
       <Route path={HEALTH_CHECK_PATH()} element={<HealthCheckPage />} />
+      <Route element={<ProtectedRoutes />}>
+        <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
+        <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
+      </Route>
 
       <Route element={<MainLayout />}>
         <Route
@@ -76,10 +80,8 @@ function App() {
         />
 
         <Route element={<ProtectedRoutes />}>
-          <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
           <Route path={POST_MY_PATH()} element={<MyPostReadPage />} />
           <Route path={CATEGORY_PATH()} element={<CategoryPage />} />
-          <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
           <Route path={MYPAGE_PATH()} element={<MyPage />} />
         </Route>
 

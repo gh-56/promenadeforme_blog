@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchReadPostById, fetchUpdatePost } from '../../../api/posts';
 import PostForm from '../../../components/PostForm';
 import type { PostResponse, PostRequest } from '../../../types/interface';
+import { notifications } from '@mantine/notifications';
 
 const PostEditPage = () => {
   const { id: postId } = useParams<{ id: string }>();
@@ -23,7 +24,12 @@ const PostEditPage = () => {
   const handleUpdate = async (payload: PostRequest) => {
     if (!postId) return;
     await fetchUpdatePost(postId, payload);
-    alert('글이 성공적으로 수정되었습니다.');
+
+    notifications.show({
+      title: '게시글 수정 성공',
+      message: '글이 성공적으로 수정되었습니다.',
+      color: 'teal',
+    });
     nav(`/posts/${postId}`);
   };
 

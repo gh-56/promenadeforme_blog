@@ -27,6 +27,7 @@ import {
   Notification,
   Text,
   Title,
+  Center,
 } from '@mantine/core';
 import {
   IconPhotoScan,
@@ -35,6 +36,8 @@ import {
   IconArrowLeft,
   IconTerminal2,
 } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 
 interface PostFormProps {
   pageTitle: string;
@@ -172,11 +175,10 @@ const PostForm = ({
 
       try {
         const response: UploadImageResponse[] = await fetchUploadImage(form);
-        console.log('response', response);
 
         for (const image of response) {
           editor?.commands.enter();
-          editor?.chain().focus('end').setImage({ src: image.url }).run();
+          editor?.chain().focus().setImage({ src: image.url }).run();
           uploadedIds.push(image._id);
         }
 
@@ -208,32 +210,55 @@ const PostForm = ({
 
     if (selectedPost) {
       //* 2. 작성 중인 글이 지워진다는 안내를 한다.
-      if (
-        confirm(
-          '임시 저장 글을 불러오시겠습니까? 작성 중인 내용이 모두 지워집니다.',
-        )
-      ) {
-        //* 3. 찾은 게시글의 불러온 내용으로 교체한다.
-        setPost({
-          ...post,
-          title: selectedPost.title,
-          category: selectedPost.category._id,
-        });
-        editor.commands.setContent(JSON.parse(selectedPost.content));
-      }
+      modals.openConfirmModal({
+        title: '임시 저장 게시글 불러오기',
+        children: (
+          <Text size='sm'>
+            임시 저장 글을 불러오시겠습니까? 작성 중인 내용이 모두 지워집니다.
+          </Text>
+        ),
+        labels: { confirm: '불러오기', cancel: '취소' },
+        confirmProps: { color: 'teal' },
+        onCancel: () => {},
+        onConfirm: () => {
+          setPost({
+            ...post,
+            title: selectedPost.title,
+            category: selectedPost.category._id,
+          });
+          editor.commands.setContent(JSON.parse(selectedPost.content));
+        },
+      });
     }
   };
 
   const handleDeleteTemporary = async (id: string) => {
-    if (confirm('임시 저장 글을 삭제하시겠습니까?')) {
-      try {
-        await fetchDeletePost(id);
-        alert('임시 저장 글을 성공적으로 삭제하였습니다.');
-      } catch (error) {
-        console.error(error);
-        alert('임시 저장 글 삭제에 실패하였습니다.');
-      }
-    }
+    modals.openConfirmModal({
+      title: '임시 저장 글 삭제',
+      children: <Text size='sm'>임시 저장 글을 삭제하시겠습니까?</Text>,
+      labels: { confirm: '삭제', cancel: '취소' },
+      confirmProps: { color: 'red' },
+      onCancel: () => {},
+      onConfirm: async () => {
+        try {
+          await fetchDeletePost(id);
+          handleReadTemporary();
+          notifications.show({
+            title: '임시 저장 게시글 삭제 성공',
+            message: '임시 저장 게시글을 성공적으로 삭제하였습니다.',
+            color: 'teal',
+          });
+        } catch (error) {
+          console.error(error);
+
+          notifications.show({
+            title: '임시 저장 게시글 삭제 실패',
+            message: '임시 저장 글 삭제에 실패했습니다.',
+            color: 'red',
+          });
+        }
+      },
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -248,15 +273,22 @@ const PostForm = ({
       await onSubmit(payload);
     } catch (error) {
       console.error(error);
-      alert('글 처리에 실패했습니다.');
+
+      notifications.show({
+        title: '게시글 작성 실패',
+        message: '글 작성에 실패했습니다.',
+        color: 'red',
+      });
     }
   };
 
   return (
-    <Container>
-      <Title order={4} mb={'xl'}>
-        {pageTitle}
-      </Title>
+    <Container mt={'xl'}>
+      <Center>
+        <Title order={4} mb={'xl'}>
+          {pageTitle}
+        </Title>
+      </Center>
       <form onSubmit={handleSubmit}>
         <Box>
           {isCategory ? (
@@ -288,6 +320,7 @@ const PostForm = ({
             clearable
             disabled={isCategory}
             nothingFoundMessage='추가된 카테고리가 없습니다.'
+            size='sm'
           />
         </Box>
 
@@ -298,6 +331,7 @@ const PostForm = ({
             ref={focusEditorRef}
             value={post.title}
             onKeyDown={handleTitleKeyDown}
+            size='xl'
           />
 
           <input
@@ -309,10 +343,7 @@ const PostForm = ({
             multiple
           />
           <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar
-              sticky
-              stickyOffset='var(--docs-header-height)'
-            >
+            <RichTextEditor.Toolbar sticky stickyOffset={'0'}>
               <RichTextEditor.ControlsGroup>
                 <RichTextEditor.Bold />
                 <RichTextEditor.Italic />
@@ -365,7 +396,20 @@ const PostForm = ({
             type='button'
             variant='default'
             leftSection={<IconArrowLeft size={16} />}
-            onClick={() => nav(-1)}
+            onClick={() => {
+              modals.openConfirmModal({
+                title: '나가기',
+                children: (
+                  <Text size='sm'>
+                    화면을 나가시면 작성 중이던 게시글이 모두 지워집니다.
+                  </Text>
+                ),
+                labels: { confirm: '확인', cancel: '취소' },
+                confirmProps: { color: 'red' },
+                onCancel: () => {},
+                onConfirm: () => nav(-1),
+              });
+            }}
           >
             나가기
           </Button>

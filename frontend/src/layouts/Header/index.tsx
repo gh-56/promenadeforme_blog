@@ -63,7 +63,7 @@ const Header = () => {
   const textColor = colorScheme === 'dark' ? 'gray' : 'black';
 
   return (
-    <Group h='100%' px='md' justify='space-between'>
+    <Group h='100%' px='md' justify='space-between' mt='md'>
       <Group>
         <Link
           to={MAIN_PATH()}

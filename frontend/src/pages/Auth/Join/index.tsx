@@ -23,6 +23,7 @@ import {
   Group,
 } from '@mantine/core';
 import { IconCamera, IconX } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 
 const JoinPage = () => {
   const nav = useNavigate();
@@ -84,15 +85,18 @@ const JoinPage = () => {
       setIsSubmitting(false);
       return;
     }
-    if (registerData.password.length < 6) {
-      setError('비밀번호는 6자 이상이어야 합니다.');
+    if (registerData.password.length < 8) {
+      setError('비밀번호는 8자 이상이어야 합니다.');
       setIsSubmitting(false);
       return;
     }
 
     try {
       await fetchCreateUser(registerData);
-      alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+      notifications.show({
+        message: '회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.',
+        color: 'teal',
+      });
       nav(LOGIN_PATH());
     } catch (err: any) {
       const errorMessage =

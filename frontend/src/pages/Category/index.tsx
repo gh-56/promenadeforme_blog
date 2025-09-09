@@ -21,6 +21,7 @@ import {
   Modal,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 
 const CategoryPage = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
@@ -55,7 +56,10 @@ const CategoryPage = () => {
   const handleAddCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newCategoryName.trim()) {
-      alert('카테고리 이름을 입력하세요.');
+      notifications.show({
+        message: '카테고리 이름을 입력하세요.',
+        color: 'red',
+      });
       return;
     }
     try {
@@ -64,7 +68,10 @@ const CategoryPage = () => {
       setNewCategoryName('');
     } catch (error) {
       console.error(error);
-      alert('카테고리 추가에 실패했습니다.');
+      notifications.show({
+        message: '카테고리 추가에 실패했습니다.',
+        color: 'red',
+      });
     }
   };
 
@@ -91,7 +98,10 @@ const CategoryPage = () => {
       setEditingCategoryId(null);
     } catch (error) {
       console.error(error);
-      alert('카테고리 수정에 실패했습니다.');
+      notifications.show({
+        message: '카테고리 수정에 실패했습니다.',
+        color: 'teal',
+      });
     }
   };
 
@@ -107,7 +117,10 @@ const CategoryPage = () => {
       setCategories(categories.filter((cat) => cat._id !== deletingCategoryId));
     } catch (error) {
       console.error(error);
-      alert('카테고리 삭제에 실패했습니다.');
+      notifications.show({
+        message: '카테고리 삭제에 실패했습니다.',
+        color: 'red',
+      });
     } finally {
       closeDeleteModal();
     }
@@ -134,7 +147,6 @@ const CategoryPage = () => {
                 style={{ flex: 1 }}
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.currentTarget.value)}
-                required
               />
               <Button type='submit'>추가</Button>
             </Group>

@@ -3,6 +3,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import Image from '@tiptap/extension-image';
+import ImageResize from 'tiptap-extension-resize-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import CodeBlockShiki from 'tiptap-extension-code-block-shiki';
@@ -38,7 +39,8 @@ export const useTiptapEditor = ({
           defaultAlignment: 'left',
         }),
         Highlight,
-        Image,
+        // Image,
+        ImageResize,
         Placeholder.configure({
           placeholder: '내용을 입력하세요.',
         }),
