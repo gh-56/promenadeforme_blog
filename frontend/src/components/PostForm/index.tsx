@@ -46,6 +46,14 @@ interface PostFormProps {
   submitText: string;
 }
 
+interface TiptapNode {
+  type: string;
+  attrs?: {
+    [key: string]: any;
+  };
+  content?: TiptapNode[];
+}
+
 const PostForm = ({
   pageTitle,
   initialPost,
@@ -61,10 +69,10 @@ const PostForm = ({
   });
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [isCategory, setIstCategory] = useState<boolean>(false);
-  const [uploadedImageIds, setUploadedImageIds] = useState<string[]>([]);
   const [temporaryPosts, setTemporaryPosts] = useState<PostResponse[]>([]);
   const [isTemporary, setIsTemporary] = useState<boolean>(false);
   const [, forceUpdate] = useState(0);
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
@@ -74,6 +82,25 @@ const PostForm = ({
       ...currentPost,
       content: newContent,
     }));
+
+    const initialImageIds = initialPost?.images.map((img) => img._id) || [];
+    const currentImageNodes =
+      editor?.state.doc.content
+        .toJSON()
+        .content?.filter((node: TiptapNode) => node.type === 'image') || [];
+    const currentImageUrls = currentImageNodes.map(
+      (node: TiptapNode) => node.attrs?.src,
+    );
+
+    const remainingImages =
+      initialPost?.images.filter((img) => currentImageUrls.includes(img.url)) ||
+      [];
+    const remainingImageIds = remainingImages.map((img) => img._id);
+
+    const deletedIds = initialImageIds.filter(
+      (id) => !remainingImageIds.includes(id),
+    );
+    setDeletedImageIds(deletedIds);
   };
 
   const editor = useTiptapEditor({
@@ -182,7 +209,22 @@ const PostForm = ({
           uploadedIds.push(image._id);
         }
 
-        setUploadedImageIds((prevIds) => [...prevIds, ...uploadedIds]);
+        setPost((currentPost) => {
+          let existingImageIds = currentPost.images || [];
+
+          const isCurrentlyOnlyDefault =
+            initialPost?.images?.length === 1 &&
+            initialPost.images[0].url.includes('default-post-image.jpg');
+
+          if (isCurrentlyOnlyDefault) {
+            existingImageIds = [];
+          }
+
+          return {
+            ...currentPost,
+            images: [...existingImageIds, ...uploadedIds],
+          };
+        });
       } catch (error) {
         console.error('이미지 업로드 실패: ', error);
       }
@@ -265,11 +307,19 @@ const PostForm = ({
     e.preventDefault();
     try {
       const rawContent = editor!.getJSON();
+      const currentImageIds = post.images || [];
+
+      const finalImageIds = currentImageIds.filter(
+        (id) => !deletedImageIds.includes(id),
+      );
+
       const payload = {
         ...post,
         content: JSON.stringify(rawContent),
-        images: [...(post.images || []), ...uploadedImageIds],
+        images: finalImageIds,
+        deletedImages: deletedImageIds,
       };
+
       await onSubmit(payload);
     } catch (error) {
       console.error(error);

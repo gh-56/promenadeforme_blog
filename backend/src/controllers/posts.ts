@@ -236,7 +236,7 @@ export const updatePost = async (
 ) => {
   try {
     const { id } = req.params;
-    const { title, content, category, images, tags } = req.body;
+    const { title, content, category, images, tags, deletedImages } = req.body;
     const userId = req.user!.userId;
 
     if (!title || !content || !category) {
@@ -253,28 +253,43 @@ export const updatePost = async (
       return next(new CustomError('수정 권한이 없습니다.', 403));
     }
 
-    const imageIds: Types.ObjectId[] = [];
-    if (images && images.length > 0) {
-      for (const image of images) {
-        imageIds.push(image._id);
-      }
-    } else {
-      let defaultImage;
+    let defaultImage;
+    if (images.length < 1) {
       defaultImage = await Image.findOne({
         url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
-        // url: 'http://localhost:4000/images/default-post-image.jpg',
       });
       if (defaultImage) {
-        imageIds.push(defaultImage._id);
-      } else {
-        defaultImage = new Image({
-          hash: 'default-post-image-hash',
-          url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
-          author: userId,
-        });
-        await defaultImage.save();
-        imageIds.push(defaultImage._id);
+        images.push(defaultImage._id);
       }
+    }
+
+    // const imageIds: Types.ObjectId[] = [];
+    // if (images && images.length > 0) {
+    //   for (const image of images) {
+    //     imageIds.push(image._id);
+    //   }
+    // } else {
+    //   let defaultImage;
+    //   defaultImage = await Image.findOne({
+    //     url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+    //     // url: 'http://localhost:4000/images/default-post-image.jpg',
+    //   });
+    //   if (defaultImage) {
+    //     imageIds.push(defaultImage._id);
+    //   } else {
+    //     defaultImage = new Image({
+    //       hash: 'default-post-image-hash',
+    //       url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+    //       author: userId,
+    //     });
+    //     await defaultImage.save();
+    //     imageIds.push(defaultImage._id);
+    //   }
+    // }
+
+    if (deletedImages && deletedImages.length > 0) {
+      // Image 모델에서 해당 ID들을 가진 문서를 모두 삭제
+      await Image.deleteMany({ _id: { $in: deletedImages }, author: userId });
     }
 
     const updatedPost = await Post.findByIdAndUpdate(
@@ -283,7 +298,7 @@ export const updatePost = async (
         title,
         content,
         category,
-        images: imageIds,
+        images,
         tags,
         updatedAt: new Date(Date.now()),
       },
