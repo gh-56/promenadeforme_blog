@@ -268,7 +268,7 @@ const PostForm = ({
       const payload = {
         ...post,
         content: JSON.stringify(rawContent),
-        images: uploadedImageIds,
+        images: [...(post.images || []), ...uploadedImageIds],
       };
       await onSubmit(payload);
     } catch (error) {

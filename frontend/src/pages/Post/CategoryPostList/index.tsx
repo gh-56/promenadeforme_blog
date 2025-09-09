@@ -79,7 +79,7 @@ const CategoryPostListPage = () => {
           />
 
           {!loading && postsData.posts.length > 0 ? (
-            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+            <SimpleGrid cols={{ base: 1, sm: 2 }}>
               {postsData.posts.map((post) => (
                 <PostCard key={post._id} post={post} />
               ))}
