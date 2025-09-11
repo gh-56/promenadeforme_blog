@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import Main from './pages/Main';
+// import Main from './pages/Main';
 import HealthCheckPage from './pages/HealthCheck';
 import PostWritePage from './pages/Post/Write/index';
 import PostReadPage from './pages/Post/Read';
@@ -74,6 +74,7 @@ function App() {
             </>
           }
         />
+
         <Route path={POST_DETAIL_PATH(':id')} element={<PostDetailPage />} />
         <Route path={POST_PATH()} element={<PostReadPage />} />
 

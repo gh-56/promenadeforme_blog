@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store';
 import {
   MAIN_PATH,
-  POST_PATH,
+  // POST_PATH,
   POST_MY_PATH,
   POST_WRITE_PATH,
   CATEGORY_PATH,

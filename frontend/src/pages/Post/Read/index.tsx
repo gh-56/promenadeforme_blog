@@ -6,7 +6,7 @@ import PostCard from '../../../components/PostCard/index.js';
 
 import {
   LoadingOverlay,
-  Container,
+  // Container,
   Title,
   SimpleGrid,
   Group,
