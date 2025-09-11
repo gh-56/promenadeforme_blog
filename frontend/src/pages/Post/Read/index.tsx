@@ -45,9 +45,9 @@ const PostReadPage = () => {
   }, [page]);
 
   return (
-    <Container py='xl'>
+    <Box>
       <Stack gap='xl'>
-        <Center>
+        <Center mt={'xl'}>
           <Title order={4}>전체 글 보기</Title>
         </Center>
 
@@ -59,7 +59,7 @@ const PostReadPage = () => {
           />
 
           {!loading && postsData.posts.length > 0 && (
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }}>
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }}>
               {postsData.posts.map((post) => (
                 <PostCard key={post._id} post={post} />
               ))}
@@ -83,7 +83,7 @@ const PostReadPage = () => {
           </Group>
         )}
       </Stack>
-    </Container>
+    </Box>
   );
 };
 

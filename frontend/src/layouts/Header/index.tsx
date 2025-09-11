@@ -82,14 +82,23 @@ const Header = () => {
       <Group visibleFrom='md'>
         {isLoggedIn ? (
           <>
+            {/* <Button */}
+            {/*   variant='subtle' */}
+            {/*   component={Link} */}
+            {/*   to={POST_PATH()} */}
+            {/*   color={textColor} */}
+            {/*   fw={'normal'} */}
+            {/* > */}
+            {/*   전체 글 */}
+            {/* </Button> */}
             <Button
               variant='subtle'
               component={Link}
-              to={POST_PATH()}
+              to={POST_WRITE_PATH()}
               color={textColor}
               fw={'normal'}
             >
-              전체 글
+              글쓰기
             </Button>
             <Button
               variant='subtle'
@@ -99,15 +108,6 @@ const Header = () => {
               fw={'normal'}
             >
               내 글
-            </Button>
-            <Button
-              variant='subtle'
-              component={Link}
-              to={POST_WRITE_PATH()}
-              color={textColor}
-              fw={'normal'}
-            >
-              글쓰기
             </Button>
             <Button
               variant='subtle'
@@ -199,15 +199,25 @@ const Header = () => {
         <Stack>
           {isLoggedIn ? (
             <>
+              {/* <Button */}
+              {/*   variant='subtle' */}
+              {/*   component={Link} */}
+              {/*   to={POST_PATH()} */}
+              {/*   onClick={toggle} */}
+              {/*   color={textColor} */}
+              {/*   fw={'normal'} */}
+              {/* > */}
+              {/*   전체 글 */}
+              {/* </Button> */}
               <Button
                 variant='subtle'
                 component={Link}
-                to={POST_PATH()}
+                to={POST_WRITE_PATH()}
                 onClick={toggle}
                 color={textColor}
                 fw={'normal'}
               >
-                전체 글
+                글쓰기
               </Button>
               <Button
                 variant='subtle'
@@ -218,16 +228,6 @@ const Header = () => {
                 fw={'normal'}
               >
                 내 글
-              </Button>
-              <Button
-                variant='subtle'
-                component={Link}
-                to={POST_WRITE_PATH()}
-                onClick={toggle}
-                color={textColor}
-                fw={'normal'}
-              >
-                글쓰기
               </Button>
               <Button
                 variant='subtle'

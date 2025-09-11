@@ -69,7 +69,7 @@ function App() {
           path={MAIN_PATH()}
           element={
             <>
-              <Main />
+              {/* <Main /> */}
               <PostReadPage />
             </>
           }
