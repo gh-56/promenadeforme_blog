@@ -30,6 +30,8 @@ import MyPage from './pages/Auth/MyPage';
 import { LoadingOverlay } from '@mantine/core';
 import MainLayout from './layouts/MainLayout';
 import CategoryPostListPage from './pages/Post/CategoryPostList';
+import { NotFound } from './pages/NotFound';
+import { ServerError } from './pages/ServerError';
 
 function App() {
   const { init, isInitialized } = useUserStore();
@@ -56,6 +58,7 @@ function App() {
       <Route path={LOGIN_PATH()} element={<LoginPage />} />
       <Route path={JOIN_PATH()} element={<JoinPage />} />
       <Route path={HEALTH_CHECK_PATH()} element={<HealthCheckPage />} />
+      <Route path='/error' element={<ServerError />} />
       <Route element={<ProtectedRoutes />}>
         <Route path={POST_WRITE_PATH()} element={<PostWritePage />} />
         <Route path={POST_EDIT_PATH(':id')} element={<PostEditPage />} />
@@ -85,7 +88,7 @@ function App() {
           <Route path={MYPAGE_PATH()} element={<MyPage />} />
         </Route>
 
-        <Route path='*' element={<h1>페이지가 존재하지 않습니다.</h1>} />
+        <Route path='*' element={<NotFound />} />
       </Route>
     </Routes>
   );

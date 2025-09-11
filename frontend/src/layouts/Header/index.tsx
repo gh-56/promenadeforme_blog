@@ -31,6 +31,7 @@ import {
   IconSettings,
   IconSun,
 } from '@tabler/icons-react';
+import logoImage from '../../assets/promenadeforme_logo.png';
 
 function ThemeToggleButton() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -38,7 +39,7 @@ function ThemeToggleButton() {
     <ActionIcon
       onClick={toggleColorScheme}
       variant='default'
-      size='lg'
+      size='md'
       aria-label='Toggle color scheme'
     >
       {colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
@@ -69,14 +70,16 @@ const Header = () => {
           to={MAIN_PATH()}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
-          <Title order={3} lts={'3px'}>
-            Promenadeforme
-          </Title>
+          <Group>
+            <Avatar src={logoImage} radius={'xs'} size={'sm'} />
+            <Title order={3} lts={'3px'}>
+              Promenadeforme
+            </Title>
+          </Group>
         </Link>
-        <ThemeToggleButton />
       </Group>
 
-      <Group visibleFrom='sm'>
+      <Group visibleFrom='md'>
         {isLoggedIn ? (
           <>
             <Button
@@ -153,6 +156,7 @@ const Header = () => {
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>
+            <ThemeToggleButton />
           </>
         ) : (
           <>
@@ -174,11 +178,16 @@ const Header = () => {
             >
               회원가입
             </Button>
+
+            <ThemeToggleButton />
           </>
         )}
       </Group>
 
-      <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
+      <Group hiddenFrom='md'>
+        <ThemeToggleButton />
+        <Burger opened={opened} onClick={toggle} hiddenFrom='md' size='sm' />
+      </Group>
 
       <Drawer
         opened={opened}
