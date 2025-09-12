@@ -16,6 +16,8 @@ backend/node_modules/
 backend/dist/
 backend/.env
 backend/src/utils/*.json
+backend/.clinic
+backend/uploads
 
 # frontend
 frontend/node_modules/

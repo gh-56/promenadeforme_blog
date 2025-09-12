@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import Post from '../schemas/post.js';
 import { Types } from 'mongoose';
-import { deleteImageFile, saveImageFile } from '../services/file.service.js';
+import { deleteImageFile } from '../services/file.service.js';
 import CustomError from '../utils/customError.js';
 import Image from '../schemas/image.js';
 import Category from '../schemas/category.js';
-import { decode } from 'punycode';
+
+const defaultPostImage = 'default-post-image.webp';
 
 export const createPost = async (
   req: Request,
@@ -29,15 +30,14 @@ export const createPost = async (
     } else {
       let defaultImage;
       defaultImage = await Image.findOne({
-        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
-        // url: 'http://localhost:4000/images/default-post-image.jpg',
+        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/${defaultPostImage}`,
       });
       if (defaultImage) {
         imageIds.push(defaultImage._id);
       } else {
         defaultImage = new Image({
           hash: 'default-post-image-hash',
-          url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+          url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/${defaultPostImage}`,
         });
 
         await defaultImage.save();
@@ -93,7 +93,7 @@ export const getPosts = async (
     const page = parseInt(req.query.page as string) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-
+    console.time('image-request-processing');
     const posts = await Post.find({})
       .skip(skip)
       .limit(limit)
@@ -106,7 +106,7 @@ export const getPosts = async (
       })
       .populate('images', 'url')
       .exec();
-
+    console.timeEnd('image-request-processing');
     const totalPosts = await Post.countDocuments({ status: 'published' });
 
     res.status(200).json({
@@ -256,7 +256,7 @@ export const updatePost = async (
     let defaultImage;
     if (images.length < 1) {
       defaultImage = await Image.findOne({
-        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
+        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/${defaultPostImage}`,
       });
       if (defaultImage) {
         images.push(defaultImage._id);

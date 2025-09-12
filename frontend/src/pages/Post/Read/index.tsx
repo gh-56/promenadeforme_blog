@@ -61,7 +61,11 @@ const PostReadPage = () => {
           {!loading && postsData.posts.length > 0 && (
             <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }}>
               {postsData.posts.map((post) => (
-                <PostCard key={post._id} post={post} />
+                <PostCard
+                  key={post._id}
+                  post={post}
+                  thumbnail={post.images?.[0]?.url}
+                />
               ))}
             </SimpleGrid>
           )}

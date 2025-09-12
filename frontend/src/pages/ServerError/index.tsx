@@ -12,7 +12,7 @@ import errorImage from '../../assets/promenadeforme_500.png';
 import { MAIN_PATH } from '../../constant';
 import { Link } from 'react-router-dom';
 
-export function ServerError() {
+function ServerError() {
   return (
     <Container mt={'xl'}>
       <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
@@ -45,3 +45,5 @@ export function ServerError() {
     </Container>
   );
 }
+
+export default ServerError;

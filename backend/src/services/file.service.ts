@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs/promises';
@@ -27,8 +28,9 @@ export const saveImageFile = async (
     .createHash('sha256')
     .update(file.buffer)
     .digest('hex');
-  const fileExt = path.extname(file.originalname);
-  const newFileName = `${fileHash}${fileExt}`;
+
+  // const fileExt = path.extname(file.originalname);
+  // const newFileName = `${fileHash}${fileExt}`;
 
   let existingImage = await Image.findOne({ hash: fileHash });
 
@@ -38,18 +40,25 @@ export const saveImageFile = async (
     }
     await existingImage.save();
   } else {
+    const newFileName = `${fileHash}.webp`;
+
+    const optimizedBuffer = await sharp(file.buffer)
+      .resize({ width: 1200, withoutEnlargement: true })
+      .toFormat('webp', { quality: 80 })
+      .toBuffer();
+
     try {
       if (process.env.NODE_ENV === 'production') {
         // GCP 버킷에 파일 업로드
         const bucket = storage.bucket(bucketName);
         const fileRef = bucket.file(newFileName);
 
-        await fileRef.save(file.buffer);
+        await fileRef.save(optimizedBuffer);
         console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
       } else {
         // 로컬에 파일 업로드
         const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
-        await fs.writeFile(savePath, file.buffer);
+        await fs.writeFile(savePath, optimizedBuffer);
       }
     } catch (error) {
       console.error('파일 저장에 실패했습니다.', error);
@@ -75,26 +84,33 @@ export const saveProfileImageFile = async (file: File) => {
     .createHash('sha256')
     .update(file.buffer)
     .digest('hex');
-  const fileExt = path.extname(file.originalname);
-  const newFileName = `${fileHash}${fileExt}`;
+
+  // const fileExt = path.extname(file.originalname);
+  // const newFileName = `${fileHash}${fileExt}`;
 
   let existingImage = await Image.findOne({ hash: fileHash });
 
   if (existingImage) {
     await existingImage.save();
   } else {
+    const newFileName = `${fileHash}.webp`;
+
+    const optimizedBuffer = await sharp(file.buffer)
+      .resize({ width: 1200, withoutEnlargement: true })
+      .toFormat('webp', { quality: 80 })
+      .toBuffer();
     try {
       if (process.env.NODE_ENV === 'production') {
         // GCP 버킷에 파일 업로드
         const bucket = storage.bucket(bucketName);
         const fileRef = bucket.file(newFileName);
 
-        await fileRef.save(file.buffer);
+        await fileRef.save(optimizedBuffer);
         console.log(`파일 ${newFileName}이 GCS에 업로드되었습니다.`);
       } else {
         // 로컬에 파일 업로드
         const savePath = path.resolve(process.cwd(), 'uploads', newFileName);
-        await fs.writeFile(savePath, file.buffer);
+        await fs.writeFile(savePath, optimizedBuffer);
       }
     } catch (error) {
       console.error('파일 저장에 실패했습니다.', error);
@@ -126,7 +142,7 @@ export const deleteImageFile = async (imageIds: Types.ObjectId[]) => {
       } else {
         if (
           image.url ===
-          `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${bucketName}/default-post-image.jpg`
+          `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${bucketName}/default-post-image.webp`
           // image.url === 'http://localhost:4000/images/default-post-image.jpg'
         ) {
           image.referenceCount = 1;

@@ -13,14 +13,18 @@ interface ContentBlock {
   content?: TextItem[];
 }
 
-const PostCard = ({ post }: { post: PostResponse }) => {
+const PostCard = ({
+  post,
+  thumbnail,
+}: {
+  post: PostResponse;
+  thumbnail: string;
+}) => {
   const { summary, imageUrl } = useMemo(() => {
     if (post.status !== 'published' || !post.content) {
       return { summary: '', imageUrl: '' };
     }
 
-    const firstImageUrl =
-      post.images?.[0]?.url || `https://placehold.co/600x400?text=No+Image`;
     let textContent = '';
 
     try {
@@ -47,7 +51,7 @@ const PostCard = ({ post }: { post: PostResponse }) => {
 
     return {
       summary: textContent.trim(),
-      imageUrl: firstImageUrl,
+      imageUrl: thumbnail,
     };
   }, [post]);
 

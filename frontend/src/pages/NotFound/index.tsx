@@ -11,7 +11,7 @@ import errorImage from '../../assets/promenadeforme_404.png';
 import { Link } from 'react-router-dom';
 import { MAIN_PATH } from '../../constant';
 
-export function NotFound() {
+function NotFound() {
   return (
     <Container>
       <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
@@ -38,3 +38,4 @@ export function NotFound() {
     </Container>
   );
 }
+export default NotFound;
