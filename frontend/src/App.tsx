@@ -48,25 +48,25 @@ const LoadingFallback = () => (
 );
 
 function App() {
-  const { init, isInitialized } = useUserStore();
-  // const { init } = useUserStore();
+  // const { init, isInitialized } = useUserStore();
+  const { init } = useUserStore();
 
   useEffect(() => {
     init();
   }, [init]);
 
-  if (!isInitialized) {
-    return (
-      <div>
-        <LoadingOverlay
-          visible={true}
-          zIndex={1000}
-          overlayProps={{ radius: 'sm', blur: 2 }}
-          loaderProps={{ color: 'black' }}
-        />
-      </div>
-    );
-  }
+  // if (!isInitialized) {
+  //   return (
+  //     <div>
+  //       <LoadingOverlay
+  //         visible={true}
+  //         zIndex={1000}
+  //         overlayProps={{ radius: 'sm', blur: 2 }}
+  //         loaderProps={{ color: 'black' }}
+  //       />
+  //     </div>
+  //   );
+  // }
 
   return (
     <Suspense fallback={<LoadingFallback />}>
