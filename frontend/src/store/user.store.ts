@@ -39,10 +39,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
   init: async () => {
     try {
-      console.time('getProfile');
       const response: UserResponse = await fetchGetProfile();
-      console.log('response', response);
-      console.timeEnd('getProfile');
       const { user, accessToken } = response;
       set({ isLoggedIn: true, user, accessToken, isInitialized: true });
     } catch (error) {
