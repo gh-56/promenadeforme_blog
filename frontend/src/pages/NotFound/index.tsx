@@ -7,7 +7,6 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import errorImage from '../../assets/promenadeforme_404.png';
 import { Link } from 'react-router-dom';
 import { MAIN_PATH } from '../../constant';
 
@@ -15,7 +14,7 @@ function NotFound() {
   return (
     <Container>
       <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
-        <Image src={errorImage} />
+        <Image src={'/image/promenadeforme_404.png'} />
         <Stack justify='center'>
           <Title ta={{ base: 'center', sm: 'left' }}>
             페이지를 찾을 수 없어요.

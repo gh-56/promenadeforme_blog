@@ -8,7 +8,6 @@ import {
   SimpleGrid,
   Stack,
 } from '@mantine/core';
-import errorImage from '../../assets/promenadeforme_500.png';
 import { MAIN_PATH } from '../../constant';
 import { Link } from 'react-router-dom';
 
@@ -16,7 +15,7 @@ function ServerError() {
   return (
     <Container mt={'xl'}>
       <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
-        <Image src={errorImage} />
+        <Image src={'/image/promenadeforme_500.png'} />
         {/* Title과 Text에도 폰트 굵기(fw), 위아래 간격(mt, mb) 등을 추가했어요. */}
         <Stack mt={'xl'}>
           <Title ta='center' fw={900} fz={30}>
