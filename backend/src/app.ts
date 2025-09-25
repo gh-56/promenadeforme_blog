@@ -54,10 +54,11 @@ app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
 
   const status = err.status || 500;
-  const message =
-    process.env.NODE_ENV !== 'production'
-      ? err.message
-      : '서버 내부 오류가 발생했습니다.';
+  const message = err.message;
+  // const message =
+  //   process.env.NODE_ENV !== 'production'
+  //     ? err.message
+  //     : '서버 내부 오류가 발생했습니다.';
 
   res.status(status).json({
     code: status,
