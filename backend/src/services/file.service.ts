@@ -140,12 +140,8 @@ export const deleteImageFile = async (imageIds: Types.ObjectId[]) => {
         console.warn(`${imageId}번 이미지가 없습니다.`);
         continue;
       } else {
-        if (
-          image.url ===
-          `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${bucketName}/default-post-image.webp`
-          // image.url === 'http://localhost:4000/images/default-post-image.jpg'
-        ) {
-          image.referenceCount = 1;
+        if (image.hash === 'default-post-image-hash') {
+          continue;
         } else {
           image.referenceCount -= 1;
         }
@@ -158,9 +154,13 @@ export const deleteImageFile = async (imageIds: Types.ObjectId[]) => {
             if (process.env.NODE_ENV === 'production') {
               await storage.bucket(bucketName).file(fileName).delete();
               console.log(`${imageId}번 이미지가 GCS에서 삭제되었습니다.`);
+
+              await Image.findOneAndDelete({ _id: imageId });
+              console.log(`${imageId}번 이미지가 삭제되었습니다.`);
             } else {
               const filePath = path.resolve(process.cwd(), 'uploads', fileName);
               await fs.unlink(filePath);
+
               await Image.findOneAndDelete({ _id: imageId });
               console.log(`${imageId}번 이미지가 삭제되었습니다.`);
             }

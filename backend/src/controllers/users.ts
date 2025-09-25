@@ -51,7 +51,7 @@ export const createUser = async (
       imageId = profileImage;
     } else {
       let defaultImage = await Image.findOne({
-        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-profile.png`,
+        hash: 'default-profile-hash',
       });
       if (defaultImage) {
         imageId = defaultImage._id;
@@ -59,7 +59,7 @@ export const createUser = async (
         defaultImage = new Image({
           hash: 'default-profile-hash',
           url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-profile.png`,
-          // url: 'http://localhost:4000/images/default-profile.png',
+          referenceCount: 999,
         });
         await defaultImage.save();
         imageId = defaultImage._id;

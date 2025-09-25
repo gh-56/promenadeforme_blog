@@ -30,7 +30,7 @@ export const createPost = async (
     } else {
       let defaultImage;
       defaultImage = await Image.findOne({
-        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/${defaultPostImage}`,
+        hash: 'default-post-image-hash',
       });
       if (defaultImage) {
         imageIds.push(defaultImage._id);
@@ -38,6 +38,7 @@ export const createPost = async (
         defaultImage = new Image({
           hash: 'default-post-image-hash',
           url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/${defaultPostImage}`,
+          referenceCount: 999,
         });
 
         await defaultImage.save();
@@ -93,7 +94,6 @@ export const getPosts = async (
     const page = parseInt(req.query.page as string) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    console.time('image-request-processing');
     const posts = await Post.find({})
       .skip(skip)
       .limit(limit)
@@ -106,7 +106,6 @@ export const getPosts = async (
       })
       .populate('images', 'url')
       .exec();
-    console.timeEnd('image-request-processing');
     const totalPosts = await Post.countDocuments({ status: 'published' });
 
     res.status(200).json({
@@ -243,75 +242,63 @@ export const updatePost = async (
       return next(new CustomError('필수 입력 항목이 누락되었습니다.', 400));
     }
 
-    const existPostById = await Post.findById(id);
-    if (!existPostById) {
-      return next(new CustomError('게시글을 찾을 수 없습니다.', 404));
+    const postToUpdate = await Post.findOne({ _id: id, author: userId });
+    if (!postToUpdate) {
+      return next(
+        new CustomError('게시글을 찾을 수 없거나 수정 권한이 없습니다.', 404),
+      );
     }
 
-    const existPostByAuthor = await Post.findOne({ _id: id, author: userId });
-    if (!existPostByAuthor) {
-      return next(new CustomError('수정 권한이 없습니다.', 403));
-    }
-
-    let defaultImage;
     if (images.length < 1) {
-      defaultImage = await Image.findOne({
-        url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/${defaultPostImage}`,
+      const defaultImage = await Image.findOne({
+        hash: 'default-post-image-hash',
       });
       if (defaultImage) {
         images.push(defaultImage._id);
       }
     }
 
-    // const imageIds: Types.ObjectId[] = [];
-    // if (images && images.length > 0) {
-    //   for (const image of images) {
-    //     imageIds.push(image._id);
-    //   }
-    // } else {
-    //   let defaultImage;
-    //   defaultImage = await Image.findOne({
-    //     url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
-    //     // url: 'http://localhost:4000/images/default-post-image.jpg',
-    //   });
-    //   if (defaultImage) {
-    //     imageIds.push(defaultImage._id);
-    //   } else {
-    //     defaultImage = new Image({
-    //       hash: 'default-post-image-hash',
-    //       url: `${process.env.GCLOUD_STORAGE_IMAGE_URL}/${process.env.GCLOUD_STORAGE_BUCKET}/default-post-image.jpg`,
-    //       author: userId,
-    //     });
-    //     await defaultImage.save();
-    //     imageIds.push(defaultImage._id);
-    //   }
-    // }
-
     if (deletedImages && deletedImages.length > 0) {
-      // Image 모델에서 해당 ID들을 가진 문서를 모두 삭제
-      await Image.deleteMany({ _id: { $in: deletedImages }, author: userId });
+      await deleteImageFile(deletedImages);
     }
 
-    const updatedPost = await Post.findByIdAndUpdate(
-      { _id: id, author: userId },
+    postToUpdate.title = title;
+    postToUpdate.content = content;
+    postToUpdate.category = category;
+    postToUpdate.images = images;
+    postToUpdate.tags = tags;
+
+    const updatedPost = await postToUpdate.save();
+
+    await updatedPost.populate([
+      { path: 'category', select: 'name' },
       {
-        title,
-        content,
-        category,
-        images,
-        tags,
-        updatedAt: new Date(Date.now()),
-      },
-      { new: true, runValidators: true },
-    )
-      .populate('category', 'name')
-      .populate({
         path: 'author',
         select: '-password -username -bio',
         populate: { path: 'profileImage', select: 'url' },
-      })
-      .populate('images', 'url')
-      .exec();
+      },
+      { path: 'images', select: 'url' },
+    ]);
+    // const updatedPost = await Post.findByIdAndUpdate(
+    //   { _id: id, author: userId },
+    //   {
+    //     title,
+    //     content,
+    //     category,
+    //     images,
+    //     tags,
+    //     updatedAt: new Date(Date.now()),
+    //   },
+    //   { new: true, runValidators: true },
+    // )
+    //   .populate('category', 'name')
+    //   .populate({
+    //     path: 'author',
+    //     select: '-password -username -bio',
+    //     populate: { path: 'profileImage', select: 'url' },
+    //   })
+    //   .populate('images', 'url')
+    //   .exec();
 
     res.status(200).json(updatedPost);
   } catch (error) {
