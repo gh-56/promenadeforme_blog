@@ -76,11 +76,16 @@ const LoginPage = () => {
       <Group justify='center'>
         <Text c='dimmed' size='sm' ta='center' mt={5}>
           아직 계정이 없으신가요?{' '}
-          <Link to={JOIN_PATH()} style={{ textDecoration: 'none' }}>
-            <Text c='gray' size='xs' mt={5}>
-              회원가입 페이지로 이동
-            </Text>
-          </Link>
+          <Text
+            c='gray'
+            size='xs'
+            mt={5}
+            component={Link}
+            to={JOIN_PATH()}
+            style={{ textDecoration: 'none' }}
+          >
+            회원가입 페이지로 이동
+          </Text>
         </Text>
       </Group>
 
