@@ -31,7 +31,6 @@ import {
   IconSettings,
   IconSun,
 } from '@tabler/icons-react';
-import logoImage from '../../assets/promenadeforme_logo.png';
 
 function ThemeToggleButton() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -71,7 +70,11 @@ const Header = () => {
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <Group>
-            <Avatar src={logoImage} radius={'xs'} size={'sm'} />
+            <Avatar
+              src={'/image/promenadeforme_logo.png'}
+              radius={'xs'}
+              size={'sm'}
+            />
             <Title order={3} lts={'3px'}>
               Promenadeforme
             </Title>
