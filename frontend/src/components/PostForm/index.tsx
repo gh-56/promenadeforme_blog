@@ -1,6 +1,6 @@
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchReadCategories } from '../../api/categories';
 import { fetchUploadImage } from '../../api/images';
@@ -38,20 +38,13 @@ import {
 } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import type { NodeType, TextType, DocumentType } from '@tiptap/react';
 
 interface PostFormProps {
   pageTitle: string;
   initialPost?: PostResponse;
   onSubmit: (payload: PostRequest) => Promise<void>;
   submitText: string;
-}
-
-interface TiptapNode {
-  type: string;
-  attrs?: {
-    [key: string]: any;
-  };
-  content?: TiptapNode[];
 }
 
 const PostForm = ({
@@ -71,44 +64,35 @@ const PostForm = ({
   const [isCategory, setIstCategory] = useState<boolean>(false);
   const [temporaryPosts, setTemporaryPosts] = useState<PostResponse[]>([]);
   const [isTemporary, setIsTemporary] = useState<boolean>(false);
-  const [, forceUpdate] = useState(0);
-  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
+  const uploadImageIdsRef = useRef<UploadImageResponse[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const focusEditorRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
-  const handleContentUpdate = (newContent: string) => {
-    setPost((currentPost) => ({
-      ...currentPost,
-      content: newContent,
-    }));
-
-    const initialImageIds = initialPost?.images.map((img) => img._id) || [];
-    const currentImageNodes =
-      editor?.state.doc.content
-        .toJSON()
-        .content?.filter((node: TiptapNode) => node.type === 'image') || [];
-    const currentImageUrls = currentImageNodes.map(
-      (node: TiptapNode) => node.attrs?.src,
-    );
-
-    const remainingImages =
-      initialPost?.images.filter((img) => currentImageUrls.includes(img.url)) ||
-      [];
-    const remainingImageIds = remainingImages.map((img) => img._id);
-
-    const deletedIds = initialImageIds.filter(
-      (id) => !remainingImageIds.includes(id),
-    );
-    setDeletedImageIds(deletedIds);
+  const handleTiptapUpdate = (
+    newContent: DocumentType<
+      Record<string, any> | undefined,
+      NodeType<
+        string,
+        undefined | Record<string, any>,
+        any,
+        (NodeType | TextType)[]
+      >[]
+    >,
+  ) => {
+    setPost((currentPost) => {
+      return { ...currentPost, content: JSON.stringify(newContent) };
+    });
   };
 
+  // 에디터 불러오기
   const editor = useTiptapEditor({
     content: post.content,
-    onUpdate: handleContentUpdate,
+    handleTiptapUpdate,
     titleInputRef: focusEditorRef,
     isEditable: true,
   });
+
   useEffect(() => {
     if (initialPost) {
       setPost({
@@ -119,6 +103,10 @@ const PostForm = ({
         status: initialPost.status || 'draft',
       });
 
+      if (initialPost.images) {
+        uploadImageIdsRef.current = initialPost.images;
+      }
+
       if (editor && initialPost.content) {
         const isSameContent =
           JSON.stringify(editor.getJSON()) === initialPost.content;
@@ -128,22 +116,6 @@ const PostForm = ({
       }
     }
   }, [initialPost, editor]);
-
-  useEffect(() => {
-    if (editor) {
-      const handleUpdate = () => {
-        forceUpdate((prev) => prev + 1);
-      };
-
-      editor.on('update', handleUpdate);
-      editor.on('selectionUpdate', handleUpdate);
-
-      return () => {
-        editor.off('update', handleUpdate);
-        editor.off('selectionUpdate', handleUpdate);
-      };
-    }
-  }, [editor]);
 
   if (!editor) {
     return null;
@@ -193,7 +165,6 @@ const PostForm = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const images = e.target.files;
-      const uploadedIds: string[] = [];
       const form = new FormData();
 
       for (const image of images) {
@@ -206,25 +177,40 @@ const PostForm = ({
         for (const image of response) {
           editor?.commands.enter();
           editor?.chain().focus().setImage({ src: image.url }).run();
-          uploadedIds.push(image._id);
+          uploadImageIdsRef.current.push(image);
         }
 
+        const uploadedImageIds = response.map((item) => {
+          return item._id;
+        });
+
         setPost((currentPost) => {
-          let existingImageIds = currentPost.images || [];
-
-          const isCurrentlyOnlyDefault =
-            initialPost?.images?.length === 1 &&
-            initialPost.images[0].url.includes('default-post-image.jpg');
-
-          if (isCurrentlyOnlyDefault) {
-            existingImageIds = [];
-          }
-
+          const newImageIds = [
+            ...(currentPost.images || []),
+            ...uploadedImageIds,
+          ];
           return {
             ...currentPost,
-            images: [...existingImageIds, ...uploadedIds],
+            images: newImageIds,
           };
         });
+
+        // setPost((currentPost) => {
+        //   let existingImageIds = currentPost.images || [];
+        //
+        //   const isCurrentlyOnlyDefault =
+        //     initialPost?.images?.length === 1 &&
+        //     initialPost.images[0].url.includes('default-post-image.jpg');
+        //
+        //   if (isCurrentlyOnlyDefault) {
+        //     existingImageIds = [];
+        //   }
+        //
+        //   return {
+        //     ...currentPost,
+        //     images: [...existingImageIds, ...uploadedIds],
+        //   };
+        // });
       } catch (error) {
         console.error('이미지 업로드 실패: ', error);
       }
@@ -306,20 +292,58 @@ const PostForm = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const rawContent = editor!.getJSON();
+      console.log('디버깅 - post 객체', post);
+      const newContent: DocumentType<
+        Record<string, any> | undefined,
+        NodeType<
+          string,
+          undefined | Record<string, any>,
+          any,
+          (NodeType | TextType)[]
+        >[]
+      > = JSON.parse(post.content);
+      console.log('디버깅 - 게시글 본문', newContent);
+
+      // 본문에 작성된 내용 중 이미지 url만 추출하기
+      const newImages = newContent.content
+        .filter((item) => item.type === 'imageResize')
+        .map((item) => item.attrs?.src);
+      const newImagesSet = new Set(newImages);
+
+      console.log('디버깅 - ref 값', uploadImageIdsRef.current);
+      // 본문 이미지 url을 통해 이미지 _id 추출하기
+      const managedImage = new Set(
+        uploadImageIdsRef.current
+          .filter((item) => newImagesSet.has(item.url))
+          .map((item) => item._id),
+      );
+      console.log('디버깅 - 본문에 작성된 이미지', managedImage);
+
+      // 본문에서 제거된 이미지 id
+      const deletedImageIds = post.images?.filter(
+        (item) => !managedImage.has(item),
+      );
+
+      console.log(
+        '디버깅 - 본문에서 제거되었지만 서버에 요청을 보내는 이미지',
+        deletedImageIds,
+      );
+
+      // 본문에 있는 이미지만 요청에 보내기 위해 post 상태 덮어쓰기
       const currentImageIds = post.images || [];
 
       const finalImageIds = currentImageIds.filter(
-        (id) => !deletedImageIds.includes(id),
+        (id) => !deletedImageIds?.includes(id),
       );
 
+      // payload로 서버에 요청보내기 (삭제된 이미지 id db에서 제거 위해 요청에 추가)
       const payload = {
         ...post,
-        content: JSON.stringify(rawContent),
         images: finalImageIds,
         deletedImages: deletedImageIds,
       };
 
+      console.log(payload);
       await onSubmit(payload);
     } catch (error) {
       console.error(error);

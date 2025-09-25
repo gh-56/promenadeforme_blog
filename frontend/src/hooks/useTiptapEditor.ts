@@ -1,4 +1,10 @@
-import { useEditor, Editor } from '@tiptap/react';
+import {
+  useEditor,
+  Editor,
+  type NodeType,
+  type TextType,
+  type DocumentType,
+} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
@@ -8,19 +14,30 @@ import { TextStyleKit } from '@tiptap/extension-text-style';
 import CodeBlockShiki from 'tiptap-extension-code-block-shiki';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { CodeBlockNodeView } from '../pages/CodeBlock';
-import { useEffect, type RefObject } from 'react';
+import { type RefObject } from 'react';
 import { useMantineColorScheme } from '@mantine/core';
 
 interface UseTiptapEditorProps {
   content: string;
-  onUpdate?: (newContent: string) => void;
+  // handleTiptapUpdate?: (newContent: string) => void;
+  handleTiptapUpdate?: (
+    newContent: DocumentType<
+      Record<string, any> | undefined,
+      NodeType<
+        string,
+        undefined | Record<string, any>,
+        any,
+        (NodeType | TextType)[]
+      >[]
+    >,
+  ) => void;
   isEditable?: boolean;
   titleInputRef?: RefObject<HTMLInputElement | null>;
 }
 
 export const useTiptapEditor = ({
   content,
-  onUpdate,
+  handleTiptapUpdate,
   isEditable = true,
   titleInputRef,
 }: UseTiptapEditorProps): Editor | null => {
@@ -55,7 +72,8 @@ export const useTiptapEditor = ({
       content: content,
       onUpdate: isEditable
         ? ({ editor }) => {
-            onUpdate?.(JSON.stringify(editor.getJSON()));
+            // handleTiptapUpdate?.(JSON.stringify(editor.getJSON()));
+            handleTiptapUpdate?.(editor.getJSON());
           }
         : undefined,
 
@@ -79,27 +97,27 @@ export const useTiptapEditor = ({
     [colorScheme],
   );
 
-  useEffect(() => {
-    if (!editor || !content) {
-      return;
-    }
-
-    let isSameContent = false;
-    try {
-      isSameContent = JSON.stringify(editor.getJSON()) === content;
-    } catch (e) {}
-
-    if (isSameContent) {
-      return;
-    }
-
-    try {
-      const parsedContent = JSON.parse(content);
-      editor.commands.setContent(parsedContent);
-    } catch (e) {
-      editor.commands.setContent(content);
-    }
-  }, [content, editor]);
-
+  // useEffect(() => {
+  //   if (!editor || !content) {
+  //     return;
+  //   }
+  //
+  //   let isSameContent = false;
+  //   try {
+  //     isSameContent = JSON.stringify(editor.getJSON()) === content;
+  //   } catch (e) {}
+  //
+  //   if (isSameContent) {
+  //     return;
+  //   }
+  //
+  //   try {
+  //     const parsedContent = JSON.parse(content);
+  //     editor.commands.setContent(parsedContent);
+  //   } catch (e) {
+  //     editor.commands.setContent(content);
+  //   }
+  // }, [content, editor]);
+  //
   return editor;
 };
