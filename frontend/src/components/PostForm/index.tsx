@@ -194,23 +194,6 @@ const PostForm = ({
             images: newImageIds,
           };
         });
-
-        // setPost((currentPost) => {
-        //   let existingImageIds = currentPost.images || [];
-        //
-        //   const isCurrentlyOnlyDefault =
-        //     initialPost?.images?.length === 1 &&
-        //     initialPost.images[0].url.includes('default-post-image.jpg');
-        //
-        //   if (isCurrentlyOnlyDefault) {
-        //     existingImageIds = [];
-        //   }
-        //
-        //   return {
-        //     ...currentPost,
-        //     images: [...existingImageIds, ...uploadedIds],
-        //   };
-        // });
       } catch (error) {
         console.error('이미지 업로드 실패: ', error);
       }
@@ -292,7 +275,6 @@ const PostForm = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log('디버깅 - post 객체', post);
       const newContent: DocumentType<
         Record<string, any> | undefined,
         NodeType<
@@ -302,7 +284,6 @@ const PostForm = ({
           (NodeType | TextType)[]
         >[]
       > = JSON.parse(post.content);
-      console.log('디버깅 - 게시글 본문', newContent);
 
       // 본문에 작성된 내용 중 이미지 url만 추출하기
       const newImages = newContent.content
@@ -310,23 +291,16 @@ const PostForm = ({
         .map((item) => item.attrs?.src);
       const newImagesSet = new Set(newImages);
 
-      console.log('디버깅 - ref 값', uploadImageIdsRef.current);
       // 본문 이미지 url을 통해 이미지 _id 추출하기
       const managedImage = new Set(
         uploadImageIdsRef.current
           .filter((item) => newImagesSet.has(item.url))
           .map((item) => item._id),
       );
-      console.log('디버깅 - 본문에 작성된 이미지', managedImage);
 
       // 본문에서 제거된 이미지 id
       const deletedImageIds = post.images?.filter(
         (item) => !managedImage.has(item),
-      );
-
-      console.log(
-        '디버깅 - 본문에서 제거되었지만 서버에 요청을 보내는 이미지',
-        deletedImageIds,
       );
 
       // 본문에 있는 이미지만 요청에 보내기 위해 post 상태 덮어쓰기
@@ -343,7 +317,6 @@ const PostForm = ({
         deletedImages: deletedImageIds,
       };
 
-      console.log(payload);
       await onSubmit(payload);
     } catch (error) {
       console.error(error);

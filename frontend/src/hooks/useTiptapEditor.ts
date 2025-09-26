@@ -14,7 +14,7 @@ import { TextStyleKit } from '@tiptap/extension-text-style';
 import CodeBlockShiki from 'tiptap-extension-code-block-shiki';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { CodeBlockNodeView } from '../pages/CodeBlock';
-import { type RefObject } from 'react';
+import { useEffect, type RefObject } from 'react';
 import { useMantineColorScheme } from '@mantine/core';
 
 interface UseTiptapEditorProps {
@@ -97,27 +97,27 @@ export const useTiptapEditor = ({
     [colorScheme],
   );
 
-  // useEffect(() => {
-  //   if (!editor || !content) {
-  //     return;
-  //   }
-  //
-  //   let isSameContent = false;
-  //   try {
-  //     isSameContent = JSON.stringify(editor.getJSON()) === content;
-  //   } catch (e) {}
-  //
-  //   if (isSameContent) {
-  //     return;
-  //   }
-  //
-  //   try {
-  //     const parsedContent = JSON.parse(content);
-  //     editor.commands.setContent(parsedContent);
-  //   } catch (e) {
-  //     editor.commands.setContent(content);
-  //   }
-  // }, [content, editor]);
-  //
+  useEffect(() => {
+    if (!editor || !content) {
+      return;
+    }
+
+    let isSameContent = false;
+    try {
+      isSameContent = JSON.stringify(editor.getJSON()) === content;
+    } catch (e) {}
+
+    if (isSameContent) {
+      return;
+    }
+
+    try {
+      const parsedContent = JSON.parse(content);
+      editor.commands.setContent(parsedContent);
+    } catch (e) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
+
   return editor;
 };

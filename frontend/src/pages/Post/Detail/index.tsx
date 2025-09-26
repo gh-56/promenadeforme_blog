@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchDeletePost, fetchReadPostById } from '../../../api/posts';
 import type { PostResponse } from '../../../types/interface';
 import { formattedDate } from '../../../utils/date-format';
